@@ -1,0 +1,16 @@
+{
+  "name": "@pixis/constants",
+  "version": "0.0.0",
+  "private": true,
+  "types": "./dist/index.d.mts",
+  "main": "./dist/index.mjs",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "tsup": "^8.5.1"
+  }
+}

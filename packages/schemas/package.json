@@ -1,0 +1,22 @@
+{
+  "name": "@pixis/schemas",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mjs",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@pixis/constants": "workspace:*",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "tsc": "^2.0.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}
