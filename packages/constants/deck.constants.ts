@@ -13,7 +13,11 @@ export const TOTAL_FLASHCARDS_MIN = 0;
 
 export const VISIBILITY_ENUM = ['public', 'private', 'unlisted'] as const;
 
-export const SORT_BY_ENUM = ['updatedAt', 'createdAt'] as const;
+export const SORTABLE_DECK_FIELDS = ['updatedAt', 'createdAt', 'popularityScore', 'savedCount', 'participantCount'] as const;
+export const FILTERABLE_DECK_FIELDS = ['visibility', 'createdAt', 'updatedAt'] as const;
+export const DECK_FILTER_OPERATIONS = ['eq', 'lte', 'gte'] as const;
 
-export type SortBy = typeof SORT_BY_ENUM[number];
+export type DeckFilterOperation = typeof DECK_FILTER_OPERATIONS[number];
+export type FilterableDeckField = typeof FILTERABLE_DECK_FIELDS[number]
+export type SortableDeckField = typeof SORTABLE_DECK_FIELDS[number];
 export type Visibility = typeof VISIBILITY_ENUM[number];

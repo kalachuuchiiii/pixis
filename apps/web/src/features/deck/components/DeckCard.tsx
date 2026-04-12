@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 
 const DeckPreviewCard = ({ deck }: { deck: Deck }) => {
-  const { title, description, topic, totalFlashcards, visibility, updatedAt, id } =
+  const { title, description, topic, visibility, updatedAt, id } =
     deck;
 
   const getRelativeTime = (date: Date) => {
@@ -36,10 +36,7 @@ const DeckPreviewCard = ({ deck }: { deck: Deck }) => {
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-stone-400 text-[11px]">
-            <BookOpen size={13} />
-            <span>{totalFlashcards} cards</span>
-          </div>
+         
         </div>
 
         {/* Title */}

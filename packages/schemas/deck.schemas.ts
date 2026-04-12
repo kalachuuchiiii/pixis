@@ -1,7 +1,6 @@
 import {
   DESCRIPTION_MAX,
   DESCRIPTION_MIN,
-  SORT_BY_ENUM,
   TITLE_MAX,
   TITLE_MIN,
   TOTAL_FLASHCARDS_MAX,
@@ -16,6 +15,7 @@ import {
   nicknameSchema,
   usernameSchema,
 } from "./user.schemas";
+import { createdAtSchema, updatedAtSchema } from "./timestamp.schemas";
 
 export const titleSchema = z.string().min(TITLE_MIN).max(TITLE_MAX);
 export const descriptionSchema = z
@@ -42,31 +42,20 @@ export const rawDeckFormSchema = z
 
 export type RawDeckForm = z.infer<typeof rawDeckFormSchema>;
 
-export const deckFilterParamsSchema = z.object({
-  page: z.coerce.number().positive(),
-  limit: z.coerce.number().positive().catch(10),
-  sortBy: z.enum(SORT_BY_ENUM),
+export const deckAuthorSchema = z.object({
+  username: usernameSchema,
+  avatarPublicUrl: avatarPublicUrlSchema,
+  nickname: nicknameSchema,
 });
 
 export const deckSchema = rawDeckFormSchema
   .extend({
-
-    createdAt: z.coerce
-      .date()
-      .refine((d) => d < new Date())
-      .transform((d) => d.toISOString()),
-    updatedAt: z.coerce
-      .date()
-      .refine((d) => d < new Date())
-      .transform((d) => d.toISOString()),
+    createdAt: createdAtSchema,
+    updatedAt: updatedAtSchema,
     id: idSchema,
-    user: {
-      username: usernameSchema,
-      avatarPublicUrl: avatarPublicUrlSchema,
-      nickname: nicknameSchema,
-    },
+    respondentCount: z.number().positive().default(0).catch(0),
+    savedCount: z.number().positive().default(0).catch(0)
   })
   .strip();
 
-export type Deck = z.infer<typeof deckSchema>;
-export type DeckFilterParams = z.infer<typeof deckFilterParamsSchema>;
+  export type Deck = z.infer<typeof deckSchema>;

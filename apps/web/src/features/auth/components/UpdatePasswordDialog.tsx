@@ -6,20 +6,36 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/useAuth";
-import { updatePasswordFormSchema } from "@pixis/schemas";
+import {
+  updatePasswordFormSchema,
+  type UpdatePasswordForm,
+} from "@pixis/schemas";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export const UpdatePasswordDialog = () => {
-  const [form, setForm] = useState({ oldPassword: "", newPassword: "" });
-  const formError = updatePasswordFormSchema.safeParse(form).error?.issues[0].message;
+  const form = useForm<UpdatePasswordForm>({
+    resolver: zodResolver(updatePasswordFormSchema),
+    defaultValues: {
+      newPassword: "",
+      oldPassword: "",
+    },
+  });
+
+  const { handleSubmit } = form;
+
   const { updatePassword, isUpdatingPassword } = useAuth();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const onSubmit = handleSubmit(async (data) => {
+    await updatePassword(data);
+  });
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -34,41 +50,59 @@ export const UpdatePasswordDialog = () => {
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-md ">
-          <DialogHeader className="p-2" >
-            <DialogTitle>Update Password</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="sm:max-w-md">
+          <form {...form} onSubmit={onSubmit} className="space-y-6">
+            <DialogHeader className="pt-2">
+              <DialogTitle>Update Password</DialogTitle>
+              <DialogDescription>
+                Choose a new password to keep your account secure
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className="flex flex-col gap-3 ">
-            <input
-              type="password"
-              name="oldPassword"
-              value={form.oldPassword}
-              onChange={handleChange}
-              placeholder="Current password"
-              className="w-full px-3 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-stone-200"
-            />
-            <input
-              type="password"
-              name="newPassword"
-              value={form.newPassword}
-              onChange={handleChange}
-              placeholder="New password"
-              className="w-full px-3 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-stone-200"
-            />
-            { formError && <p className="text-red-400 text-xs">{formError}</p> }
-          </div>
+            <div className="flex flex-col gap-3 ">
+              <Controller
+                name="oldPassword"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Old Password</FieldLabel>
+                    <Input {...field} placeholder="Your old password" />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="newPassword"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>New Password</FieldLabel>
+                    <Input {...field}  placeholder="Your new password"/>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
 
-          <footer className="w-full justify-end flex mt-6" >
-            <Button variant={"outline"}>Cancel</Button>
-            <Button
-              onClick={() => updatePassword(form)}
-              disabled={!!formError || isUpdatingPassword}
-              className="ml-2"
-            >
-              Save
-            </Button>
-          </footer>
+            <footer className="w-full justify-end flex mt-6">
+              <DialogClose>
+                <Button variant={"outline"} type="button">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button
+                type="submit"
+                disabled={isUpdatingPassword}
+                className="ml-2"
+              >
+                Save
+              </Button>
+            </footer>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

@@ -7,7 +7,7 @@ const Layout = () => {
 
   return (
     <div className="flex h-screen w-full bg-white overflow-hidden">
-      <div className="hidden lg:flex w-[52%] flex-col justify-between px-16 py-14 border-r border-stone-100 relative overflow-hidden">
+      <div className="hidden lg:flex  animate-fade-in-down w-[52%] flex-col justify-between px-16 py-14 border-r border-stone-100 relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{

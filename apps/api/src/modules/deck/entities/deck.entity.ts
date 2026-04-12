@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm';
 import { IsString, IsOptional, IsEnum, IsBoolean, MinLength, MaxLength } from 'class-validator';
 import  { User } from '@/modules/users/entities/user.entity';
 import { DESCRIPTION_MAX, TITLE_MAX, TITLE_MIN } from '@pixis/constants';
@@ -6,6 +6,10 @@ import { DESCRIPTION_MAX, TITLE_MAX, TITLE_MIN } from '@pixis/constants';
 
 @Entity('deck')
 export class Deck {
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
+  
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -18,6 +22,12 @@ export class Deck {
 
   @Column({ type: 'text', nullable: true })
   topic!: string;
+  
+  @Column({ name: 'participant_count', default: 0 })
+  participantCount!: number;
+
+  @Column({ name: 'saved_count', default: 0 })
+  savedCount!: number;
 
   @Column()
   @IsString()
@@ -31,10 +41,6 @@ export class Deck {
   @MaxLength(DESCRIPTION_MAX)
   description!: string;
 
-  @Column({ default: false, name: 'is_deleted' })
-  @IsBoolean()
-  isDeleted!: boolean;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
@@ -43,7 +49,10 @@ export class Deck {
 
   @Column({ default: 'private' })
   @IsEnum(['private', 'public', 'unlisted'])
-  visibility!: string;
+  visibility!: 'private' | 'public' | 'unlisted';
+
+  @Column({ default: 0, name: 'popularity_score' })
+  popularityScore!: number
 
   @Column({ nullable: true, name: 'color', default: "#000000" })
   @IsOptional()

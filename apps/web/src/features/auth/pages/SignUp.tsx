@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -8,29 +7,36 @@ import {
 } from "@/components/ui/dialog";
 import clsx from "clsx";
 import { NavLink } from "react-router-dom";
-import {
-  PASSWORD_MAX,
-  PASSWORD_MIN,
-  USERNAME_MAX,
-  USERNAME_MIN,
-} from "@pixis/constants";
-import { useSignUpForm } from "../hooks/useSignUpForm";
+import { Controller, useForm } from "react-hook-form";
+import { signUpFormSchema, type SignUpForm } from "@pixis/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../hooks/useAuth";
+import { Field, FieldError, FieldLabel, FieldTitle } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 const SignUp = () => {
-  const {
-    form,
-    handleTogglePrivacyPolicy,
-    handleChange,
-    handleSubmit,
-    formError,
-    isValid,
-    isFormEmpty,
-    isSigningUp
-  } = useSignUpForm();
+  const { signUp, isSigningUp } = useAuth();
+  const form = useForm<SignUpForm>({
+    resolver: zodResolver(signUpFormSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      confirmPassword: "",
+      hasAgreedToPrivacyPolicy: false,
+    },
+  });
+
+  const { handleSubmit } = form;
+
+  const onSubmit = handleSubmit(async (data) => {
+    await signUp(data);
+  });
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       className="space-y-3.5"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
@@ -46,111 +52,90 @@ const SignUp = () => {
       </p>
 
       {/* Username */}
-      <div>
-        <label className="block text-[11px] font-medium tracking-[0.06em] uppercase text-stone-400 mb-1.5">
-          Username
-        </label>
-        <input
-          maxLength={USERNAME_MAX}
-          minLength={USERNAME_MIN}
-          value={form.username}
-          onChange={handleChange}
-          name="username"
-          type="text"
-          placeholder="e.g. jane_doe"
-          className="w-full px-3.5 py-[11px] rounded-[10px] border border-stone-200 bg-stone-50 text-[14px]"
-        />
-      </div>
+      <Controller
+        control={form.control}
+        name="username"
+        render={({ field, fieldState }) => (
+          <Field>
+            <FieldLabel>Username</FieldLabel>
+            <Input {...field} placeholder="e.g. jane_doe" />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-      {/* Password (shadcn style = just controlled, no manual toggle needed) */}
-      <div>
-        <label className="block text-[11px] font-medium tracking-[0.06em] uppercase text-stone-400 mb-1.5">
-          Password
-        </label>
-        <input
-          minLength={PASSWORD_MIN}
-          maxLength={PASSWORD_MAX}
-          value={form.password}
-          onChange={handleChange}
-          name="password"
-          type="password"
-          placeholder="••••••••"
-          className="w-full px-3.5 py-[11px] rounded-[10px] border border-stone-200 bg-stone-50 text-[14px]"
-        />
-      </div>
+      <Controller
+        control={form.control}
+        name="password"
+        render={({ field, fieldState }) => (
+          <Field>
+            <FieldLabel>Password</FieldLabel>
+            <Input {...field} placeholder="********" />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-      {/* Confirm Password */}
-      <div>
-        <label className="block text-[11px] font-medium tracking-[0.06em] uppercase text-stone-400 mb-1.5">
-          Confirm Password
-        </label>
-        <input
-          value={form.confirmPassword}
-          onChange={handleChange}
-          name="confirmPassword"
-          type="password"
-          placeholder="••••••••"
-          className="w-full px-3.5 py-[11px] rounded-[10px] border border-stone-200 bg-stone-50 text-[14px]"
-        />
-      </div>
+      <Controller
+        control={form.control}
+        name="confirmPassword"
+        render={({ field, fieldState }) => (
+          <Field>
+            <FieldLabel>Confirm Password</FieldLabel>
+            <Input {...field} placeholder="********"  />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
       {/* Checkbox */}
       <div className="flex items-start gap-3 pt-1">
-        <button
-          type="button"
-          onClick={handleTogglePrivacyPolicy}
-          className={`mt-0.5 w-4 h-4 rounded-[4px] border flex items-center justify-center ${
-            form.hasAgreedToPrivacyPolicy
-              ? "bg-stone-900 border-stone-900"
-              : "border-stone-300"
-          }`}
-        >
-          {form.hasAgreedToPrivacyPolicy && (
-            <span className="text-white text-[10px]">✓</span>
+        <Controller
+          control={form.control}
+          name="hasAgreedToPrivacyPolicy"
+          render={({ field, fieldState }) => (
+            <Field orientation={"vertical"} className="flex fle">
+              <FieldLabel>Privacy Policy</FieldLabel>
+              <div className="flex gap-2">
+                <Checkbox
+                  className="size-4"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <p className="text-[13px] text-stone-400">
+                  I agree to Pixis's{" "}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button
+                        type="button"
+                        className="text-stone-700 underline font-medium"
+                      >
+                        Privacy Policy
+                      </button>
+                    </DialogTrigger>
+
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Privacy Policy</DialogTitle>
+                      </DialogHeader>
+                      <p className="text-sm text-stone-500">
+                        Your data is safe. (shortened)
+                      </p>
+                    </DialogContent>
+                  </Dialog>{" "}
+                  and Terms of Service.
+                </p>
+              </div>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
-        </button>
-
-        <p className="text-[13px] text-stone-400">
-          I agree to Pixis's{" "}
-          <Dialog>
-            <DialogTrigger asChild>
-              <button
-                type="button"
-                className="text-stone-700 underline font-medium"
-              >
-                Privacy Policy
-              </button>
-            </DialogTrigger>
-
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Privacy Policy</DialogTitle>
-              </DialogHeader>
-              <p className="text-sm text-stone-500">
-                Your data is safe. (shortened)
-              </p>
-            </DialogContent>
-          </Dialog>{" "}
-          and Terms of Service.
-        </p>
+        />
       </div>
 
-      {formError && !isFormEmpty && (
-        <p className="text-xs text-red-400">{formError.issues[0].message}</p>
-      )}
       {/* Submit */}
-      <button
-        type="submit"
-        disabled={!form.hasAgreedToPrivacyPolicy || isSigningUp}
-        className={clsx(
-          `w-full mt-6 py-3 rounded-[10px]`,
-          isValid
-            ? "bg-stone-900 text-white"
-            : "bg-stone-100 text-stone-300 cursor-not-allowed"
-        )}
-      >
+      <Button type="submit" className="w-full my-btn" disabled={isSigningUp}>
         Create account
-      </button>
+      </Button>
       <p className="text-center text-[13px] text-stone-400 mt-7">
         Already have an account?
         <NavLink

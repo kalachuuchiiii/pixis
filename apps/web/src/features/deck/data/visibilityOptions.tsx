@@ -2,13 +2,14 @@ import type { Visibility } from "@pixis/constants";
 import { Globe, Lock, Link } from "lucide-react";
 
 
-
-export const VISIBILITY_OPTIONS: {
+export type VisibilityOption = {
   value: Visibility;
   label: string;
   desc: string;
   icon: React.ReactNode;
-}[] = [
+};
+
+export const VISIBILITY_OPTIONS: VisibilityOption[] = [
   {
     value: "public",
     label: "Public",

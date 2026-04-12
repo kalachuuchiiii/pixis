@@ -5,19 +5,22 @@ import { CreateDeckDialog } from "../components/CreateDeckDialog";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import type { Deck } from "@pixis/schemas";
-
-type SortOption = "createdAt" | "updatedAt";
+import { DeckFilter } from "@/components/DeckFilter";
+import { useSearchParams } from "react-router-dom";
+import { useDeckFilter } from "../hooks/useDeckFilter";
 
 const MyDecks = () => {
-  const [sortBy, setSortBy] = useState<SortOption>("updatedAt");
+  const [searchQuery] = useSearchParams();
+  const deckFilterHandlers = useDeckFilter();
+
   const { data } = useInfiniteQuery({
     queryFn: async ({ pageParam = 1 }) => {
       const res = await api.get<{ decks: Deck[]; nextPage: number | null }>(
-        `/decks/me?sortBy=${sortBy}&page=${pageParam}&limit=${10}`
+        `/decks/?page=${pageParam}&limit=${10}&${deckFilterHandlers.updatedQuery}`
       );
       return res.data;
     },
-    queryKey: ["my-decks", sortBy],
+    queryKey: ["my-decks", deckFilterHandlers.updatedQuery],
     initialPageParam: 1,
     getNextPageParam: (prev) => prev.nextPage,
   });
@@ -55,31 +58,7 @@ const MyDecks = () => {
 
           {/* Sort Controls */}
           <div className="flex items-center gap-3">
-            <span className="text-sm text-stone-400 whitespace-nowrap">
-              Sort by
-            </span>
-            <div className="inline-flex bg-stone-100 rounded-2xl p-1 text-sm">
-              <button
-                onClick={() => setSortBy("updatedAt")}
-                className={`px-5 py-2 rounded-xl transition-all font-medium ${
-                  sortBy === "updatedAt"
-                    ? "bg-white shadow-sm text-stone-900"
-                    : "text-stone-500 hover:text-stone-700"
-                }`}
-              >
-                Recently Updated
-              </button>
-              <button
-                onClick={() => setSortBy("createdAt")}
-                className={`px-5 py-2 rounded-xl transition-all font-medium ${
-                  sortBy === "createdAt"
-                    ? "bg-white shadow-sm text-stone-900"
-                    : "text-stone-500 hover:text-stone-700"
-                }`}
-              >
-                Recently Created
-              </button>
-            </div>
+            <DeckFilter deckFilterHandlers={deckFilterHandlers} />
             <CreateDeckDialog />
           </div>
         </div>
@@ -90,15 +69,12 @@ const MyDecks = () => {
             <div className="text-[15px] font-medium text-stone-700">
               Your Decks
             </div>
-            <div className="text-[13px] text-stone-400">
-              {sortBy === "updatedAt" && "Sorted by last studied"}
-              {sortBy === "createdAt" && "Sorted by creation date"}
-            </div>
           </div>
 
           {/* Empty Deck Grid Container */}
           <div className="space-y-2">
             {decks &&
+              decks.length > 0 &&
               decks.map((d) => (
                 <DeckPreviewCard key={`${d.topic}.${d.id}`} deck={d} />
               ))}

@@ -1,11 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, DeleteDateColumn } from 'typeorm';
 import { IsString, IsOptional, IsEnum, MinLength } from 'class-validator';
 import { Deck } from '@/modules/deck/entities/deck.entity';
 import { TYPE_ENUM } from '@pixis/constants';
 import { User } from '@/modules/users/entities/user.entity';
+import { flashcardFormSchema, flashcardRefIds } from '@pixis/schemas';
 
 @Entity('flashcard')
 export class Flashcard {
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
+
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -46,4 +51,12 @@ export class Flashcard {
 
   @Column({ type: 'text', array: true, nullable: true })
   choices!: string[] | null;
+
+  @Column({ name: 'is_answer_case_sensitive', default: false })
+  isAnswerCaseSensitive!: boolean;
+
+  @BeforeInsert()
+  validate(){
+      flashcardFormSchema.and(flashcardRefIds).parse(this);
+  }
 }

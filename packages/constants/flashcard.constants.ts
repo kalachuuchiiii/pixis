@@ -10,3 +10,5 @@ export const TYPE_ENUM = ['open_ended', 'close_ended'] as const;
 
 export const CHOICES_MIN = 2;
 export const CHOICES_MAX = 6;
+export const ALLOWED_FLASHCARD_SORTING_FIELDS = ['createdAt', 'updatedAt', 'repetitions', 'lapses'];
+export const ALLOWED_FLASHCARD_FILTER_FIELDS = ['createdAt', 'updatedAt', 'type', 'repetitions', 'lapses', 'easeFactor']

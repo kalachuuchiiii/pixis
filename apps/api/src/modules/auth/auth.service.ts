@@ -111,7 +111,7 @@ export class AuthService {
     }
     const isPasswordCorrect = await myUser.credential.comparePassword(form.oldPassword);
     if(!isPasswordCorrect){
-      throw new BadRequestException({ message: 'Passwords do not match.', code: 'PASSWORDS_DO_NOT_MATCH'});
+      throw new BadRequestException({ message: 'Incorrect Password', code: 'INCORRECT_PASSWORD'});
     }
 
     await myUser.credential.hashAndSetPassword(form.newPassword);

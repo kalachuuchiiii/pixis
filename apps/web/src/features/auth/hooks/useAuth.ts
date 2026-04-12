@@ -6,6 +6,7 @@ import {
 import {
   signInFormSchema,
   signUpFormSchema,
+  updatePasswordFormSchema,
   type SignInForm,
   type SignUpForm,
   type UpdatePasswordForm,
@@ -15,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useAuth = () => {
-
   const nav = useNavigate();
 
   const { mutate: signUp, isPending: isSigningUp } = useMutation({
@@ -25,8 +25,8 @@ export const useAuth = () => {
           const validatedForm = signUpFormSchema.parse(form);
           return resolve(api.post("/auth/signup", validatedForm));
         } catch (e) {
-          console.dir(e, { depth: 1})
-         return reject(e);
+          console.dir(e, { depth: 1 });
+          return reject(e);
         }
       });
 
@@ -36,10 +36,10 @@ export const useAuth = () => {
         error: getErrorMessage,
       });
       return await promise;
-     },
-     onSuccess: () => {
-         nav('/sign-in');
-     }
+    },
+    onSuccess: () => {
+      nav("/sign-in");
+    },
   });
 
   const { mutate: signIn, isPending: isSigningIn } = useMutation({
@@ -61,36 +61,45 @@ export const useAuth = () => {
       return await promise;
     },
     onSuccess: () => {
-      nav('/app')
-    }
+      nav("/app");
+    },
   });
 
   const { mutate: signOut, isPending: isSigningOut } = useMutation({
-    mutationFn: async() => {
-      const promise = api.post('/auth/signout');
-       await toast.promise(promise, {
-        loading: 'Signing you out...',
+    mutationFn: async () => {
+      const promise = api.post("/auth/signout");
+      await toast.promise(promise, {
+        loading: "Signing you out...",
         success: getSuccessMessage,
-        error: getErrorMessage
-       })
-       return await promise;
+        error: getErrorMessage,
+      });
+      return await promise;
     },
     onSuccess: () => {
-      nav('/sign-in');
-    }
-  })
+      nav("/sign-in");
+    },
+  });
 
-  const { mutate: updatePassword, isPending: isUpdatingPassword } = useMutation({
-    mutationFn: async(form: UpdatePasswordForm) => {
-      const promise = api.patch('/auth/me/password', form);
-      await toast.promise(promise, {
-        loading: 'Updating password...',
-        success: getSuccessMessage,
-        error: getErrorMessage
-      })
-      return await promise;
+  const { mutate: updatePassword, isPending: isUpdatingPassword } = useMutation(
+    {
+      mutationFn: async (form: UpdatePasswordForm) => {
+        const promise = new Promise((resolve, reject) => {
+          try {
+            const cleanForm = updatePasswordFormSchema.parse(form);
+            return resolve(api.patch("/auth/me/password", cleanForm));
+          } catch (e) {
+            return reject(e);
+          }
+        });
+        await toast.promise(promise, {
+          loading: "Updating password...",
+          success: getSuccessMessage,
+          error: getErrorMessage,
+        });
+        return await promise;
+      },
     }
-  })
+  );
 
   return {
     signUp,

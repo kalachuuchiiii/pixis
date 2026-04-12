@@ -10,6 +10,7 @@ import SignUp from "@/features/auth/pages/SignUp";
 import DeckManager from "@/features/deck/pages/DeckManager";
 import MyDecks from "@/features/deck/pages/MyDecks";
 import PublicDecks from "@/features/deck/pages/PublicDecks";
+import FlashcardList from "@/features/flashcard/pages/FlashcardList";
 import FlashcardManager from "@/features/flashcard/pages/FlashcardManager";
 import LandingPage from "@/pages/LandingPage";
 import { useRoutes, type RouteObject } from "react-router-dom";
@@ -68,9 +69,13 @@ const routes: RouteObject[] = [
         path: '/app/decks/:deckId/manage'
       },
        {
-        element: <FlashcardManager />,
-        path: '/app/decks/:deckId/manage/flashcard'
+        element: <FlashcardList />,
+        path: '/app/decks/:deckId/manage/flashcards'
       },
+      {
+        element: <FlashcardManager />,
+        path: '/app/flashcards/:flashcardId/manage'
+      }
       
     ]
   }

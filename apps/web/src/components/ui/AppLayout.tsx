@@ -386,7 +386,7 @@ const AppLayout = () => {
           <Topbar />
 
           {/* Page content */}
-          <main className="flex-1 overflow-y-auto bg-stone-50/60 p-6">
+          <main className="flex-1 max-w-7xl w-full overflow-y-auto bg-stone-50/60 p-6">
             {!isFetching && <Outlet />}
           </main>
         </div>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, CreditCard } from "lucide-react";
+import { ChevronLeft, CreditCard, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -8,34 +8,79 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CloseEndedFlashcardForm } from "./CloseEndedFlashcardForm";
-import { OpenEndedFlashcardForm } from "./OpenEndedFlashcardForm";
 
-import { useState } from "react";
-import type { Flashcard } from "@pixis/schemas";
-import { useParams } from "react-router-dom";
-
+import { CloseEndedForm } from "./CloseEndedForm";
+import { useCreateFlashcard } from "../hooks/useCreateFlashcard";
+import { OpenEndedForm } from "./OpenEndedForm";
 
 export const CreateFlashcard = () => {
-  const [type, setType] = useState<Flashcard["type"] | "">("");
-  const { deckId = 0 } = useParams();
+  const {
+    type,
+    closeEndedForm,
+    openEndedForm,
+    onSubmitCloseEnded,
+    onSubmitOpenEnded,
+    isCreatingFlashcard,
+    setType,
+  } = useCreateFlashcard();
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button className="p-6">New Flashcard</Button>
+      <DialogTrigger className="fixed bottom-10 left-[50%] " asChild>
+        <Button
+          variant={"outline"}
+          className="p-6 shadow-xl shadow-[-10px_10px_0px_0px_rgba(0,_0,_0,_0.15)]  "
+        >
+          {" "}
+          <Plus /> New Flashcard
+        </Button>
       </DialogTrigger>
 
-      <DialogContent className="min-w-3xl px-8">
+      <DialogContent className="min-w-3xl p-6">
         {type !== "" ? (
           <div className="space-y-4">
-            <Button  onClick={() => setType('')} variant={'outline'}>
-               <ChevronLeft />
+            <Button onClick={() => setType("")} variant={"outline"}>
+              <ChevronLeft />
             </Button>
             {type === "close_ended" ? (
-              <CloseEndedFlashcardForm deckId = {Number(deckId)} />
+              <div>
+                <header>
+                  <h1 className="label">New Flashcard</h1>
+                </header>
+                <CloseEndedForm
+                  onSubmit={onSubmitCloseEnded}
+                  closeEndedForm={closeEndedForm}
+                  id="close-ended-form"
+                />
+                <Button
+                  disabled={isCreatingFlashcard}
+                  className="my-btn w-full"
+                  type="submit"
+                  form="close-ended-form"
+                >
+                  Create
+                </Button>
+              </div>
             ) : (
-              <OpenEndedFlashcardForm  />
+              <div>
+                <header>
+                  <h1 className="label text-[10px]">New Flashcard</h1>
+                </header>
+                <OpenEndedForm
+                  className="space-y-2"
+                  onSubmit={onSubmitOpenEnded}
+                  id="open-ended-form"
+                  openEndedForm={openEndedForm}
+                />
+                <Button
+                  disabled={isCreatingFlashcard}
+                  className="my-btn w-full"
+                  type="submit"
+                  form="open-ended-form"
+                >
+                  Create
+                </Button>
+              </div>
             )}
           </div>
         ) : (

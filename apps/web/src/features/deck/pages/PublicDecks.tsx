@@ -34,20 +34,18 @@ const TOPICS: string[] = [
 ];
 
 // ── Sort Options ──────────────────────────────────────────────────────────
-type SortOption = "date" | "popularity" | "easeFactor" | "flashcardCount";
+type SortOption = "createdAt" | "popularity" 
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: "date", label: "Newest" },
+  { value: "createdAt", label: "Newest" },
   { value: "popularity", label: "Most Popular" },
-  { value: "easeFactor", label: "Easiest First" },
-  { value: "flashcardCount", label: "Most Cards" },
 ];
 
 // ── Public Decks Page ─────────────────────────────────────────────────────
 const PublicDecksPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("All Topics");
-  const [sortBy, setSortBy] = useState<SortOption>("date");
+  const [sortBy, setSortBy] = useState<SortOption>("createdAt");
 
   return (
     <div className="min-h-screen bg-white">
@@ -85,7 +83,7 @@ const PublicDecksPage = () => {
             <div className="flex-1 relative">
               <input
                 type="text"
-                placeholder="Search decks by title or keyword..."
+                placeholder="Search decks by title, topic or keyword..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-stone-50 border border-stone-200 focus:border-stone-400 rounded-xl px-5 py-3 text-[15px] placeholder:text-stone-400 focus:outline-none transition-colors"
@@ -93,21 +91,6 @@ const PublicDecksPage = () => {
               <div className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400">
                 🔍
               </div>
-            </div>
-
-            {/* Topic Filter */}
-            <div className="lg:w-64">
-              <select
-                value={selectedTopic}
-                onChange={(e) => setSelectedTopic(e.target.value)}
-                className="w-full bg-stone-50 border border-stone-200 focus:border-stone-400 rounded-xl px-5 py-3 text-[15px] focus:outline-none cursor-pointer transition-colors"
-              >
-                {TOPICS.map((topic) => (
-                  <option key={topic} value={topic}>
-                    {topic}
-                  </option>
-                ))}
-              </select>
             </div>
 
             {/* Sort By */}
@@ -137,7 +120,8 @@ const PublicDecksPage = () => {
             <span className="font-medium text-stone-600">
               {selectedTopic === "All Topics" ? "all topics" : selectedTopic}
             </span>
-            • Sorted by {SORT_OPTIONS.find((o) => o.value === sortBy)?.label.toLowerCase()}
+            • Sorted by{" "}
+            {SORT_OPTIONS.find((o) => o.value === sortBy)?.label.toLowerCase()}
           </div>
         </div>
 
@@ -153,11 +137,7 @@ const PublicDecksPage = () => {
           </div>
 
           {/* Placeholder Grid - Ready for Deck Cards */}
-          <div className="space-y-2">
-            {
-              mockDecks.map((d) => <DeckPreviewCard deck={d} />)
-            }
-          </div>
+         
 
           {/* Empty State Placeholder (shown when no results) */}
           {/* You can conditionally render this later */}
