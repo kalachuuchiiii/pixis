@@ -35,6 +35,7 @@ import {
   BookOpen,
   CheckCircle2,
   Gift,
+  LibraryBig,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
@@ -44,6 +45,7 @@ import type { AppDispatch } from "@/app/store";
 import { useEffect } from "react";
 import { getMe } from "@/features/account/slice/profileSlice";
 import { useAppSelector } from "@/hooks/useReduxHook";
+import AppErrorBoundary from "@/app/AppErrorBoundary";
 
 // ── Hardcoded user data ────────────────────────────────────────────────────
 
@@ -95,11 +97,14 @@ const NOTIFICATIONS = [
   },
 ];
 
-// ── Nav groups (psychology-ordered) ───────────────────────────────────────
-// Primary (goal-oriented, most used) → Secondary (social/progress) → System
 const NAV_PRIMARY = [
   { label: "Home", to: "/app", icon: Home },
   { label: "My Decks", to: "/app/decks", icon: Layers },
+  {
+    label: "My Collections",
+    to: "/app/collections",
+    icon: LibraryBig,
+  },
   { label: "Activity", to: "/app/activity", icon: BarChart2 },
 ];
 
@@ -368,7 +373,7 @@ const Topbar = () => {
 const AppLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isFetching } = useAppSelector((state) => state.profile);
-  
+
   useEffect(() => {
     dispatch(getMe());
   }, []);
@@ -382,13 +387,15 @@ const AppLayout = () => {
         <AppSidebar />
 
         {/* Main column */}
-        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <div className="flex flex-col flex-1 min-w-0 overflow">
           <Topbar />
 
           {/* Page content */}
-          <main className="flex-1 max-w-7xl w-full overflow-y-auto bg-stone-50/60 p-6">
-            {!isFetching && <Outlet />}
-          </main>
+          <AppErrorBoundary>
+            <main className="flex-1  max-w-7xl w-full p-6">
+              {!isFetching && <Outlet />}
+            </main>
+          </AppErrorBoundary>
         </div>
       </div>
     </SidebarProvider>

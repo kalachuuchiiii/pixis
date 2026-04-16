@@ -1,86 +1,121 @@
-import { useState } from "react";
-import DeckPreviewCard from "../components/DeckCard";
+import { useEffect, useRef, useState } from "react";
 import { PixisAvatar } from "@/components/ui/PixisAvatar";
 import { CreateDeckDialog } from "../components/CreateDeckDialog";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  type InfiniteData,
+  type UseInfiniteQueryResult,
+} from "@tanstack/react-query";
 import api from "@/lib/api";
-import type { Deck } from "@pixis/schemas";
-import { DeckFilter } from "@/components/DeckFilter";
-import { useSearchParams } from "react-router-dom";
+import {  type DeckWithAuthorAndFlashcardPreview } from "@pixis/schemas";
+import { DeckFilter } from "@/features/deck/components/DeckFilter";
+import { Link, useSearchParams } from "react-router-dom";
 import { useDeckFilter } from "../hooks/useDeckFilter";
+import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
+import { useInView } from "react-intersection-observer";
+import { AppHeader } from "@/components/ui/AppHeader";
+import { DeckCard } from "../components/DeckCard";
+import { Archive } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { EmptyResource } from "../../../components/ui/EmptyResource";
+import { Spinner } from "@/components/ui/spinner";
 
 const MyDecks = () => {
-  const [searchQuery] = useSearchParams();
   const deckFilterHandlers = useDeckFilter();
-
-  const { data } = useInfiniteQuery({
+  const { query } = deckFilterHandlers;
+  const createDeckButtonRef = useRef<HTMLButtonElement | null>(null);
+  const infiniteQuery = useInfiniteQuery({
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await api.get<{ decks: Deck[]; nextPage: number | null }>(
-        `/decks/?page=${pageParam}&limit=${10}&${deckFilterHandlers.updatedQuery}`
-      );
+      const queries = [`page=${pageParam}&limit=${4}`];
+      if (query) {
+        queries.push(query);
+      }
+      const res = await api.get<{
+        decks: DeckWithAuthorAndFlashcardPreview[];
+        nextPage: number | null;
+      }>(`/decks/?${queries.join("&")}`);
       return res.data;
     },
-    queryKey: ["my-decks", deckFilterHandlers.updatedQuery],
+    queryKey: ["my-decks", deckFilterHandlers.query],
     initialPageParam: 1,
     getNextPageParam: (prev) => prev.nextPage,
   });
+  const { data, isPending, isLoading, isFetching, hasNextPage, fetchNextPage } =
+    infiniteQuery;
 
-  const decks = data?.pages.flatMap((d) => d.decks);
+  const decks = data?.pages.flatMap((d) => d.decks) ?? [];
+  const isProcessing = isPending || isLoading || isFetching || !data;
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (!hasNextPage || isProcessing || !ref || !inView) return;
+    fetchNextPage();
+  }, [inView, ref]);
+
+  const hasNoDecks = !hasNextPage && decks.length === 0;
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-100 h-[60px] px-8 flex items-center justify-between">
-        <PixisAvatar />
-        <div className="text-sm text-stone-500 font-medium">My Decks</div>
-        <a
-          href="/"
-          className="text-[13.5px] text-stone-500 hover:text-stone-900 transition-colors"
-        >
-          ← Home
-        </a>
-      </nav>
-
-      <div className="lg:px-8 max-w-7xl mx-auto  pt-12 pb-20">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
-          <div>
-            <h1
-              className="text-[clamp(32px,5vw,48px)] font-normal text-stone-900 leading-tight"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              My Decks
-            </h1>
-            <p className="text-[15px] text-stone-500 mt-2">
-              Manage and continue studying your personal decks
-            </p>
-          </div>
-
-          {/* Sort Controls */}
-          <div className="flex items-center gap-3">
+    <div className="page-container animate-fade-in-right">
+      <AppHeader
+        heading={`My Decks`}
+        description="Manage and continue studying your personal decksk"
+        beside={
+          <div className="flex items-center h-12  justify-end w-full gap-1">
             <DeckFilter deckFilterHandlers={deckFilterHandlers} />
-            <CreateDeckDialog />
+            <Tooltip>
+              <TooltipTrigger>
+                <Link to={`/app/archived/decks`}>
+                  <Button variant={"outline"} className="my-btn h-full">
+                    <Archive />
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Go to archived decks</TooltipContent>
+            </Tooltip>
+            <CreateDeckDialog ref={createDeckButtonRef} />
           </div>
+        }
+      />
+      <div>
+        <div className="space-y-2 grid grid-cols-2 gap-1">
+          {decks.map((d) => (
+            <DeckCard.Default key={`${d.topic}.${d.id}`} deck={d} />
+          ))}
         </div>
-
-        {/* Decks Container - Empty Placeholder */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <div className="text-[15px] font-medium text-stone-700">
-              Your Decks
-            </div>
-          </div>
-
-          {/* Empty Deck Grid Container */}
-          <div className="space-y-2">
-            {decks &&
-              decks.length > 0 &&
-              decks.map((d) => (
-                <DeckPreviewCard key={`${d.topic}.${d.id}`} deck={d} />
-              ))}
-          </div>
+        <div className=" h-20 my-20">
+          {isProcessing ? (
+            <Spinner className="w-full my-auto mx-auto" />
+          ) : hasNoDecks ? (
+            <EmptyResource
+              title="No decks yet"
+              description="No decks yet. Start by creating one"
+              content={
+                <Button onClick={() => createDeckButtonRef.current?.click()}>
+                  Create
+                </Button>
+              }
+            />
+          ) : (
+            !hasNextPage && (
+              <EmptyResource
+                title="No more decks"
+                description="No more decks to show"
+                content={
+                  <Link to={"/app/explore"}>
+                    <Button>Explore</Button>
+                  </Link>
+                }
+              />
+            )
+          )}
         </div>
       </div>
+      <div className="h-2 w-full" ref={ref} />
     </div>
   );
 };

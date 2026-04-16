@@ -1,12 +1,11 @@
+import type { PaginateQuery } from 'nestjs-paginate';
 
-
-
-export const getNextPage = <T >(items: T[], limit: number, page: number) => {
-    const hasNextPage = items.length === limit + 1;
-    const nextPage = hasNextPage ? page + 1 : null;
-    const data = hasNextPage ? items.slice(0, limit) : items;
-    return {
-        nextPage,
-        data
-    }
+export const getNextPage = (links: {
+    first?: string | undefined;
+    previous?: string | undefined;
+    current: string;
+    next?: string | undefined;
+    last?: string | undefined;
+}, page: number | undefined = 6) => {
+    return links.next ? ((page ?? 6) + 1) : null;
 } 

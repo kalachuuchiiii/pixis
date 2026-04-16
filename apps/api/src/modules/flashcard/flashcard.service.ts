@@ -3,12 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { Flashcard, FlashcardForm, Query } from '@pixis/schemas';
+import type { FlashcardForm, Query } from '@pixis/schemas';
 import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck } from '../deck/entities/deck.entity';
 import type { Repository } from 'typeorm';
-import { Flashcard as FlashcardEntity } from './entities/flashcard.entity';
+import { Flashcard } from './entities/flashcard.entity';
+import { FilterOperator, paginate, type PaginateQuery } from 'nestjs-paginate';
+import type { SelectQueryBuilder } from 'typeorm/browser';
+import {
+  SEARCHABLE_FLASHCARD_FIELDS,
+  SORTABLE_FLASHCARD_FIELDS,
+} from '@pixis/constants';
+import { getNextPage } from '@/common/utils/pagination.util';
 
 type FlashcardIdAndUser = { flashcardId: number; user: AuthPayload };
 
@@ -16,9 +23,42 @@ type FlashcardIdAndUser = { flashcardId: number; user: AuthPayload };
 export class FlashcardService {
   constructor(
     @InjectRepository(Deck) private deckRepo: Repository<Deck>,
-    @InjectRepository(FlashcardEntity)
-    private flashcardRepo: Repository<FlashcardEntity>,
+    @InjectRepository(Flashcard)
+    private flashcardRepo: Repository<Flashcard>,
   ) {}
+
+  addAnalytics(queryBuilder: SelectQueryBuilder<Flashcard>) {
+    queryBuilder
+      .select([
+        'flashcard.id',
+        'flashcard.question',
+        'flashcard.userId',
+        'flashcard.deckId',
+        'flashcard.answer',
+        'flashcard.type',
+        'flashcard.createdAt',
+        'flashcard.updatedAt',
+        'flashcard.choices',
+        'flashcard.isAnswerCaseSensitive',
+      ])
+      .addSelect('COALESCE(SUM(progress.repetitions), 0)', 'totalRepetitions')
+      .addSelect('COALESCE(SUM(progress.lapses), 0)', 'totalLapses')
+      .addSelect('COALESCE(AVG(progress.easeFactor), 0)', 'avgEaseFactor')
+      .addSelect(
+        'COALESCE(SUM(CASE WHEN progress.lastRating = 1 THEN 1 ELSE 0 END), 0)',
+        'hardRatingCount',
+      )
+      .addSelect(
+        'COALESCE(SUM(CASE WHEN progress.lastRating = 2 THEN 1 ELSE 0 END), 0)',
+        'goodRatingCount',
+      )
+      .addSelect(
+        'COALESCE(SUM(CASE WHEN progress.lastRating = 3 THEN 1 ELSE 0 END), 0)',
+        'easyRatingCount',
+      )
+      .groupBy('flashcard.id');
+    return queryBuilder;
+  }
 
   async createFlashcard({
     deckId,
@@ -30,7 +70,7 @@ export class FlashcardService {
     user: AuthPayload;
   }) {
     const myDeck = await this.deckRepo.findOne({
-      where: { id: deckId, userId: user.id },
+      where: { id: deckId, userId: user.id }, withDeleted: true
     });
     if (!myDeck) {
       throw new ForbiddenException({
@@ -55,14 +95,11 @@ export class FlashcardService {
     deckId: number;
     user: AuthPayload;
     params: Query;
-  }) {
-  
-  
-  }
+  }) {}
 
   async getFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const flashcard = await this.flashcardRepo.findOne({
-      where: { id: flashcardId, userId: user.id },
+      where: { id: flashcardId, userId: user.id }, withDeleted: true
     });
     if (!flashcard) {
       throw new NotFoundException({
@@ -121,6 +158,44 @@ export class FlashcardService {
       });
     }
     return result;
+  }
+
+  async getFlashcards({
+    deckId,
+    query,
+    user,
+  }: {
+    deckId: number;
+    user?: AuthPayload;
+    query: PaginateQuery;
+  }) {
+    const deck = await this.deckRepo.findOne({
+      where: { id: deckId }, withDeleted: true
+    });
+    
+    if (!deck || (deck.visibility !== 'public' && deck.userId !== user?.id)) {
+      throw new NotFoundException({
+        message: 'Deck not found',
+        code: 'DECK_NOT_FOUND',
+      });
+    }
+    const qb = this.flashcardRepo
+      .createQueryBuilder('flashcard')
+      .where('flashcard.deckId = :deckId', { deckId })
+
+    const { data, links, meta: { totalItems } } = await paginate(query, qb, {
+      sortableColumns: [...SORTABLE_FLASHCARD_FIELDS],
+      filterableColumns: {
+        type: [FilterOperator.EQ],
+        createdAt: [FilterOperator.EQ, FilterOperator.GTE]
+      },
+      searchableColumns: [...SEARCHABLE_FLASHCARD_FIELDS],
+    });
+    return {
+      data,
+      totalItems,
+      nextPage: getNextPage(links, query.page)
+    }
   }
 
   async deleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {

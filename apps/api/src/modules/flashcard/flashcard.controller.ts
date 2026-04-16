@@ -10,6 +10,7 @@ import {
 import { AccessGuard } from '../auth/guards/access.guard';
 
 import z from 'zod';
+import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 
 @Controller('flashcards')
 export class FlashcardController {
@@ -36,11 +37,18 @@ export class FlashcardController {
 
   @Get('/decks/:deckId')
   @UseGuards(AccessGuard)
-  async getDecksFlashcards(@Req() request: Request) {
+  async getDecksFlashcards(@Req() request: Request, @Paginate() query: PaginateQuery) {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authPayloadSchema.parse(request.user);
-    
-  }
+    const { data, nextPage, totalItems } = await this.flashcardService.getFlashcards({ deckId, query, user });
+     console.log(data);
+     const flashcards = z.array(flashcardSchema).parse(data);
+    return {
+      flashcards, 
+      nextPage,
+      totalFlashcards: totalItems
+    }
+  } 
 
   @Get('/:flashcardId')
   @UseGuards(AccessGuard)
@@ -52,7 +60,7 @@ export class FlashcardController {
       flashcardId,
       user,
     });
-    const cleanFlashcard = flashcardFormSchema.parse(flashcard);
+    const cleanFlashcard = flashcardSchema.parse(flashcard);
     return {
       flashcard: cleanFlashcard,
     };

@@ -7,6 +7,9 @@ import Assistant from "@/features/assistant/pages/Assistant";
 import Layout from "@/features/auth/components/Layout";
 import SignIn from "@/features/auth/pages/SignIn";
 import SignUp from "@/features/auth/pages/SignUp";
+import CollectionList from "@/features/collection/pages/CollectionList";
+import ArchivedDecks from "@/features/deck/pages/ArchivedDecks";
+import DeckDetails from "@/features/deck/pages/DeckDetails";
 import DeckManager from "@/features/deck/pages/DeckManager";
 import MyDecks from "@/features/deck/pages/MyDecks";
 import PublicDecks from "@/features/deck/pages/PublicDecks";
@@ -36,6 +39,18 @@ const routes: RouteObject[] = [
   {
     element: <AppLayout />,
     children: [
+      {
+         element: <CollectionList />,
+         path: '/app/collections'
+      },
+      {
+          element: <DeckDetails />,
+          path: '/app/decks/:deckId'
+      },
+      {
+        element: <ArchivedDecks />,
+        path: '/app/archived/decks'
+      },
       {
         element: <Assistant />,
         path: '/app'

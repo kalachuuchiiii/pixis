@@ -1,12 +1,9 @@
 import api from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  flashcardFormSchema,
-  type FlashcardForm,
-} from "@pixis/schemas";
+import { flashcardFormSchema, type Flashcard, type FlashcardForm } from "@pixis/schemas";
 import { useQuery } from "@tanstack/react-query";
 import _ from "lodash";
-import  { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMyFlashcard } from "./useMyFlashcard";
 import { useParams } from "react-router-dom";
@@ -27,55 +24,61 @@ export const useFlashcardManager = () => {
     mode: "onChange",
   });
   const { reset, handleSubmit, watch } = flashcardForm;
-  const { updateFlashcard, isUpdatingFlashcard } = useMyFlashcard();
+  const { updateFlashcard, isUpdatingFlashcard, deleteFlashcard, isDeletingFlashcard } = useMyFlashcard();
 
-  const { data, isPending, isLoading, isFetching } = useQuery({
-    queryFn: async () => {
-      const res = await api.get<{ flashcard: FlashcardForm }>(
+  const { data: flashcard, isPending, isLoading, isFetching } = useQuery({ //flashcard is immutable, use flashcardForm to write
+    queryFn: async () => { 
+      const res = await api.get<{ flashcard: Flashcard }>(
         `/flashcards/${flashcardId}`
       );
-      reset(res.data.flashcard);
+      const flashcardForm = flashcardFormSchema.parse(res.data.flashcard);
+      reset(flashcardForm);
       return res.data.flashcard;
     },
     queryKey: ["flashcard", flashcardId],
   });
 
-  const values = watch();
-  const hasNoChanges = useMemo(() => _.isEqual(values, data), [values, data]);
+  const flashcardFormValues = watch();
+  const flashcardValues = useMemo(() => flashcardFormSchema.safeParse(flashcard).data, [flashcard]);
+  const hasNoChanges = useMemo(() => _.isEqual(flashcardValues, flashcardFormValues), [flashcardFormValues, flashcardValues]);
 
   const handleChangeType = (type: "close_ended" | "open_ended") => {
     if (type === "close_ended") {
       return reset({
-        ...values,
+        ...flashcardFormValues,
         type: "close_ended",
         isAnswerCaseSensitive: false,
         choices: prevChoices,
       });
     }
-
-    setPrevChoices(values.choices ?? []);
-
+    
+    setPrevChoices(flashcardFormValues.choices ?? []);
     reset({
-      ...values,
+      ...flashcardFormValues,
       choices: null,
       type: "open_ended",
     });
   };
 
-  const onSubmit = handleSubmit(async(data) => {
-    await updateFlashcard({ flashcardId, updateForm: data })
-  })
+  const onSubmit = handleSubmit(async (data) => {
+    await updateFlashcard({ flashcardId, updateForm: data });
+  });
+
+  const disabled = (isPending ||
+      isFetching ||
+      isLoading || isUpdatingFlashcard || isDeletingFlashcard);
 
   return {
     handleChangeType,
+    hasNoChanges,
     onSubmit,
+    disabled,
     updateFlashcard,
     isUpdatingFlashcard,
-    hasNoChanges,
-    values,
-    isPending,
-    isFetching,
-    isLoading,
+    deleteFlashcard,
+    isDeletingFlashcard,
+    flashcardFormValues,
     flashcardForm,
+    flashcard
   };
 };

@@ -1,13 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, DeleteDateColumn, OneToOne } from 'typeorm';
 import { IsString, IsOptional, IsEnum, IsBoolean, MinLength, MaxLength } from 'class-validator';
 import  { User } from '@/modules/users/entities/user.entity';
 import { DESCRIPTION_MAX, TITLE_MAX, TITLE_MIN } from '@pixis/constants';
+import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
 
 
 @Entity('deck')
 export class Deck {
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ name: 'deleted_at'})
   deletedAt?: Date;
   
   @PrimaryGeneratedColumn()
@@ -19,6 +20,10 @@ export class Deck {
 
   @Column({ name: 'user_id'})
   userId!: number;
+
+  @OneToOne(() => Flashcard)
+  @JoinColumn({ name: 'flashcard_preview' })
+  flashcardPreview?: Flashcard
 
   @Column({ type: 'text', nullable: true })
   topic!: string;

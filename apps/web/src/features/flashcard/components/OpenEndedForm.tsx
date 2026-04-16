@@ -17,9 +17,9 @@ export const OpenEndedForm = ({
   return (
     <form { ...props} >
       <header className="mb-4">
-           <h1 className="text-4xl title">Open-Ended</h1>
+           <h1 className="text-4xl heading text-5xl">Open-Ended</h1>
       </header>
-     <div className="space-y-2">
+     <div className="space-y-6">
        <Controller
         name="question"
         control={control}

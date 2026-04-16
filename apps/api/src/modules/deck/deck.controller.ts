@@ -12,25 +12,51 @@ import { DeckService } from './deck.service';
 import type { Request } from 'express';
 import {
   authPayloadSchema,
+  deckAuthorSchema,
   deckSchema,
+  deckWithAuthorAndFlashcardPreviewSchema,
+  deckWithAuthorSchema,
   idSchema,
   rawDeckFormSchema,
 } from '@pixis/schemas';
 import { AccessGuard } from '../auth/guards/access.guard';
 import z from 'zod';
 
-import { Crud, CrudController } from '@dataui/crud';
+
 import { Deck } from './entities/deck.entity';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 
-@Crud({
-  model: {
-    type: Deck,
-  },
-})
 @Controller('decks')
-export class DeckController implements CrudController<Deck> {
+export class DeckController {
   constructor(public service: DeckService) {}
+
+
+  
+
+   @Get('/archived')
+  @UseGuards(AccessGuard)
+  async getMyArchive(@Req() request: Request, @Paginate() query: PaginateQuery) {
+    const user = authPayloadSchema.parse(request.user);
+    const { data, nextPage } = await this.service.getSoftDeletedDecks({ query, user });
+    console.log(data);
+    const archivedDecks = z.array(deckSchema).parse(data);
+    return {
+      archivedDecks,
+      nextPage
+    }
+  }
+
+  @Get('/explore')
+  @UseGuards(AccessGuard)  
+  async getPublicDecks(@Req() request: Request, @Paginate() query: PaginateQuery) {
+       const { data, nextPage } = await this.service.getDecks({ query });
+
+       const cleanDecks = z.array(deckWithAuthorAndFlashcardPreviewSchema).parse(data);
+       return {
+        decks: cleanDecks,
+        nextPage
+       }
+  }
 
   @Post('/')
   @UseGuards(AccessGuard)
@@ -48,7 +74,7 @@ export class DeckController implements CrudController<Deck> {
   async getMyDecks(@Req() request: Request, @Paginate() query: PaginateQuery) {
     const user = authPayloadSchema.parse(request.user);
     const { data, nextPage } = await this.service.getDecks({ query, user });
-    const cleanData = z.array(deckSchema).max(query.limit ?? 10).parse(data);
+    const cleanData = z.array(deckWithAuthorAndFlashcardPreviewSchema).max(query.limit ?? 10).parse(data);
  
     return {
        decks: cleanData,
@@ -56,31 +82,23 @@ export class DeckController implements CrudController<Deck> {
     };
   }
 
-  @Get('/explore')  
-  async getPublicDecks(@Req() request: Request) {
-    
-  }
+  
 
-  @Get('/archive')
-  @UseGuards(AccessGuard)
-  async getMyArchive(@Req() request: Request) {
-    
-    const user = authPayloadSchema.parse(request.user);
-  }
 
-  @Get('/:deckId')
+  @Get(':deckId')
   @UseGuards(AccessGuard)
   async getMyDeck(@Req() request: Request) {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authPayloadSchema.parse(request.user);
     const deck = await this.service.getDeckById({ deckId, user });
-    const cleanDeck = rawDeckFormSchema.parse(deck);
+    console.log(deck);
+    const cleanDeck = deckWithAuthorSchema.parse(deck);
     return {
       deck: cleanDeck,
     };
   }
 
-  @Patch('/:deckId')
+  @Patch(':deckId')
   @UseGuards(AccessGuard)
   async updateMyDeck(@Req() request: Request) {
     const deckForm = rawDeckFormSchema.parse(request.body);
@@ -114,6 +132,21 @@ export class DeckController implements CrudController<Deck> {
     };
   }
 
+  @Delete('/permanent/bulk')
+  @UseGuards(AccessGuard)
+  async deleteMyDecks(@Req() request: Request) {
+    const user = authPayloadSchema.parse(request.user);
+    console.log(request.body);
+    const deckIds = z.array(idSchema).parse(request.body.deckIds);
+    await this.service.deleteDecks({ user, deckIds });
+    return {
+      message: `Successfully deleted ${deckIds.length} deck(s)`,
+    };
+  }
+
+
+  
+
   @Patch('/:deckId/restore')
   @UseGuards(AccessGuard)
   async restoreMyDeck(@Req() request: Request) {
@@ -124,4 +157,17 @@ export class DeckController implements CrudController<Deck> {
       message: 'Restored Deck',
     };
   }
+
+  @Patch('/restore/bulk')
+  @UseGuards(AccessGuard)
+  async restoreSelectedDecks(@Req() request: Request) {
+    const user = authPayloadSchema.parse(request.user);
+    const deckIds = z.array(idSchema).parse(request.body.deckIds);
+    await this.service.restoreDecks({ user, deckIds });
+    return {
+      message: `Successfully restored ${deckIds.length} deck(s)`
+    }
+  }
+
+   
 }

@@ -24,8 +24,9 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { VisibilityOptionButton } from "@/features/auth/components/ui/VisibilityOptionButton";
 import { useDeck } from "../hooks/useDeck";
 import { DeckForm } from "./DeckForm";
+import type { ComponentProps } from "react";
 
-export const CreateDeckDialog = () => {
+export const CreateDeckDialog = ({ ...props}:ComponentProps<'button'>) => {
   const { createDeck, isCreatingDeck } = useDeck();
   const deckForm = useForm<RawDeckForm>({
     defaultValues: {
@@ -44,18 +45,13 @@ export const CreateDeckDialog = () => {
   });
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button className="my-btn">
-              Create <Plus />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>New deck</TooltipContent>
-        </Tooltip>
+    <Dialog  >
+      <DialogTrigger  onFocus={e => e.target.blur()} {...props} tabIndex={-1}  >
+        <Button  className="my-btn">
+          Create <Plus />
+          </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-8/12">
+      <DialogContent autoFocus = {false} onCloseAutoFocus={(e) => e.preventDefault()} className="min-w-8/12">
         <header>
           <h1 className="text-[10px] font-semibold tracking-[0.18em] uppercase text-stone-400 mb-2">
             New deck

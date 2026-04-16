@@ -15,7 +15,8 @@ import {
   nicknameSchema,
   usernameSchema,
 } from "./user.schemas";
-import { createdAtSchema, updatedAtSchema } from "./timestamp.schemas";
+import { createdAtSchema, timeSchema, updatedAtSchema } from "./timestamp.schemas";
+import { flashcardSchema, questionSchema, typeSchema } from "./flashcard.schemas";
 
 export const titleSchema = z.string().min(TITLE_MIN).max(TITLE_MAX);
 export const descriptionSchema = z
@@ -45,17 +46,25 @@ export type RawDeckForm = z.infer<typeof rawDeckFormSchema>;
 export const deckAuthorSchema = z.object({
   username: usernameSchema,
   avatarPublicUrl: avatarPublicUrlSchema,
-  nickname: nicknameSchema,
+  nickname: nicknameSchema
 });
 
 export const deckSchema = rawDeckFormSchema
   .extend({
-    createdAt: createdAtSchema,
-    updatedAt: updatedAtSchema,
+    createdAt: timeSchema,
+    updatedAt: timeSchema,
     id: idSchema,
+    userId: idSchema,
     respondentCount: z.number().positive().default(0).catch(0),
-    savedCount: z.number().positive().default(0).catch(0)
+    savedCount: z.number().positive().default(0).catch(0),
+    deletedAt: timeSchema.nullable().optional()
   })
   .strip();
+  export const flashcardPreviewSchema = z.object({ type: typeSchema, question: questionSchema});
 
+  export const deckWithAuthorSchema = deckSchema.and(z.object({ user: deckAuthorSchema }));
+  export const deckWithAuthorAndFlashcardPreviewSchema = deckWithAuthorSchema.and(z.object({ flashcardPreview: flashcardPreviewSchema.optional().nullable() }))
+
+  export type DeckWithAuthorAndFlashcardPreview = z.infer<typeof deckWithAuthorAndFlashcardPreviewSchema>
+  export type DeckWithAuthor = z.infer<typeof deckWithAuthorSchema>;
   export type Deck = z.infer<typeof deckSchema>;

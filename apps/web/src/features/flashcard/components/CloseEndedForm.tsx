@@ -42,7 +42,7 @@ export const CloseEndedForm = ({
   return (
     <form {...props}>
       <header className="mb-4">
-        <h1 className="text-4xl title">Close-Ended</h1>
+        <h1 className=" heading text-5xl">Close-Ended</h1>
       </header>
       <Controller
         name="question"

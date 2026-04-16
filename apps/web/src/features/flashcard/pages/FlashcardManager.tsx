@@ -1,16 +1,5 @@
 import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
-import api from "@/lib/api";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  flashcardFormSchema,
-  type CloseEndedFlashcardForm,
-  type FlashcardForm,
-} from "@pixis/schemas";
-import { useQuery } from "@tanstack/react-query";
 import _ from "lodash";
-import React, { useMemo, useState, type ComponentProps } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
 import { CloseEndedForm } from "../components/CloseEndedForm";
 import { OpenEndedForm } from "../components/OpenEndedForm";
 import type {
@@ -27,63 +16,100 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import { useFlashcardManager } from "../hooks/useFlashcardManager";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const FlashcardManager = () => {
   const {
     handleChangeType,
     onSubmit,
-    isUpdatingFlashcard,
-    hasNoChanges,
-    values,
-    isPending,
-    isFetching,
-    isLoading,
+    flashcard,
+    flashcardFormValues,
     flashcardForm,
+    disabled,
+    deleteFlashcard,
+    isDeletingFlashcard,
+    hasNoChanges,
   } = useFlashcardManager();
 
-  if (isPending || isLoading || isFetching) {
+  if (disabled || !flashcard) {
     return <LoadingDisplay />;
   }
 
-  const submitButtonProps: ComponentProps<"button"> = {
-    type: "submit",
-    className: "grow-1 my-btn",
-    disabled:
-      isPending ||
-      isFetching ||
-      isLoading ||
-      hasNoChanges ||
-      isUpdatingFlashcard,
-  };
-
   return (
-    <div className="animate-fade-in-right min-h-[80vh] flex flex-col items-center justify-between w-full">
+    <div className="animate-fade-in-right page-container ">
       <div className="w-full">
         <header>
-          <h1 className="label">Manage your existing flashcard</h1>
+          <h1 className="description">Manage your existing flashcard</h1>
         </header>
         <main className="mx-auto">
-          {values?.type === "close_ended" ? (
+          {flashcardFormValues?.type === "close_ended" ? (
             <CloseEndedForm
-            onSubmit={onSubmit}
+              onSubmit={onSubmit}
+              aria-disabled = {disabled}
               id="close-ended-form/manage"
               closeEndedForm={flashcardForm as UpdateCloseEndedForm}
             />
           ) : (
             <OpenEndedForm
               onSubmit={onSubmit}
+              aria-disabled = {disabled}
               id="open-ended-form/manage"
               openEndedForm={flashcardForm as UpdateOpenEndedForm}
             />
           )}
         </main>
       </div>
-      <footer className="flex items-center w-full gap-2">
-        <Select onValueChange={handleChangeType} defaultValue={values.type}>
+      <footer className="flex items-center w-full gap-2 h-11">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant={"destructive"} className="h-full my-btn">
+              <Trash />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Flashcard</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this flashcard? This can't be undone!
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  disabled={disabled}
+                  onClick={() =>
+                    deleteFlashcard({
+                      deckId: flashcard.deckId,
+                      flashcardId: flashcard.id,
+                    })
+                  }
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogContent>
+        </AlertDialog>
+        <Select
+          onValueChange={handleChangeType}
+          defaultValue={flashcardFormValues.type}
+        >
           <SelectTrigger className="my-btn space-x-2 ">
-            <Pencil /> <SelectValue defaultValue={values.type} />
+            <Pencil /> <SelectValue defaultValue={flashcardFormValues.type} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -95,12 +121,22 @@ const FlashcardManager = () => {
             </SelectGroup>
           </SelectContent>
         </Select>
-        {values.type === "open_ended" ? (
-          <Button {...submitButtonProps} form="open-ended-form/manage">
+        {flashcardFormValues.type === "open_ended" ? (
+          <Button
+            type="submit"
+            className="grow-1 my-btn"
+            disabled={disabled || hasNoChanges}
+            form="open-ended-form/manage"
+          >
             Update
           </Button>
         ) : (
-          <Button {...submitButtonProps} form="close-ended-form/manage">
+          <Button
+            type="submit"
+            className="grow-1 my-btn"
+            disabled={disabled || hasNoChanges || flashcardFormValues.choices.length < 2} 
+            form="close-ended-form/manage"
+          >
             Update
           </Button>
         )}

@@ -7,14 +7,38 @@ import {
   closeEndedFlashcardSchema,
   flashcardFormSchema,
   idSchema,
+  type Flashcard,
   type FlashcardForm,
 } from "@pixis/schemas";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type InfiniteData,
+} from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { FlashcardListContext } from "../pages/FlashcardList";
+
+type InfiniteFlashcardData =
+  | InfiniteData<
+      {
+        nextPage: number | undefined;
+        flashcards: Flashcard[];
+        totalFlashcards: number;
+      },
+      unknown
+    >
+  | undefined;
 
 export const useMyFlashcard = () => {
+  const nav = useNavigate();
+  const ctx = useContext(FlashcardListContext);
+  const queryClient = useQueryClient();
+
   const { mutate: createFlashcard, isPending: isCreatingFlashcard } =
     useMutation({
       mutationFn: async ({
@@ -24,13 +48,26 @@ export const useMyFlashcard = () => {
         flashcardForm: FlashcardForm;
         deckId: string | number;
       }) => {
-        const promise = new Promise((resolve, reject) => {
+        const promise = new Promise<
+          Promise<
+            AxiosResponse<
+              {
+                flashcard: Flashcard;
+              },
+              any,
+              {}
+            >
+          >
+        >((resolve, reject) => {
           try {
             const cleanForm = flashcardFormSchema.parse(flashcardForm);
             const cleanDeckId = idSchema.parse(deckId);
-            const p = api.post(`/flashcards/decks/${cleanDeckId}`, {
-              ...cleanForm,
-            });
+            const p = api.post<{ flashcard: Flashcard }>(
+              `/flashcards/decks/${cleanDeckId}`,
+              {
+                ...cleanForm,
+              }
+            );
             return resolve(p);
           } catch (e) {
             return reject(e);
@@ -44,39 +81,104 @@ export const useMyFlashcard = () => {
         });
         return await promise;
       },
+      onSuccess: (result) => {
+        console.log(ctx, result);
+        if(!ctx) return;
+        queryClient.setQueryData(ctx.queryKey, (old: InfiniteFlashcardData) => {
+          return {
+            ...old,
+            pages: old?.pages.map((p) => ({
+            ...p,
+            totalFlashcards: p.totalFlashcards + 1,
+            flashcards: [...p.flashcards, result.data.flashcard],
+          }))
+          }
+        });
+      },
     });
 
-  const { mutate: updateFlashcard, isPending: isUpdatingFlashcard } = useMutation({
-    mutationFn: async ({
-      updateForm,
-      flashcardId,
-    }: {
-      updateForm: FlashcardForm;
-      flashcardId: number | string;
-    }) => {
-      const promise = new Promise((resolve, reject) => {
-        try {
-          const cleanForm = flashcardFormSchema.parse(updateForm);
-          const cleanId = idSchema.parse(flashcardId);
-          return resolve(api.patch(`/flashcards/${cleanId}`, cleanForm));
-        } catch (e) {
-          return reject(e);
-        }
-      });
+  const { mutate: updateFlashcard, isPending: isUpdatingFlashcard } =
+    useMutation({
+      mutationFn: async ({
+        updateForm,
+        flashcardId,
+      }: {
+        updateForm: FlashcardForm;
+        flashcardId: number | string;
+      }) => {
+        const promise = new Promise((resolve, reject) => {
+          try {
+            const cleanForm = flashcardFormSchema.parse(updateForm);
+            const cleanId = idSchema.parse(flashcardId);
+            return resolve(api.patch(`/flashcards/${cleanId}`, cleanForm));
+          } catch (e) {
+            return reject(e);
+          }
+        });
 
-      await toast.promise(promise, {
-        loading: "Updating flashcard...",
-        success: getSuccessMessage,
-        error: getErrorMessage,
-      });
-      return await promise;
-    },
-  });
+        await toast.promise(promise, {
+          loading: "Updating flashcard...",
+          success: getSuccessMessage,
+          error: getErrorMessage,
+        });
+        return await promise;
+      },
+    });
+
+  const { mutate: softDeleteFlashcard, isPending: isSoftDeletingFlashcard } =
+    useMutation({
+      mutationFn: async ({
+        flashcardId,
+        deckId,
+      }: {
+        flashcardId: number;
+        deckId: number;
+      }) => {
+        const promise = api.delete(`/flashcards/${flashcardId}`);
+
+        await toast.promise(promise, {
+          loading: "Deleting flashcard...",
+          success: getSuccessMessage,
+          error: getErrorMessage,
+        });
+        return await promise;
+      },
+      onSuccess: (_res, { deckId }) => {
+        nav(`/app/decks/${deckId}/manage/flashcards`);
+      },
+    });
+
+  const { mutate: deleteFlashcard, isPending: isDeletingFlashcard } =
+    useMutation({
+      mutationFn: async ({
+        flashcardId,
+        deckId,
+      }: {
+        flashcardId: number;
+        deckId: number;
+      }) => {
+        const promise = api.delete(`/flashcards/${flashcardId}/permanent`);
+
+        await toast.promise(promise, {
+          loading: "Deleting flashcard...",
+          success: getSuccessMessage,
+          error: getErrorMessage,
+        });
+        return await promise;
+      },
+      onSuccess: (_res, { deckId }) => {
+        nav(`/app/decks/${deckId}/manage/flashcards`);
+      },
+    });
 
   return {
     createFlashcard,
     updateFlashcard,
+    softDeleteFlashcard,
+    isSoftDeletingFlashcard,
     isUpdatingFlashcard,
+    deleteFlashcard,
+    isDeletingFlashcard,
     isCreatingFlashcard,
   };
 };

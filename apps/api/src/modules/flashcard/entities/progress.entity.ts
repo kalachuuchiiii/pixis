@@ -1,25 +1,27 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn, Index } from 'typeorm';
 import { Flashcard } from './flashcard.entity';
 import { User } from '@/modules/users/entities/user.entity';
 
-@Entity('user_flashcard_progress')
-export class UserFlashcardProgress {
+@Entity('progress')
+export class Progress {
 
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  user_id!: number;
+  @Index()
+  @Column({ name: 'user_id'})
+  userId!: number;
 
-  @Column()
-  flashcard_id!: number;
+  @Index()
+  @Column({ name: 'flashcard_id'})
+  flashcardId!: number;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  @ManyToOne(() => Flashcard, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'flashcard_id' })
+  @ManyToOne(() => Flashcard, (flashcard) => flashcard.progress, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'flashcard_id' }) 
   flashcard!: Flashcard;
 
   @Column({ nullable: true, name: 'next_due_at' })
@@ -40,6 +42,7 @@ export class UserFlashcardProgress {
   @Column({ nullable: true, name: 'last_reviewed_at' })
   lastReviewedAt!: Date;
 
-  @Column({ nullable: true, name: 'last_rating' })
-  lastRating!: number; // 1=Again, 2=Hard, 3=Good, 4=Easy
+
+  @Column({ name: 'last_rating' })
+  lastRating!: number; // 1=Hard, 2=Good, 3=Easy
 }

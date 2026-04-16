@@ -5,7 +5,14 @@ import type {
   SortingOrder,
   DeckFilterOperation,
 } from "@pixis/constants";
-import { useCallback, useMemo, useState } from "react";
+import { isDate } from "lodash";
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { useForm } from "react-hook-form";
 
 export type SortObject = {
@@ -15,62 +22,88 @@ export type SortObject = {
 
 export type FilterObject = {
   visibility: {
-    op: "eq";
-    value: Visibility;
+    op?: "eq";
+    value?: Visibility | "all";
   };
   createdAt?: {
-    op: DeckFilterOperation;
-    value: Date;
-  };
-  updatedAt?: {
-    op: DeckFilterOperation;
-    value: Date;
+    op?: DeckFilterOperation;
+    value?: string;
   };
 };
 
-export const useDeckFilter = () => {
-  const [updatedQuery, setUpdatedQuery] = useState('');
+export const useDeckFilter = (
+  { hideDeckVisibilityOption }: { hideDeckVisibilityOption: boolean } = {
+    hideDeckVisibilityOption: false,
+  }
+) => {
+  const [query, setQuery] = useState("");
   const sortForm = useForm<SortObject>({
     defaultValues: {
-      field: "popularityScore",
+      field: "createdAt",
       order: "DESC",
     },
   });
   const sort = sortForm.watch();
-
+  const [search, setSearch] = useState<string>("");
   const filterForm = useForm<FilterObject>({
     defaultValues: {
       visibility: {
         op: "eq",
-        value: "public",
+        value: "all",
       },
     },
   });
+  const resetFilter = () => {
+    sortForm.reset();
+    filterForm.reset();
+  };
   const filter = filterForm.watch();
 
-  const query = useMemo(() => {
-    let baseQuery = `sortBy=${sort.field}:${sort.order}`;
-    let filterQuery: string = "";
-
-    for (const [key, value] of Object.entries(filter)) {
-      if (!value) continue;
-      filterQuery += `filter.${key}=$${value.op}:${value.value}`;
-    }
-    return `${baseQuery}&${filterQuery}`;
-  }, [filter, sort]);
-
   const onUpdate = useCallback(() => {
-    setUpdatedQuery(query);
-  }, [query]);
+    const queries: string[] = [`sortBy=${sort.field}:${sort.order}`];
+    if (search.trim()) {
+      queries.push(`search=${search}`);
+    }
+    for (const [key, value] of Object.entries(filter)) {
+      if (
+        !value ||
+        !value.value ||
+        !value.op ||
+        value.value === "all" ||
+        (key === "visibility" && hideDeckVisibilityOption)
+      )
+        continue;
+      queries.push(`filter.${key}=$${value.op}:${value.value}`);
+    }
+    setQuery(queries.join("&"));
+  }, [filter, sort, search]);
+
+  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  }, []);
+
+  const onEnterUpdate = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
+      if (!e.shiftKey && e.key === "Enter") {
+        onUpdate();
+      }
+    },
+    [onUpdate]
+  );
 
   return {
     query,
     onUpdate,
-    updatedQuery,
+    onChange,
+    onEnterUpdate,
     setSortValue: sortForm.setValue,
     setFilterValue: filterForm.setValue,
+    search,
+    hideDeckVisibilityOption,
+    setSearch,
     sort,
     filter,
+    resetFilter,
   };
 };
 

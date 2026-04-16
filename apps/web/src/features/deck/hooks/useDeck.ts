@@ -3,11 +3,13 @@ import {
   getErrorMessage,
   getSuccessMessage,
 } from "@/utils/message-extractor.utils";
-import type { RawDeckForm } from "@pixis/schemas";
+import { idSchema, type RawDeckForm } from "@pixis/schemas";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useDeck = () => {
+  const nav = useNavigate();
   const { mutate: createDeck, isPending: isCreatingDeck } = useMutation({
     mutationFn: async (rawDeckForm: RawDeckForm) => {
       const promise = api.post("/decks", rawDeckForm);
@@ -33,9 +35,27 @@ export const useDeck = () => {
     },
   });
 
+  const { mutate: softDeleteDeck, isPending: isSoftDeletingDeck } = useMutation({
+    mutationFn: async({ deckId }:{deckId: number}) => {
+      const promise = api.delete(`/decks/${deckId}`);
+      await toast.promise(promise, {
+        loading: 'Deleting deck...',
+        success: getSuccessMessage,
+        error: getErrorMessage
+      })
+      return await promise;
+    },
+    onSuccess: () => {
+      nav('/app/decks')
+    }
+  })
+
+
   return {
     createDeck,
     updateDeck,
+    softDeleteDeck,
+    isSoftDeletingDeck,
     isUpdatingDeck,
     isCreatingDeck,
   };
