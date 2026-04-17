@@ -1,4 +1,3 @@
-import { useState, useEffect, useMemo, type ComponentProps } from "react";
 import {
   Sheet,
   SheetClose,
@@ -10,12 +9,14 @@ import {
   SheetTrigger,
 } from "../../../components/ui/sheet";
 import { Button } from "../../../components/ui/button";
-import { Filter, ChevronRight, Search, Archive } from "lucide-react";
+import { Filter, ChevronRight } from "lucide-react";
 import {
+  SORTABLE_COLLECTION_FIELDS,
   SORTABLE_DECK_FIELDS,
   SORTING_ORDERS,
   VISIBILITY_ENUM,
-  type DeckFilterOperation,
+  type CollectionVisibility,
+  type SortableCollectionField,
   type SortableDeckField,
   type SortingOrder,
   type Visibility,
@@ -28,31 +29,25 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "@/components/ui/select";
 import { capitalize } from "lodash";
-import type { DeckFilterHandlers } from "@/features/deck/hooks/useDeckFilter";
-import { creationDateFilters } from "../data/creationDateFilter";
-import {
-  InputGroup,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
 import { sortOrdersMap } from "@/data/sort";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
-import { Link } from "react-router-dom";
+import { creationDateFilters } from "@/features/deck/data/creationDateFilter";
+import type { CollectionFilterHandler } from "../hooks/useCollectionFilter";
+import { sortableFieldsMap } from "@/features/deck/components/DeckFilter";
 
-export const sortableFieldsMap: Record<SortableDeckField, string> = {
-  createdAt: "Creation Date",
-  updatedAt: "Updated Date",
-  popularityScore: "Popularity",
-  savedCount: "Saved count",
-  participantCount: "Participants",
+const sortableFilterMap = {
+  createdAt: "Creation date",
+  updatedAt: "Updated date",
+  deckCount: "Number of decks",
 };
 
-export const DeckFilter = ({
-  deckFilterHandlers,
-  ...props
-}: { deckFilterHandlers: DeckFilterHandlers } & ComponentProps<"div">) => {
+export const CollectionFilter = ({
+  collectionFilterHandlers,
+}: {
+  collectionFilterHandlers: CollectionFilterHandler;
+}) => {
   const {
     setSortValue,
     setFilterValue,
@@ -61,12 +56,12 @@ export const DeckFilter = ({
     resetFilter,
     onUpdate,
     search,
-    blacklistedFields
-  } = deckFilterHandlers;
+    blacklistedFields,
+  } = collectionFilterHandlers;
 
   return (
     <SearchFilterBar
-      handlers={deckFilterHandlers}
+      handlers={collectionFilterHandlers}
       className="w-full"
       placeholder="Search decks by title, description, or keywords"
       actions={[
@@ -122,7 +117,7 @@ export const DeckFilter = ({
                 <div className="flex items-center gap-3">
                   <Select
                     value={sort.field}
-                    onValueChange={(val: SortableDeckField) =>
+                    onValueChange={(val: SortableCollectionField) =>
                       setSortValue("field", val)
                     }
                   >
@@ -132,9 +127,9 @@ export const DeckFilter = ({
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Fields</SelectLabel>
-                        {SORTABLE_DECK_FIELDS.map((field) => (
+                        {SORTABLE_COLLECTION_FIELDS.map((field) => (
                           <SelectItem key={field} value={field}>
-                            {sortableFieldsMap[field]}
+                            {sortableFilterMap[field]}
                           </SelectItem>
                         ))}
                       </SelectGroup>
@@ -167,12 +162,12 @@ export const DeckFilter = ({
               </div>
 
               {/* Visibility */}
-              {!blacklistedFields.includes('visibility') && (
+              {!blacklistedFields.includes("visibility") && (
                 <div>
                   <label className="label mb-3 block">Visibility</label>
                   <Select
                     value={filter?.visibility?.value}
-                    onValueChange={(val: Visibility | "all") => {
+                    onValueChange={(val: CollectionVisibility | "all") => {
                       if (val !== "all") {
                         setFilterValue("visibility.value", val);
                         return;

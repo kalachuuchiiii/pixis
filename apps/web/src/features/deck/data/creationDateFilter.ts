@@ -7,7 +7,7 @@ export type CreationDateFilter =
   | {
       description: string;
       value: string; //ISO
-      op: DeckFilterOperation;
+      op:  'gte' | 'btw'
       key: "TODAY" | "LAST_7_DAYS" | "LAST_30_DAYS";
     }
   | {

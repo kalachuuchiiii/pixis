@@ -8,3 +8,4 @@ export * from './flashcard.schemas';
 export * from './user.schemas';
 export * from './query.schemas';
 export * from './query.schemas.factory';
+export * from './collection.schemas';

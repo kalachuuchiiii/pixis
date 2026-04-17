@@ -15,7 +15,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ];
 
 const PublicDecksPage = () => {
-  const deckFilterHandlers = useDeckFilter({ hideDeckVisibilityOption: true });
+  const deckFilterHandlers = useDeckFilter(['visibility']);
   const { query } = deckFilterHandlers;
   const { data } = useInfiniteQuery({
     queryKey: ["explore", query],

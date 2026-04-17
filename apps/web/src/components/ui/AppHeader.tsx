@@ -16,7 +16,9 @@ export const AppHeader = ({
         <h1 className="heading text-5xl">{heading}</h1>
         <p className="description">{description}</p>
       </div>
-      {beside}
+      <div className="w-6/12">
+        {beside}
+      </div>
     </header>
   );
 };

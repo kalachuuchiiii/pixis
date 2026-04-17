@@ -1,38 +1,29 @@
 import { useQueryParam } from "@/hooks/useQueryParam";
 import type {
-  SortableDeckField,
-  FilterableDeckField,
-  Visibility,
+  CollectionVisibility,
+  SortableCollectionField,
   SortingOrder,
-  DeckFilterOperation,
 } from "@pixis/constants";
-import { isDate } from "lodash";
-import React, {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-} from "react";
+import { useCallback, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 
-export type SortObject = {
-  field: SortableDeckField;
+type SortObject = {
+  field: SortableCollectionField;
   order: SortingOrder;
 };
 
-export type FilterObject = {
+type FilterObject = {
+  createdAt?: {
+    op: "gte" | "btw";
+    value: string; //iso
+  };
   visibility?: {
     op: "eq";
-    value: Visibility | "all";
-  };
-  createdAt?: {
-    op: DeckFilterOperation;
-    value: string;
+    value: CollectionVisibility;
   };
 };
 
-export const useDeckFilter = (blacklistedFields: string[] = []) => {
+export const useCollectionFilter = (blacklistedFields: string[] = []) => {
   const [query, setQuery] = useState("");
   const sortForm = useForm<SortObject>({
     defaultValues: {
@@ -43,12 +34,7 @@ export const useDeckFilter = (blacklistedFields: string[] = []) => {
   const sort = sortForm.watch();
   const [search, setSearch] = useState<string>("");
   const filterForm = useForm<FilterObject>({
-    defaultValues: {
-      visibility: {
-        op: "eq",
-        value: "all",
-      },
-    },
+    defaultValues: {},
   });
   const resetFilter = () => {
     sortForm.reset();
@@ -57,21 +43,21 @@ export const useDeckFilter = (blacklistedFields: string[] = []) => {
   const filter = filterForm.watch();
 
   const { update } = useQueryParam(blacklistedFields);
-  const onUpdate = () => {
+
+  const onUpdate = () =>
     update((query) => setQuery(query), { filter, sort, search });
-  };
+
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   }, []);
 
-  const onEnterUpdate = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
-      if (!e.shiftKey && e.key === "Enter") {
-        onUpdate();
-      }
-    },
-    [onUpdate]
-  );
+  const onEnterUpdate = (
+    e: React.KeyboardEvent<HTMLInputElement | HTMLButtonElement>
+  ) => {
+    if (!e.shiftKey && e.key === "Enter") {
+      onUpdate();
+    }
+  };
 
   return {
     query,
@@ -89,4 +75,5 @@ export const useDeckFilter = (blacklistedFields: string[] = []) => {
   };
 };
 
-export type DeckFilterHandlers = ReturnType<typeof useDeckFilter>;
+
+export type CollectionFilterHandler = ReturnType<typeof useCollectionFilter>;

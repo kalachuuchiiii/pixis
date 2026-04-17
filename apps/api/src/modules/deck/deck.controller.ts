@@ -12,7 +12,6 @@ import { DeckService } from './deck.service';
 import type { Request } from 'express';
 import {
   authPayloadSchema,
-  deckAuthorSchema,
   deckSchema,
   deckWithAuthorAndFlashcardPreviewSchema,
   deckWithAuthorSchema,
@@ -22,7 +21,6 @@ import {
 import { AccessGuard } from '../auth/guards/access.guard';
 import z from 'zod';
 
-
 import { Deck } from './entities/deck.entity';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 
@@ -30,32 +28,37 @@ import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 export class DeckController {
   constructor(public service: DeckService) {}
 
-
-  
-
-   @Get('/archived')
+  @Get('/archived')
   @UseGuards(AccessGuard)
-  async getMyArchive(@Req() request: Request, @Paginate() query: PaginateQuery) {
+  async getMyArchive(
+    @Req() request: Request,
+    @Paginate() query: PaginateQuery,
+  ) {
     const user = authPayloadSchema.parse(request.user);
-    const { data, nextPage } = await this.service.getSoftDeletedDecks({ query, user });
+    const { data, nextPage } = await this.service.getSoftDeletedDecks({
+      query,
+      user,
+    });
     console.log(data);
     const archivedDecks = z.array(deckSchema).parse(data);
     return {
       archivedDecks,
-      nextPage
-    }
+      nextPage,
+    };
   }
 
   @Get('/explore')
-  @UseGuards(AccessGuard)  
-  async getPublicDecks(@Req() request: Request, @Paginate() query: PaginateQuery) {
-       const { data, nextPage } = await this.service.getDecks({ query });
+  @UseGuards(AccessGuard)
+  async getPublicDecks(@Paginate() query: PaginateQuery) {
+    const { data, nextPage } = await this.service.getDecks({ query });
 
-       const cleanDecks = z.array(deckWithAuthorAndFlashcardPreviewSchema).parse(data);
-       return {
-        decks: cleanDecks,
-        nextPage
-       }
+    const cleanDecks = z
+      .array(deckWithAuthorAndFlashcardPreviewSchema)
+      .parse(data);
+    return {
+      decks: cleanDecks,
+      nextPage,
+    };
   }
 
   @Post('/')
@@ -73,17 +76,17 @@ export class DeckController {
   @UseGuards(AccessGuard)
   async getMyDecks(@Req() request: Request, @Paginate() query: PaginateQuery) {
     const user = authPayloadSchema.parse(request.user);
-    const { data, nextPage } = await this.service.getDecks({ query, user });
-    const cleanData = z.array(deckWithAuthorAndFlashcardPreviewSchema).max(query.limit ?? 10).parse(data);
- 
+    const { data, nextPage } = await this.service.getMyDecks({ query, user });
+    const cleanData = z
+      .array(deckWithAuthorAndFlashcardPreviewSchema)
+      .max(query.limit ?? 10)
+      .parse(data);
+
     return {
-       decks: cleanData,
-       nextPage
+      decks: cleanData,
+      nextPage,
     };
   }
-
-  
-
 
   @Get(':deckId')
   @UseGuards(AccessGuard)
@@ -144,9 +147,6 @@ export class DeckController {
     };
   }
 
-
-  
-
   @Patch('/:deckId/restore')
   @UseGuards(AccessGuard)
   async restoreMyDeck(@Req() request: Request) {
@@ -165,9 +165,7 @@ export class DeckController {
     const deckIds = z.array(idSchema).parse(request.body.deckIds);
     await this.service.restoreDecks({ user, deckIds });
     return {
-      message: `Successfully restored ${deckIds.length} deck(s)`
-    }
+      message: `Successfully restored ${deckIds.length} deck(s)`,
+    };
   }
-
-   
 }

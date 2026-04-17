@@ -28,6 +28,7 @@ import { SORTABLE_DECK_FIELDS } from '@pixis/constants';
 import { DataSource } from 'typeorm';
 import { Flashcard } from '../flashcard/entities/flashcard.entity';
 import { log } from 'console';
+import type { SelectQueryBuilder } from 'typeorm/browser';
 type DeckIdWithUser = { deckId: number; user: AuthPayload };
 
 const paginationOption: PaginateConfig<Deck> = {
@@ -56,8 +57,6 @@ export class DeckService {
     query: PaginateQuery;
     user: AuthPayload;
   }) {
-    console.log('Soft deltedddddd');
-
     const qb = this.deckRepo
       .createQueryBuilder('deck')
       .withDeleted()
@@ -70,32 +69,66 @@ export class DeckService {
       nextPage: getNextPage(links, query.page),
     };
   }
-  async getDecks({
+
+  async getMyDecks({
     query,
     user,
   }: {
     query: PaginateQuery;
-    user?: AuthPayload;
+    user: AuthPayload;
   }) {
     const qb = this.deckRepo.createQueryBuilder('deck');
+    qb.where('deck.userId = :userId', { userId: user.id });
 
-    if (user) {
-      qb.where('deck.userId = :userId', { userId: user.id });
-    }
+    const qbWithJoins = this.populateDeckFields(qb);
 
-    qb.leftJoinAndSelect('deck.user', 'user').leftJoinAndMapOne(
-      'deck.flashcardPreview',
-      Flashcard,
-      'flashcard',
-      'flashcard.deckId = deck.id',
-    ).select(['deck', 'user.username', 'user.nickname', 'user.avatarPublicUrl', 'flashcard.question', 'flashcard.type']);
-
-    const { data, links } = await paginate(query, qb, paginationOption);
+    const { data, links } = await paginate(
+      query,
+      qbWithJoins,
+      paginationOption,
+    );
 
     return {
       data,
       nextPage: getNextPage(links, query.page),
     };
+  }
+
+  async getDecks({ query }: { query: PaginateQuery }) {
+    const qb = this.deckRepo.createQueryBuilder('deck');
+    const qbWithJoins = this.populateDeckFields(qb);
+
+    const { data, links } = await paginate(query, qbWithJoins, {
+      ...paginationOption,
+      filterableColumns: {
+        ...paginationOption.filterableColumns,
+        visibility: [],
+      },
+    });
+
+    return {
+      data,
+      nextPage: getNextPage(links, query.page),
+    };
+  }
+
+  populateDeckFields(qb: SelectQueryBuilder<Deck>) {
+    qb.leftJoinAndSelect('deck.user', 'user')
+      .leftJoinAndMapOne(
+        'deck.flashcardPreview',
+        Flashcard,
+        'flashcard',
+        'flashcard.deckId = deck.id',
+      )
+      .select([
+        'deck',
+        'user.username',
+        'user.nickname',
+        'user.avatarPublicUrl',
+        'flashcard.question',
+        'flashcard.type',
+      ]);
+    return qb;
   }
 
   async createDeck({

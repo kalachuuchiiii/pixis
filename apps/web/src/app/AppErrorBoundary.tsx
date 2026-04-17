@@ -53,7 +53,11 @@ const Fallback = ({ error }: FallbackProps) => {
       </div>
     );
   }
-  return <div></div>;
+  return <div>
+    {
+      message
+    }
+  </div>;
 };
 
 const AppErrorBoundary = ({ children }: { children: ReactNode }) => {

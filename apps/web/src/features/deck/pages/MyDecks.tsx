@@ -7,7 +7,7 @@ import {
   type UseInfiniteQueryResult,
 } from "@tanstack/react-query";
 import api from "@/lib/api";
-import {  type DeckWithAuthorAndFlashcardPreview } from "@pixis/schemas";
+import { type DeckWithAuthorAndFlashcardPreview } from "@pixis/schemas";
 import { DeckFilter } from "@/features/deck/components/DeckFilter";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDeckFilter } from "../hooks/useDeckFilter";
@@ -15,7 +15,7 @@ import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
 import { useInView } from "react-intersection-observer";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { DeckCard } from "../components/DeckCard";
-import { Archive } from "lucide-react";
+import { Archive, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/tooltip";
 import { EmptyResource } from "../../../components/ui/EmptyResource";
 import { Spinner } from "@/components/ui/spinner";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const MyDecks = () => {
   const deckFilterHandlers = useDeckFilter();
@@ -77,12 +78,25 @@ const MyDecks = () => {
               </TooltipTrigger>
               <TooltipContent>Go to archived decks</TooltipContent>
             </Tooltip>
-            <CreateDeckDialog ref={createDeckButtonRef} />
+            <Dialog >
+              <DialogTrigger ref={createDeckButtonRef}>
+                <Button className="my-btn">
+                  Create <Plus />
+                </Button>
+              </DialogTrigger>
+              <DialogContent
+                
+                className="p-0 min-w-8/12"
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
+                <CreateDeckDialog />
+              </DialogContent>
+            </Dialog>
           </div>
         }
       />
       <div>
-        <div className="space-y-2 grid grid-cols-2 gap-1">
+        <div className=" grid grid-cols-2 gap-2">
           {decks.map((d) => (
             <DeckCard.Default key={`${d.topic}.${d.id}`} deck={d} />
           ))}

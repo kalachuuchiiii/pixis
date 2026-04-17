@@ -112,12 +112,19 @@ export const updateUserFormSchema = z.object({
   nickname: nicknameSchema,
 });
 
+export const userBadgeSchema = z.object({
+  username: usernameSchema,
+  nickname: nicknameSchema,
+  avatarPublicUrl: avatarPublicUrlSchema
+})
+
 // ================== TYPES ==================
 
 export type Id = z.infer<typeof idSchema>;
 export type Username = z.infer<typeof usernameSchema>;
 export type Nickname = z.infer<typeof nicknameSchema>;
 export type AvatarPublicUrl = z.infer<typeof avatarPublicUrlSchema>;
+export type UserBadge = z.infer<typeof userBadgeSchema>;
 
 export type RawUser = z.infer<typeof rawUserSchema>;
 export type Point = z.infer<typeof pointSchema>;

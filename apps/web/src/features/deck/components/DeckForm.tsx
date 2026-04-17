@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import type { RawDeckForm } from "@pixis/schemas";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { QUICK_TOPICS } from "../data/quickTopics";
-import { Tag } from "lucide-react";
+import { Pipette, Tag } from "lucide-react";
 import { VISIBILITY_OPTIONS } from "../data/visibilityOptions";
 import { VisibilityOptionButton } from "@/features/auth/components/ui/VisibilityOptionButton";
-import { Button } from "@/components/ui/button";
 import { memo, type ComponentProps } from "react";
+import { ColorPicker } from "react-beautiful-color";
+import { Button } from "@/components/ui/button";
 
 type DeckFormProp = UseFormReturn<RawDeckForm, any, RawDeckForm>;
 
@@ -19,43 +20,50 @@ export const DeckForm = memo(
   }: { deckForm: DeckFormProp } & ComponentProps<"form">) => {
     const { control, setValue, watch } = deckForm;
     const visibility = watch("visibility");
+    const color = watch("color");
     return (
       <form {...props}>
         <div
           className="w-full space-y-4"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
-          <Controller
-            name="title"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel>Title</FieldLabel>
-                <Input {...field} placeholder="e.g. Cell Biology — Chapter 3" />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
+          <header className="flex items-start gap-4">
+            <div className="space-y-4 w-full">
+              <Controller
+                name="title"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Title</FieldLabel>
+                    <Input
+                      {...field}
+                      placeholder="e.g. Cell Biology — Chapter 3"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
-              </Field>
-            )}
-          />
+              />
 
-          <Controller
-            name="description"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel>Description</FieldLabel>
-                <Input
-                  {...field}
-                  placeholder="What's this deck about? (optional)"
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
+              <Controller
+                name="description"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Description</FieldLabel>
+                    <Input
+                      {...field}
+                      placeholder="What's this deck about? (optional)"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
-              </Field>
-            )}
-          />
-
+              />
+            </div>
+          </header>
           <Controller
             name="topic"
             control={control}
@@ -82,29 +90,48 @@ export const DeckForm = memo(
               </Field>
             )}
           />
-
-          <Controller
-            name="description"
-            control={control}
-            render={({ fieldState }) => (
-              <Field>
-                <FieldLabel>Visibility</FieldLabel>
-                <div className="grid grid-cols-3 gap-2.5">
-                  {VISIBILITY_OPTIONS.map((opt) => (
-                    <VisibilityOptionButton
-                      key={opt.value}
-                      value={visibility}
-                      option={opt}
-                      onClick={() => setValue("visibility", opt.value)}
-                    />
-                  ))}
+          <div className="flex items-center gap-6">
+            <ColorPicker
+              onChange={(color) => setValue("color", color.getHex())}
+              color={{ type: "hex", value: color }}
+              className="size-40"
+            >
+              <ColorPicker.Saturation className="flex-1 mb-3" />
+              <div className="flex items-center  gap-3 p-3 pt-0">
+                <ColorPicker.EyeDropper>
+                  <Button variant={"outline"}>
+                    <Pipette className="opacity-50" size={20} />
+                  </Button>
+                </ColorPicker.EyeDropper>
+                <div className="flex-1 flex flex-col ml-2 gap-3">
+                  <ColorPicker.Hue className="h-4" />
+                  <ColorPicker.Alpha className="h-4" />
                 </div>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+              </div>
+            </ColorPicker>
+            <Controller
+              name="description"
+              control={control}
+              render={({ fieldState }) => (
+                <Field>
+                  <FieldLabel>Visibility</FieldLabel>
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {VISIBILITY_OPTIONS.map((opt) => (
+                      <VisibilityOptionButton
+                        key={opt.value}
+                        value={visibility}
+                        option={opt}
+                        onClick={() => setValue("visibility", opt.value)}
+                      />
+                    ))}
+                  </div>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
         </div>
       </form>
     );

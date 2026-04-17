@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { VISIBILITY_OPTIONS } from "../data/visibilityOptions";
 import { QUICK_TOPICS } from "../data/quickTopics";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useController, useForm } from "react-hook-form";
 import { rawDeckFormSchema, type RawDeckForm } from "@pixis/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -26,7 +26,7 @@ import { useDeck } from "../hooks/useDeck";
 import { DeckForm } from "./DeckForm";
 import type { ComponentProps } from "react";
 
-export const CreateDeckDialog = ({ ...props}:ComponentProps<'button'>) => {
+export const CreateDeckDialog = () => {
   const { createDeck, isCreatingDeck } = useDeck();
   const deckForm = useForm<RawDeckForm>({
     defaultValues: {
@@ -43,41 +43,33 @@ export const CreateDeckDialog = ({ ...props}:ComponentProps<'button'>) => {
   const onSubmit = handleSubmit(async (data) => {
     await createDeck(data);
   });
+  const color = deckForm.watch('color')
+
 
   return (
-    <Dialog  >
-      <DialogTrigger  onFocus={e => e.target.blur()} {...props} tabIndex={-1}  >
-        <Button  className="my-btn">
-          Create <Plus />
+    <div className={`p-4 border-l-40 border-l-[${color}] rounded-xl`}>
+      <header>
+        <h1 className="text-[10px] font-semibold tracking-[0.18em] uppercase text-stone-400 mb-2">
+          New deck
+        </h1>
+        <h1
+          className="text-[28px] font-normal text-stone-900 leading-tight"
+          style={{ fontFamily: "'DM Serif Display', serif" }}
+        >
+          Create a deck
+        </h1>
+        <p className="text-[14px] text-stone-400 mt-1.5">
+          Fill in the details below, then start adding flashcards.
+        </p>
+      </header>
+      <DeckForm deckForm={deckForm} onSubmit={onSubmit} id="create-deck-form" />
+      <footer className="mt-4 mb-2">
+        <DialogClose>
+          <Button variant={"outline"} className="my-btn">
+            Cancel
           </Button>
-      </DialogTrigger>
-      <DialogContent autoFocus = {false} onCloseAutoFocus={(e) => e.preventDefault()} className="min-w-8/12">
-        <header>
-          <h1 className="text-[10px] font-semibold tracking-[0.18em] uppercase text-stone-400 mb-2">
-            New deck
-          </h1>
-          <h1
-            className="text-[28px] font-normal text-stone-900 leading-tight"
-            style={{ fontFamily: "'DM Serif Display', serif" }}
-          >
-            Create a deck
-          </h1>
-          <p className="text-[14px] text-stone-400 mt-1.5">
-            Fill in the details below, then start adding flashcards.
-          </p>
-        </header>
-
-        <DeckForm
-          deckForm={deckForm}
-          onSubmit={onSubmit}
-          id="create-deck-form"
-        />
-        <DialogFooter>
-          <DialogClose>
-            <Button variant={"outline"} className="my-btn">
-              Cancel
-            </Button>
-          </DialogClose>
+        </DialogClose>
+        <DialogClose>
           <Button
             type="submit"
             className="w-full my-btn w-10/12"
@@ -85,8 +77,8 @@ export const CreateDeckDialog = ({ ...props}:ComponentProps<'button'>) => {
           >
             Save
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DialogClose>
+      </footer>
+    </div>
   );
 };

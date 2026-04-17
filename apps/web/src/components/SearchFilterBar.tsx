@@ -9,6 +9,7 @@ import {
 import type { DeckFilterHandlers } from "@/features/deck/hooks/useDeckFilter";
 import type { FlashcardFilterHandlers } from "@/features/flashcard/hooks/useFlashcardFilter";
 import { Separator } from "./ui/separator";
+import type { CollectionFilterHandler } from "@/features/collection/hooks/useCollectionFilter";
 
 export const SearchFilterBar = ({
   actions,
@@ -16,12 +17,12 @@ export const SearchFilterBar = ({
   ...props
 }: {
   actions: JSX.Element[] | JSX.Element;
-  handlers: DeckFilterHandlers | FlashcardFilterHandlers;
+  handlers: DeckFilterHandlers | FlashcardFilterHandlers | CollectionFilterHandler;
 } & ComponentProps<"input">) => {
   const { search, onChange, onEnterUpdate, onUpdate } = handlers;
   return (
 
-     <div className="flex items-center relative gap-2 w-6/12 ">
+     <div className="flex items-center w-full relative gap-2  ">
       <InputGroup className="flex items-center  w-full h-12 h-full">
         <InputGroupInput
           value={search}

@@ -10,10 +10,8 @@ import { Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAppSelector } from "@/hooks/useReduxHook";
 import { capitalize } from "lodash";
+import clsx from "clsx";
 
-// --------------------
-// Context
-// --------------------
 type DeckContextType = {
   deck: DeckWithAuthorAndFlashcardPreview;
 };
@@ -38,8 +36,13 @@ const Root = ({
 }) => {
   return (
     <DeckContext.Provider value={{ deck }}>
-      <div className="w-full mx-auto">
-        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm overflow-hidden">
+      <div className={`w-full mx-auto `}>
+        <div
+          className={clsx(
+            "bg-white border h-full flex flex-col justify-between rounded-2xl p-6 shadow-sm overflow-hidden",
+            `border-l-40 border-l-[${deck.color}]`
+          )}
+        >
           {children}
         </div>
       </div>
@@ -97,9 +100,11 @@ const Preview = () => {
   const dtx = useDeck();
 
   if (!dtx || !dtx.deck.flashcardPreview) {
-    return <div className="bg-stone-50 text-xs p-2 border border-stone-100 rounded-xl mb-5">
-      No available flashcard preview
-    </div>;
+    return (
+      <div className="bg-stone-50 text-xs p-2 border border-stone-100 rounded-xl mb-5">
+        No available flashcard preview
+      </div>
+    );
   }
 
   return (

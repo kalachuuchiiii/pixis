@@ -10,8 +10,6 @@ import {
 import z from "zod";
 import { idSchema } from "./user.schemas";
 import { createdAtSchema, updatedAtSchema } from "./timestamp.schemas";
-import { querySchema } from "./query.schemas";
-import { createSortSchema } from "./query.schemas.factory";
 
 export const questionSchema = z.string().min(QUESTION_MIN).max(QUESTION_MAX);
 export const answerSchema = z.string().min(ANSWER_MIN).max(ANSWER_MAX);
