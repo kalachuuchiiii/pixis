@@ -9,7 +9,7 @@ import {
 } from "@pixis/constants";
 import z from "zod";
 import { idSchema } from "./user.schemas";
-import { createdAtSchema, updatedAtSchema } from "./timestamp.schemas";
+import { timestampSchema } from "./timestamp.schemas";
 
 export const questionSchema = z.string().min(QUESTION_MIN).max(QUESTION_MAX);
 export const answerSchema = z.string().min(ANSWER_MIN).max(ANSWER_MAX);
@@ -20,18 +20,13 @@ export const choicesSchema = z
 
 export const typeSchema = z.enum(TYPE_ENUM);
 
-export const flashcardRefIds = z.object({
-  deckId: idSchema,
-  userId: idSchema,
-});
-
 export const openEndedFlashcardSchema = z
   .object({
     type: z.literal("open_ended"),
     question: questionSchema,
     answer: answerSchema,
     choices: z.null().catch(null),
-    isAnswerCaseSensitive: z.boolean()
+    isAnswerCaseSensitive: z.boolean(),
   })
   .strip();
 
@@ -41,7 +36,7 @@ export const closeEndedFlashcardSchema = z
     question: questionSchema,
     answer: answerSchema,
     choices: choicesSchema,
-    isAnswerCaseSensitive: z.literal(false)
+    isAnswerCaseSensitive: z.literal(false),
   })
   .refine((data) => data.choices.includes(data.answer))
   .strip();
@@ -51,12 +46,20 @@ export const flashcardFormSchema = z.discriminatedUnion("type", [
   closeEndedFlashcardSchema,
 ]);
 
-export const timestampSchema = z.object({
-  createdAt: createdAtSchema,
-  updatedAt: updatedAtSchema
+export const timeSchema = z.object({
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
 });
 
-export const flashcardSchema = flashcardFormSchema.and(flashcardRefIds).and(timestampSchema).and(z.object({ id: idSchema }));
+export const flashcardSchema = flashcardFormSchema
+  .and(timeSchema)
+  .and(
+    z.object({
+      id: idSchema,
+      userId: idSchema,
+
+    })
+  );
 export type CloseEndedFlashcardForm = z.infer<typeof closeEndedFlashcardSchema>;
 export type OpenEndedFlashcardForm = z.infer<typeof openEndedFlashcardSchema>;
 

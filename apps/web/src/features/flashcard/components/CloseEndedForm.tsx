@@ -11,12 +11,18 @@ import { Button } from "@/components/ui/button";
 import { CHOICES_MAX } from "@pixis/constants";
 import type { CreateCloseEndedForm } from "../hooks/useCreateFlashcard";
 
+export type CloseEndedFormType = UseFormReturn<
+  CloseEndedFlashcardForm,
+  any,
+  CloseEndedFlashcardForm
+>;
+
 export const CloseEndedForm = ({
   closeEndedForm,
   ...props
 }: {
-  closeEndedForm: CreateCloseEndedForm;
-} & ComponentProps<"form">) => {
+  closeEndedForm: CloseEndedFormType;
+} & ComponentProps<"div">) => {
   const [choiceInput, setChoiceInput] = useState("");
   const {
     control,
@@ -40,10 +46,7 @@ export const CloseEndedForm = ({
   };
 
   return (
-    <form {...props}>
-      <header className="mb-4">
-        <h1 className=" heading text-5xl">Close-Ended</h1>
-      </header>
+    <div {...props}>
       <Controller
         name="question"
         control={control}
@@ -135,6 +138,6 @@ export const CloseEndedForm = ({
           )}
         />
       </div>
-    </form>
+    </div>
   );
 };

@@ -47,9 +47,13 @@ export class CollectionsController {
     @Paginate() query: PaginateQuery,
   ) {
     const user = authPayloadSchema.parse(request.user);
-    await this.collectionsService.getMyCollections({ query, user });
+    const { data, nextPage, totalItems } =
+      await this.collectionsService.getMyCollections({ query, user });
+    const cleanCollections = z.array(collectionSchema).parse(data);
     return {
-      message: 'Collection updated',
+      collections: cleanCollections,
+      nextPage,
+      totalItems,
     };
   }
 
@@ -60,7 +64,7 @@ export class CollectionsController {
     const user = authPayloadSchema.parse(request.user);
     await this.collectionsService.createCollection({ collectionForm, user });
     return {
-      message: 'Collection updated',
+      message: 'Collection created',
     };
   }
 
@@ -92,7 +96,11 @@ export class CollectionsController {
     const collectionForm = collectionFormSchema.parse(request.body);
     const collectionId = idSchema.parse(request.params.collectionId);
     const user = authPayloadSchema.parse(request.user);
-    await this.collectionsService.updateCollection({ collectionForm, collectionId, user });
+    await this.collectionsService.updateCollection({
+      collectionForm,
+      collectionId,
+      user,
+    });
     return {
       message: 'Collection updated',
     };
@@ -106,6 +114,23 @@ export class CollectionsController {
     await this.collectionsService.restoreCollection({ collectionId, user });
     return {
       message: 'Collection restored',
+    };
+  }
+
+  @Get('/:collectionId')
+  @UseGuards(AccessGuard)
+  async getCollection(@Req() request: Request) {
+    const collectionId = idSchema.parse(request.params.collectionId);
+    const user = authPayloadSchema.parse(request.user);
+    const collection = await this.collectionsService.getCollection({
+      collectionId,
+      user,
+      options: (qb) => qb.leftJoinAndSelect('collection.user', 'user'),
+    });
+
+    const cleanCollection = collectionSchema.parse(collection);
+    return {
+      collection: cleanCollection,
     };
   }
 }

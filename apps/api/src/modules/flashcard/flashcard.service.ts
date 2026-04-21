@@ -16,6 +16,7 @@ import {
   SORTABLE_FLASHCARD_FIELDS,
 } from '@pixis/constants';
 import { getNextPage } from '@/common/utils/pagination.util';
+import { DeckService } from '../deck/deck.service';
 
 type FlashcardIdAndUser = { flashcardId: number; user: AuthPayload };
 
@@ -25,6 +26,7 @@ export class FlashcardService {
     @InjectRepository(Deck) private deckRepo: Repository<Deck>,
     @InjectRepository(Flashcard)
     private flashcardRepo: Repository<Flashcard>,
+    public readonly deckService: DeckService
   ) {}
 
   addAnalytics(queryBuilder: SelectQueryBuilder<Flashcard>) {
@@ -32,8 +34,8 @@ export class FlashcardService {
       .select([
         'flashcard.id',
         'flashcard.question',
-        'flashcard.userId',
-        'flashcard.deckId',
+        'flashcard.user.id',
+        'flashcard.deck.id',
         'flashcard.answer',
         'flashcard.type',
         'flashcard.createdAt',
@@ -70,7 +72,8 @@ export class FlashcardService {
     user: AuthPayload;
   }) {
     const myDeck = await this.deckRepo.findOne({
-      where: { id: deckId, userId: user.id }, withDeleted: true
+      where: { id: deckId, user: { id: user.id }},
+      withDeleted: true,
     });
     if (!myDeck) {
       throw new ForbiddenException({
@@ -81,25 +84,16 @@ export class FlashcardService {
 
     const newFlashcard = this.flashcardRepo.create({
       ...flashcardForm,
-      userId: user.id,
-      deckId: myDeck.id,
+      user: { id:  user.id },
+      deck: { id:  myDeck.id }
     });
     return await this.flashcardRepo.save(newFlashcard);
   }
 
-  async getDeckFlashcards({
-    deckId,
-    params,
-    user,
-  }: {
-    deckId: number;
-    user: AuthPayload;
-    params: Query;
-  }) {}
-
   async getFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const flashcard = await this.flashcardRepo.findOne({
-      where: { id: flashcardId, userId: user.id }, withDeleted: true
+      where: { id: flashcardId, userId: user.id },
+      withDeleted: true,
     });
     if (!flashcard) {
       throw new NotFoundException({
@@ -107,6 +101,7 @@ export class FlashcardService {
         code: 'FLASHCARD_NOT_FOUND',
       });
     }
+    console.log(flashcard)
     return flashcard;
   }
 
@@ -120,7 +115,7 @@ export class FlashcardService {
     flashcardForm: FlashcardForm;
   }) {
     const result = await this.flashcardRepo.update(
-      { id: flashcardId, userId: user.id },
+      { id: flashcardId, user: { id: user.id } },
       { ...flashcardForm, updatedAt: new Date() },
     );
     if (result.affected === 0) {
@@ -135,7 +130,7 @@ export class FlashcardService {
   async softDeleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const result = await this.flashcardRepo.softDelete({
       id: flashcardId,
-      userId: user.id,
+      user: { id: user.id }
     });
     if (result.affected === 0) {
       throw new NotFoundException({
@@ -149,7 +144,7 @@ export class FlashcardService {
   async restoreFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const result = await this.flashcardRepo.restore({
       id: flashcardId,
-      userId: user.id,
+      user: { id: user.id }
     });
     if (result.affected === 0) {
       throw new NotFoundException({
@@ -164,44 +159,44 @@ export class FlashcardService {
     deckId,
     query,
     user,
+    extend,
   }: {
     deckId: number;
     user?: AuthPayload;
     query: PaginateQuery;
+    extend?: (
+      query: SelectQueryBuilder<Flashcard>,
+    ) => SelectQueryBuilder<Flashcard>;
   }) {
-    const deck = await this.deckRepo.findOne({
-      where: { id: deckId }, withDeleted: true
-    });
-    
-    if (!deck || (deck.visibility !== 'public' && deck.userId !== user?.id)) {
-      throw new NotFoundException({
-        message: 'Deck not found',
-        code: 'DECK_NOT_FOUND',
-      });
-    }
+    const deck = await this.deckService.getDeck({ deckId, user, extend: (qb) => qb.withDeleted() })
     const qb = this.flashcardRepo
       .createQueryBuilder('flashcard')
-      .where('flashcard.deckId = :deckId', { deckId })
+      .where('flashcard.deck.id = :deckId', { deckId });
 
-    const { data, links, meta: { totalItems } } = await paginate(query, qb, {
+    const {
+      data,
+      links,
+      meta: { totalItems },
+    } = await paginate(query, extend ? extend(qb) : qb, {
       sortableColumns: [...SORTABLE_FLASHCARD_FIELDS],
       filterableColumns: {
         type: [FilterOperator.EQ],
-        createdAt: [FilterOperator.EQ, FilterOperator.GTE]
+        createdAt: [FilterOperator.EQ, FilterOperator.GTE],
       },
       searchableColumns: [...SEARCHABLE_FLASHCARD_FIELDS],
     });
+    console.log(data);
     return {
       data,
       totalItems,
-      nextPage: getNextPage(links, query.page)
-    }
+      nextPage: getNextPage(links, query.page),
+    };
   }
 
   async deleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const result = await this.flashcardRepo.delete({
       id: flashcardId,
-      userId: user.id,
+      user: { id: user.id }
     });
     if (result.affected === 0) {
       throw new NotFoundException({

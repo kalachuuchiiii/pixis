@@ -11,7 +11,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error: AxiosError & { config: AxiosError['config'] & { _retry?: boolean; }}) => {
-    console.log('ERROR', error.response);
+    console.log(`Error on ${error.response?.config.url}`, error.response);
     const originalReponse = error.config;
     const response = error.response;
     if(!originalReponse || originalReponse._retry || !response || response.status !== 401 || originalReponse.url?.includes('/auth/refresh')){

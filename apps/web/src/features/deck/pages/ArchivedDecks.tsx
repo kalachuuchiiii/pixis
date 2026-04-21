@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { Deck } from "@pixis/schemas";
+import type { Deck, DeckWithAuthor } from "@pixis/schemas";
 import {
   useInfiniteQuery,
   useMutation,
@@ -10,7 +10,7 @@ import React from "react";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { useDeckFilter } from "../hooks/useDeckFilter";
 import { DeckFilter } from "../components/DeckFilter";
-import { DeckCard } from "../components/DeckCard";
+import { DeckDisplay } from "../components/DeckDisplay";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,7 +55,7 @@ const ArchivedDecks = () => {
       }
       const result = await api.get<{
         nextPage: number | undefined;
-        archivedDecks: Deck[];
+        archivedDecks: DeckWithAuthor[];
       }>(`/decks/archived?${queries.join("&")}`);
       return result.data;
     },
@@ -118,7 +118,7 @@ const ArchivedDecks = () => {
                   "outline-emerald-300 shadow-lg shadow-emerald-100 outline rounded-2xl"
               )}
             >
-              <DeckCard.Default deck={d} />
+              <DeckDisplay.Default deck={d} />
             </div>
           ))}
         </main>

@@ -21,7 +21,7 @@ export const RestoreDeckDialog = ({ deckId }: { deckId: number }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={"outline"} className="h-full">
+        <Button variant={"outline"} className="my-btn">
           <CloudBackup />
         </Button>
       </AlertDialogTrigger>

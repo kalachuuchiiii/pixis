@@ -13,7 +13,7 @@ export const VISIBILITY_OPTIONS: VisibilityOption[] = [
   {
     value: "public",
     label: "Public",
-    desc: "Anyone can find and study this deck",
+    desc: "Anyone can find and open this resource",
     icon: <Globe size={14} strokeWidth={1.8} />,
   },
   {
@@ -25,7 +25,7 @@ export const VISIBILITY_OPTIONS: VisibilityOption[] = [
   {
     value: "private",
     label: "Private",
-    desc: "Only you can see this deck",
+    desc: "Only you can see this resource",
     icon: <Lock size={14} strokeWidth={1.8} />,
   },
 ];

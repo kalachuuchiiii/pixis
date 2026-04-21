@@ -20,7 +20,6 @@ export const getErrorMessage = (err: unknown) => {
 };
 
 export const getSuccessMessage = (res: any) => {
-  console.log(res, 'succ');
   if (!navigator.onLine) {
     return "Please check your internet and try again.";
   }

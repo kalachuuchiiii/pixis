@@ -12,6 +12,7 @@ export const useFlashcardList = () => {
   const { query } = flashcardFilterHandlers;
   const createFlashcardTriggerRef = useRef<HTMLButtonElement>(null);
   const queryKey = useMemo(() => ["flashcards", String(deckId), query], [deckId, query]);
+  
   const { data, refetch, isFetching, isLoading, isPending, hasNextPage } =
     useInfiniteQuery({
       queryKey,
@@ -25,10 +26,11 @@ export const useFlashcardList = () => {
         return result.data;
       },
       initialPageParam: 1,
+      staleTime: 5 * 60 * 1000,
       getNextPageParam: (lastPage) => lastPage.nextPage,
     });
 
-  const flashcards = data?.pages.flatMap((d) => d.flashcards) ?? [];
+  const flashcards = data?.pages.flatMap((d) => d.flashcards ?? []) ?? [];
   const totalFlashcards = data?.pages[0].totalFlashcards ?? 0;
   const isProcessing = isPending || isLoading || isFetching;
   const { ref, inView } = useInView();

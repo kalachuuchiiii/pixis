@@ -6,35 +6,35 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "./ui/input-group";
-import type { DeckFilterHandlers } from "@/features/deck/hooks/useDeckFilter";
-import type { FlashcardFilterHandlers } from "@/features/flashcard/hooks/useFlashcardFilter";
 import { Separator } from "./ui/separator";
+import type { DeckFilterHandler } from "@/features/deck/hooks/useDeckFilter";
 import type { CollectionFilterHandler } from "@/features/collection/hooks/useCollectionFilter";
+import type { FlashcardFilterHandler } from "@/features/flashcard/hooks/useFlashcardFilter";
 
 export const SearchFilterBar = ({
   actions,
-  handlers,
+  filter,
   ...props
 }: {
   actions: JSX.Element[] | JSX.Element;
-  handlers: DeckFilterHandlers | FlashcardFilterHandlers | CollectionFilterHandler;
+  filter: DeckFilterHandler | CollectionFilterHandler | FlashcardFilterHandler;
 } & ComponentProps<"input">) => {
-  const { search, onChange, onEnterUpdate, onUpdate } = handlers;
+  const { search, handleChangeSearch, updateQueryOnEnter, updateQuery } =
+    filter;
   return (
-
-     <div className="flex items-center w-full relative gap-2  ">
+    <div className="flex items-center w-full relative gap-2  ">
       <InputGroup className="flex items-center  w-full h-12 h-full">
         <InputGroupInput
           value={search}
-          onChange={onChange}
+          onChange={handleChangeSearch}
           type="text"
-          className="h-full w-full"   
+          className="h-full w-full"
           {...props}
-          onKeyDown={onEnterUpdate}
+          onKeyDown={updateQueryOnEnter}
         />
 
         <InputGroupButton
-          onClick={onUpdate}
+          onClick={updateQuery}
           disabled={!search.trim()}
           variant={"ghost"}
           className="my-btn"
@@ -53,6 +53,5 @@ export const SearchFilterBar = ({
         </div>
       </InputGroup>
     </div>
-
   );
 };

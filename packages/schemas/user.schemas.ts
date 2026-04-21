@@ -65,7 +65,6 @@ export const rawUserSchema = z.object({
 
 export const pointSchema = z.object({
   id: idSchema,
-  userId: idSchema.optional().nullable(),
   user: rawUserSchema.optional().nullable(),
   currentPoints: z
     .int("Current points must be an integer")
@@ -88,7 +87,6 @@ export const lastActionTimestampSchema = z.coerce
 
 export const streakSchema = z.object({
   id: idSchema,
-  userId: idSchema.optional().nullable(),
   user: rawUserSchema.optional().nullable(),
   currentStreak: z
     .int("Current streak must be an integer")

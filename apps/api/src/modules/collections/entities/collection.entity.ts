@@ -1,5 +1,4 @@
-import { Deck } from '@/modules/deck/entities/deck.entity';
-import { SavedDeck } from '@/modules/deck/entities/saved-deck.entity';
+
 import { User } from '@/modules/users/entities/user.entity';
 import {
   Column,
@@ -8,13 +7,18 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
+import { VISIBILITY_ENUM, type Visibility } from '@pixis/constants';
+import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
 
-@Entity()
+@Entity('collection')
 export class Collection {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -22,16 +26,18 @@ export class Collection {
   @Column({ nullable: true, default: '' })
   name!: string;
 
-  @Column({ enum: ['private', 'public'], default: 'private' })
-  visibility!: 'private' | 'public';
+  @Column({ enum: VISIBILITY_ENUM, default: 'private' })
+  visibility!: Visibility;
 
-  @Index()
-  @Column({ name: 'user_id' })
+  @ManyToOne(() => User, u => u.collections)
+  @JoinColumn({ name: 'user_id' })
+  user?: User; 
+
+  @RelationId((c: Collection) => c.user)
   userId!: number;
 
-  @ManyToOne(() => User)
-  @JoinColumn()
-  user?: User;
+  @OneToMany(() => CollectionDeck, cd => cd.collection)
+  collectionDecks?: CollectionDeck[]
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
@@ -42,8 +48,8 @@ export class Collection {
   @DeleteDateColumn({ name: 'deleted_at'})
   deletedAt?: Date;
 
-  @OneToMany(() => SavedDeck, (deck) => deck.collectionId, { onDelete: 'CASCADE'})
-  decks?: Deck[];
+  @Column({ name: 'deck_count', default: 0 })
+  deckCount?: number
 
   @Column({ nullable: true, name: 'color', default: "#000000" })
   color!: string; // e.g., '#FF5733'

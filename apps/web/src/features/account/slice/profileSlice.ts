@@ -46,14 +46,12 @@ export const initialState: ProfileState = {
     lastUsernameUpdate: new Date().toISOString(),
     point: {
       id: 0,
-      userId: 0,
       currentPoints: 0,
       highestPoints: 0,
       totalPoints: 0,
     },
     streak: {
       id: 0,
-      userId: 0,
       currentStreak: 0,
       highestStreak: 0,
       totalStreak: 0,

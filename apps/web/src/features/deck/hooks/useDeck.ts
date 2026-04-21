@@ -4,12 +4,15 @@ import {
   getSuccessMessage,
 } from "@/utils/message-extractor.utils";
 import { idSchema, type RawDeckForm } from "@pixis/schemas";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useDeck = () => {
   const nav = useNavigate();
+  const queryClient = useQueryClient();
+
+
   const { mutate: createDeck, isPending: isCreatingDeck } = useMutation({
     mutationFn: async (rawDeckForm: RawDeckForm) => {
       const promise = api.post("/decks", rawDeckForm);
@@ -22,9 +25,8 @@ export const useDeck = () => {
     },
   });
 
-
    const { mutate: updateDeck, isPending: isUpdatingDeck } = useMutation({
-    mutationFn: async ({ rawDeckForm, deckId }: {rawDeckForm: RawDeckForm, deckId: number }) => {
+    mutationFn: async ({ rawDeckForm, deckId }: {rawDeckForm: RawDeckForm, deckId: number | string }) => {
       const promise = api.patch(`/decks/${deckId}`, rawDeckForm);
       await toast.promise(promise, {
         loading: "Updating deck...",
@@ -33,6 +35,9 @@ export const useDeck = () => {
       });
       return await promise;
     },
+    onSuccess: (_, { deckId }) => {
+      queryClient.invalidateQueries({ queryKey: ['deck', String(deckId) ]});
+    }
   });
 
   const { mutate: softDeleteDeck, isPending: isSoftDeletingDeck } = useMutation({

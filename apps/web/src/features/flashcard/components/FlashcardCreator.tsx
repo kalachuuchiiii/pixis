@@ -31,13 +31,12 @@ export const FlashcardCreator = () => {
           <Button onClick={() => setType("")} variant={"outline"}>
             <ChevronLeft />
           </Button>
+          <header>
+            <h1 className="label text-[10px] description">New Flashcard</h1>
+          </header>
           {type === "close_ended" ? (
             <div>
-              <header>
-                <h1 className="description">New Flashcard</h1>
-              </header>
               <CloseEndedForm
-                onSubmit={onSubmitCloseEnded}
                 closeEndedForm={closeEndedForm}
                 id="close-ended-form"
               />
@@ -46,29 +45,23 @@ export const FlashcardCreator = () => {
                   isCreatingFlashcard ||
                   closeEndedForm.watch("choices").length < 2
                 }
+                onClick={onSubmitCloseEnded}
                 className="my-btn w-full"
                 type="submit"
-                form="close-ended-form"
               >
                 Create
               </Button>
             </div>
           ) : (
             <div>
-              <header>
-                <h1 className="label text-[10px] description">New Flashcard</h1>
-              </header>
               <OpenEndedForm
                 className="space-y-2"
-                onSubmit={onSubmitOpenEnded}
-                id="open-ended-form"
                 openEndedForm={openEndedForm}
               />
               <Button
+                onClick={onSubmitOpenEnded}
                 disabled={isCreatingFlashcard}
                 className="my-btn w-full"
-                type="submit"
-                form="open-ended-form"
               >
                 Create
               </Button>
@@ -79,11 +72,10 @@ export const FlashcardCreator = () => {
         <>
           {" "}
           <header>
-              <p className="description">
+            <p className="description">
               Choose the type of flashcard you want to create
             </p>
-            <h1 className="heading text-4xl" >New Flashcard</h1>
-          
+            <h1 className="heading text-4xl">New Flashcard</h1>
           </header>
           <div className="grid grid-cols-2 gap-3 pt-4">
             <Button

@@ -1,54 +1,34 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, DeleteDateColumn, Index, OneToMany, OneToOne } from 'typeorm';
-import { IsString, IsOptional, IsEnum, MinLength } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, RelationId } from 'typeorm';
 import { Deck } from '@/modules/deck/entities/deck.entity';
-import { TYPE_ENUM } from '@pixis/constants';
+import { TYPE_ENUM, type FlashcardType } from '@pixis/constants';
 import { User } from '@/modules/users/entities/user.entity';
-import { flashcardFormSchema, flashcardRefIds } from '@pixis/schemas';
 import { Progress } from './progress.entity';
 
 @Entity('flashcard')
 export class Flashcard {
 
-  @DeleteDateColumn()
-  deletedAt?: Date;
-
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Deck, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Deck, d => d.flashcards, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'deck_id' })
   deck!: Deck;
 
-  @Index()
-  @Column({ name: 'deck_id'})
-  deckId!: number;
-
-  @OneToOne(( ) => Deck)
-  @JoinColumn({ name: 'deck_preview'})
-  deckPreview?: Deck
-
-  @Index()
-  @Column({ name: 'user_id'})
-  userId!: number;
-
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, u => u.flashcards)
   @JoinColumn({ name: 'user_id'})
   user!: User;
 
+  @RelationId((flashcard: Flashcard) => flashcard.user)
+  userId!: number;
+
   @Column()
-  @IsString() 
-  @MinLength(1)
   question!: string;
 
   @Column()
-  @IsString()
-  @MinLength(1)
   answer!: string;
 
-  @Column({ nullable: false })
-  @IsOptional()
-  @IsEnum(TYPE_ENUM)
-  type!: string;
+  @Column({ nullable: false, enum: TYPE_ENUM })
+  type!: FlashcardType;
 
   @OneToMany(() => Progress, (prog) => prog.flashcard, { cascade: true, nullable: true })
   progress?: Progress[]
@@ -65,8 +45,4 @@ export class Flashcard {
   @Column({ name: 'is_answer_case_sensitive', default: false })
   isAnswerCaseSensitive!: boolean;
 
-  @BeforeInsert()
-  validate(){
-      flashcardFormSchema.and(flashcardRefIds).parse(this);
-  }
 }

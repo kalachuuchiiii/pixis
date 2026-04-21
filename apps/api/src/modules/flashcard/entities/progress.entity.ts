@@ -1,29 +1,26 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn, Index } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn, Index, RelationId } from 'typeorm';
 import { Flashcard } from './flashcard.entity';
 import { User } from '@/modules/users/entities/user.entity';
 
 @Entity('progress')
 export class Progress {
-
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index()
-  @Column({ name: 'user_id'})
-  userId!: number;
-
-  @Index()
-  @Column({ name: 'flashcard_id'})
-  flashcardId!: number;
-
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+  user?: User;
+
+  @RelationId((p: Progress) => p.user)
+  userId!: number;
 
   @ManyToOne(() => Flashcard, (flashcard) => flashcard.progress, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'flashcard_id' }) 
-  flashcard!: Flashcard;
+  flashcard?: Flashcard;
 
+  @RelationId((p: Progress) => p.flashcard)
+  flashcardId!: number;
+  
   @Column({ nullable: true, name: 'next_due_at' })
   nextDueAt!: Date;
 

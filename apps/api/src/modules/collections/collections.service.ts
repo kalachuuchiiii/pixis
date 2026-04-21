@@ -1,7 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Collection } from './entities/collection.entity';
-import { IsNull, Not, type Repository, type SelectQueryBuilder } from 'typeorm';
+import {
+  IsNull,
+  Not,
+  type FindOneOptions,
+  type Repository,
+  type SelectQueryBuilder,
+} from 'typeorm';
 import type { CollectionForm } from '@pixis/schemas';
 import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import {
@@ -11,6 +21,9 @@ import {
   type PaginateQuery,
 } from 'nestjs-paginate';
 import { getNextPage } from '@/common/utils/pagination.util';
+import { SORTABLE_COLLECTION_FIELDS } from '@pixis/constants';
+import { CollectionDeck } from '../collection-deck/entities/collection-deck.entity';
+import { options } from 'axios';
 
 type CollectionIdWithUser = {
   collectionId: number;
@@ -29,7 +42,7 @@ export class CollectionsService {
     },
   ) {
     return {
-      sortableColumns: ['createdAt', 'updatedAt'],
+      sortableColumns: [...SORTABLE_COLLECTION_FIELDS],
       filterableColumns: {
         createdAt: [FilterOperator.GTE, FilterOperator.BTW],
         visibility: disabledVisibility ? [] : [FilterOperator.EQ],
@@ -47,7 +60,7 @@ export class CollectionsService {
   }) {
     const newCollection = this.collectionRepo.create({
       ...collectionForm,
-      userId: user.id,
+      user: { id: user.id },
     });
     const result = await this.collectionRepo.save(newCollection);
     return result;
@@ -63,7 +76,7 @@ export class CollectionsService {
     user: AuthPayload;
   }) {
     const result = await this.collectionRepo.update(
-      { id: collectionId, userId: user.id },
+      { id: collectionId, user: { id: user.id } },
       collectionForm,
     );
     if (result.affected === 0) {
@@ -78,7 +91,7 @@ export class CollectionsService {
   async softDeleteCollection({ collectionId, user }: CollectionIdWithUser) {
     const result = await this.collectionRepo.softDelete({
       id: collectionId,
-      userId: user.id,
+      user: { id: user.id },
       deletedAt: IsNull(),
     });
     if (result.affected === 0) {
@@ -93,8 +106,7 @@ export class CollectionsService {
   async deleteCollection({ collectionId, user }: CollectionIdWithUser) {
     const result = await this.collectionRepo.delete({
       id: collectionId,
-      userId: user.id,
-      deletedAt: Not(IsNull()),
+      user: { id: user.id },
     });
     if (result.affected === 0) {
       throw new NotFoundException({
@@ -108,7 +120,7 @@ export class CollectionsService {
   async restoreCollection({ collectionId, user }: CollectionIdWithUser) {
     const result = await this.collectionRepo.restore({
       id: collectionId,
-      userId: user.id,
+      user: { id: user.id },
       deletedAt: Not(IsNull()),
     });
     if (result.affected === 0) {
@@ -138,6 +150,41 @@ export class CollectionsService {
     };
   }
 
+  async getCollection({
+    collectionId,
+    user,
+    options,
+  }: {
+    collectionId: number;
+    user: AuthPayload;
+    options?: (
+      qb: SelectQueryBuilder<Collection>,
+    ) => SelectQueryBuilder<Collection>;
+  }) {
+    const qb = this.collectionRepo
+      .createQueryBuilder('collection')
+      .where('collection.id = :collectionId', { collectionId })
+      .loadRelationCountAndMap(
+        'collection.deckCount',
+        'collection.collectionDecks',
+      );
+
+    const finalQb = options ? options(qb) : qb;
+    const result = await finalQb.getOne();
+
+    if (
+      !result ||
+      (result.visibility === 'private' && result.userId !== user.id)
+    ) {
+      throw new NotFoundException({
+        message: 'Collection not found',
+        code: 'COLLECTION_NOT_FOUND',
+      });
+    }
+
+    return result;
+  }
+
   async getMyCollections({
     query,
     user,
@@ -147,7 +194,7 @@ export class CollectionsService {
   }) {
     const qb = this.collectionRepo
       .createQueryBuilder('collection')
-      .where('collection.userId = :userId', { userId: user.id });
+      .where('collection.user.id = :userId', { userId: user.id });
 
     const qbWithJoins = this.populateCollectionFields(qb);
 
@@ -156,6 +203,7 @@ export class CollectionsService {
       qbWithJoins,
       this.paginateOption({ disabledVisibility: false }),
     );
+    console.log(data);
 
     return {
       data,
@@ -166,13 +214,16 @@ export class CollectionsService {
 
   populateCollectionFields(qb: SelectQueryBuilder<Collection>) {
     qb.leftJoinAndSelect('collection.user', 'user')
-      .loadRelationCountAndMap('collection.deckCount', 'collection.decks')
       .select([
         'collection',
         'user.username',
         'user.nickname',
         'user.avatarPublicUrl',
-      ]);
+      ])
+      .loadRelationCountAndMap(
+        'collection.deckCount',
+        'collection.collectionDecks',
+      );
     return qb;
   }
 }

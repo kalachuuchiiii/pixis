@@ -1,21 +1,25 @@
-import { Controller } from "react-hook-form";
+import { Controller, type UseFormReturn } from "react-hook-form";
 import type { CreateOpenEndedForm } from "../hooks/useCreateFlashcard";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle } from "lucide-react";
 import type { ComponentProps } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import type { OpenEndedFlashcardForm } from "@pixis/schemas";
+
+
+export type OpenEndedFormType = UseFormReturn<OpenEndedFlashcardForm, any, OpenEndedFlashcardForm>;
 
 export const OpenEndedForm = ({
   openEndedForm,
   ...props
 }: {
-  openEndedForm: CreateOpenEndedForm;
-} & ComponentProps<'form'>) => {
+  openEndedForm: OpenEndedFormType;
+} & ComponentProps<'div'>) => {
   const { control, watch } = openEndedForm;
 
   return (
-    <form { ...props} >
+    <div { ...props} >
       <header className="mb-4">
            <h1 className="text-4xl heading text-5xl">Open-Ended</h1>
       </header>
@@ -66,6 +70,6 @@ export const OpenEndedForm = ({
         💡 Tip: Be specific and clear. Students can write their answers in their
         own words.
       </p>
-    </form>
+    </div>
   );
 };

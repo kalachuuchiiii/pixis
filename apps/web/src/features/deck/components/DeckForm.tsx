@@ -5,29 +5,35 @@ import type { RawDeckForm } from "@pixis/schemas";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { QUICK_TOPICS } from "../data/quickTopics";
 import { Pipette, Tag } from "lucide-react";
-import { VISIBILITY_OPTIONS } from "../data/visibilityOptions";
 import { VisibilityOptionButton } from "@/features/auth/components/ui/VisibilityOptionButton";
-import { memo, type ComponentProps } from "react";
+import { memo, type ComponentProps, type ReactNode } from "react";
 import { ColorPicker } from "react-beautiful-color";
 import { Button } from "@/components/ui/button";
+import { VISIBILITY_OPTIONS } from "@/data/visibility";
 
 type DeckFormProp = UseFormReturn<RawDeckForm, any, RawDeckForm>;
 
 export const DeckForm = memo(
   ({
     deckForm,
+    header,
+    footer,
     ...props
-  }: { deckForm: DeckFormProp } & ComponentProps<"form">) => {
+  }: {
+    deckForm: DeckFormProp;
+    header: ReactNode;
+    footer: ReactNode;
+  } & ComponentProps<'div'>) => {
     const { control, setValue, watch } = deckForm;
     const visibility = watch("visibility");
     const color = watch("color");
     return (
-      <form {...props}>
+      <div {...props}>
+        {header}
         <div
           className="w-full space-y-4"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
-          <header className="flex items-start gap-4">
             <div className="space-y-4 w-full">
               <Controller
                 name="title"
@@ -46,24 +52,9 @@ export const DeckForm = memo(
                 )}
               />
 
-              <Controller
-                name="description"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Description</FieldLabel>
-                    <Input
-                      {...field}
-                      placeholder="What's this deck about? (optional)"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+        
             </div>
-          </header>
+        
           <Controller
             name="topic"
             control={control}
@@ -110,7 +101,7 @@ export const DeckForm = memo(
               </div>
             </ColorPicker>
             <Controller
-              name="description"
+              name="visibility"
               control={control}
               render={({ fieldState }) => (
                 <Field>
@@ -133,7 +124,8 @@ export const DeckForm = memo(
             />
           </div>
         </div>
-      </form>
+        {footer}
+      </div>
     );
   }
 );

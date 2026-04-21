@@ -19,8 +19,8 @@ export const SoftDeleteDeckDialog = ({ deckId }:{ deckId: number }) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant={"destructive"} className="h-full">
+      <AlertDialogTrigger>
+        <Button variant={"destructive"} className=" my-btn">
           <Trash />
         </Button>
       </AlertDialogTrigger>

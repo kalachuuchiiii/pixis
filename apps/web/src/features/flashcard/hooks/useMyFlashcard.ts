@@ -83,18 +83,19 @@ export const useMyFlashcard = () => {
       },
       onSuccess: (result) => {
         console.log(ctx, result);
-        if(!ctx) return;
+        if (!ctx) return;
         queryClient.setQueryData(ctx.queryKey, (old: InfiniteFlashcardData) => {
           return {
             ...old,
             pages: old?.pages.map((p) => ({
-            ...p,
-            totalFlashcards: p.totalFlashcards + 1,
-            flashcards: [...p.flashcards, result.data.flashcard],
-          }))
-          }
+              ...p,
+              totalFlashcards: p.totalFlashcards + 1,
+              flashcards: [...p.flashcards, result.data.flashcard],
+            })),
+          };
         });
       },
+
     });
 
   const { mutate: updateFlashcard, isPending: isUpdatingFlashcard } =
@@ -122,31 +123,12 @@ export const useMyFlashcard = () => {
           error: getErrorMessage,
         });
         return await promise;
-      },
+      },  
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['flashcards']})
+      }
     });
 
-  const { mutate: softDeleteFlashcard, isPending: isSoftDeletingFlashcard } =
-    useMutation({
-      mutationFn: async ({
-        flashcardId,
-        deckId,
-      }: {
-        flashcardId: number;
-        deckId: number;
-      }) => {
-        const promise = api.delete(`/flashcards/${flashcardId}`);
-
-        await toast.promise(promise, {
-          loading: "Deleting flashcard...",
-          success: getSuccessMessage,
-          error: getErrorMessage,
-        });
-        return await promise;
-      },
-      onSuccess: (_res, { deckId }) => {
-        nav(`/app/decks/${deckId}/manage/flashcards`);
-      },
-    });
 
   const { mutate: deleteFlashcard, isPending: isDeletingFlashcard } =
     useMutation({
@@ -154,8 +136,8 @@ export const useMyFlashcard = () => {
         flashcardId,
         deckId,
       }: {
-        flashcardId: number;
-        deckId: number;
+        flashcardId: number | string;
+        deckId: number | string;
       }) => {
         const promise = api.delete(`/flashcards/${flashcardId}/permanent`);
 
@@ -167,15 +149,13 @@ export const useMyFlashcard = () => {
         return await promise;
       },
       onSuccess: (_res, { deckId }) => {
-        nav(`/app/decks/${deckId}/manage/flashcards`);
+         queryClient.invalidateQueries({ queryKey: ['flashcards']})
       },
     });
 
   return {
     createFlashcard,
     updateFlashcard,
-    softDeleteFlashcard,
-    isSoftDeletingFlashcard,
     isUpdatingFlashcard,
     deleteFlashcard,
     isDeletingFlashcard,

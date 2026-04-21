@@ -1,4 +1,9 @@
-import { createContext, useContext } from "react";
+import {
+  createContext,
+  useContext,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
 import { Button } from "@/components/ui/button";
 import type {
   Deck,
@@ -12,8 +17,10 @@ import { useAppSelector } from "@/hooks/useReduxHook";
 import { capitalize } from "lodash";
 import clsx from "clsx";
 
+type DeckDisplay = DeckWithAuthor | DeckWithAuthorAndFlashcardPreview | Deck;
+
 type DeckContextType = {
-  deck: DeckWithAuthorAndFlashcardPreview;
+  deck: DeckDisplay;
 };
 
 const DeckContext = createContext<DeckContextType | null>(null);
@@ -30,23 +37,30 @@ const useDeck = () => {
 const Root = ({
   deck,
   children,
+  ...props
 }: {
-  deck: DeckWithAuthorAndFlashcardPreview;
+  deck: DeckWithAuthorAndFlashcardPreview | Deck;
   children: React.ReactNode;
-}) => {
+} & ComponentProps<"div">) => {
   return (
     <DeckContext.Provider value={{ deck }}>
-      <div className={`w-full mx-auto `}>
-        <div
-          className={clsx(
-            "bg-white border h-full flex flex-col justify-between rounded-2xl p-6 shadow-sm overflow-hidden",
-            `border-l-40 border-l-[${deck.color}]`
-          )}
-        >
-          {children}
-        </div>
-      </div>
+      <div {...props}>{children}</div>
     </DeckContext.Provider>
+  );
+};
+
+const Card = ({ children }: { children: ReactNode }) => {
+  const { deck } = useDeck();
+
+  return (
+    <div
+      className={clsx(
+        "bg-white border h-full flex flex-col justify-between rounded-2xl p-6 shadow-sm overflow-hidden",
+        `border-l-8 border-l-[${deck.color}]`
+      )}
+    >
+      {children}
+    </div>
   );
 };
 
@@ -72,59 +86,23 @@ const Header = () => {
 // --------------------
 // Title
 // --------------------
-const Title = () => {
+const Title = ({ textSize = 17.5 }: { textSize?: number }) => {
   const { deck } = useDeck();
   return (
-    <h1 className="text-[17px] font-semibold text-stone-900 ">
-      {deck.title || <span className="opacity-50">Untitled</span>}
-    </h1>
-  );
-};
-
-// --------------------
-// Description
-// --------------------
-const Description = () => {
-  const { deck } = useDeck();
-  return (
-    <p className="text-[13.5px] text-stone-600 line-clamp-2 mb-5">
-      {deck.description}
-    </p>
-  );
-};
-
-// --------------------
-// Preview Block
-// --------------------
-const Preview = () => {
-  const dtx = useDeck();
-
-  if (!dtx || !dtx.deck.flashcardPreview) {
-    return (
-      <div className="bg-stone-50 text-xs p-2 border border-stone-100 rounded-xl mb-5">
-        No available flashcard preview
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-stone-50 border border-stone-100 rounded-xl mb-5">
-      <span className="text-xs px-2">
-        {capitalize(dtx.deck.flashcardPreview.type.replace("_", " "))}
-      </span>
-      <p className="text-[14px] pb-4 pt-2 px-4 font-medium text-stone-800">
-        {dtx.deck.flashcardPreview.question}
+    <header className="mb-3">
+      <h1 className={`text-[${textSize}px] font-semibold text-stone-900 `}>
+        {deck.title || <span className="opacity-50">Untitled</span>}
+      </h1>
+      <p className="text-xs gap-2">
+        {deck.flashcardCount === 0 ? "No" : deck.flashcardCount}{' '}
+        {deck.flashcardCount >= 2 ? "Flashcards" : "Flashcard"}
       </p>
-    </div>
+    </header>
   );
 };
 
-// --------------------
-// Footer
-// --------------------
 const Footer = () => {
   const { deck } = useDeck();
-  const { user } = useAppSelector((state) => state.profile);
 
   return (
     <div className="flex items-center justify-between pt-3 border-t border-stone-100">
@@ -135,18 +113,9 @@ const Footer = () => {
       </div>
 
       <nav className="space-x-2 flex items-center">
-        {!deck.deletedAt && (
-          <Link to={`/app/decks/${deck.id}`}>
-            <Button className="my-btn">View Deck</Button>
-          </Link>
-        )}
-        {deck.userId === user.id && (
-          <Link to={`/app/decks/${deck.id}/manage`}>
-            <Button variant="outline" className="my-btn">
-              Manage Deck
-            </Button>
-          </Link>
-        )}
+        <Link to={`/app/decks/${deck.id}`}>
+          <Button className="my-btn">View Deck</Button>
+        </Link>
       </nav>
     </div>
   );
@@ -159,21 +128,20 @@ const Footer = () => {
 export const Default = ({ deck }: DeckContextType) => {
   return (
     <Root deck={deck}>
-      <Header />
-      <Title />
-      <Description />
-      <Preview />
-      <Footer />
+      <Card>
+        <Header />
+        <Title />
+        <Footer />
+      </Card>
     </Root>
   );
 };
 
-export const DeckCard = Object.assign(Root, {
+export const DeckDisplay = Object.assign(Root, {
   Root,
   Header,
   Title,
+  Card,
   Default,
-  Description,
-  Preview,
   Footer,
 });

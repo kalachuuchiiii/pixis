@@ -15,9 +15,7 @@ import {
   SORTABLE_DECK_FIELDS,
   SORTING_ORDERS,
   VISIBILITY_ENUM,
-  type CollectionVisibility,
   type SortableCollectionField,
-  type SortableDeckField,
   type SortingOrder,
   type Visibility,
 } from "@pixis/constants";
@@ -44,24 +42,27 @@ const sortableFilterMap = {
 };
 
 export const CollectionFilter = ({
-  collectionFilterHandlers,
+  collectionFilter,
 }: {
-  collectionFilterHandlers: CollectionFilterHandler;
+  collectionFilter: CollectionFilterHandler;
 }) => {
   const {
-    setSortValue,
-    setFilterValue,
-    sort,
-    filter,
+    sortForm,
+    filterForm,
     resetFilter,
-    onUpdate,
+    updateQuery,
+    updateQueryOnEnter,
     search,
     blacklistedFields,
-  } = collectionFilterHandlers;
+  } = collectionFilter;
+  const sort = sortForm.watch();
+  const filter = filterForm.watch();
+  const setFilterValue = filterForm.setValue;
+  const setSortValue = sortForm.setValue;
 
   return (
     <SearchFilterBar
-      handlers={collectionFilterHandlers}
+      filter={collectionFilter}
       className="w-full"
       placeholder="Search decks by title, description, or keywords"
       actions={[
@@ -88,7 +89,6 @@ export const CollectionFilter = ({
                 <div className="flex flex-wrap gap-2">
                   {creationDateFilters.map(
                     ({ op, value, key, description }) => {
-                      console.log(value, filter.createdAt);
                       return (
                         <Button
                           key={key}
@@ -98,10 +98,6 @@ export const CollectionFilter = ({
                               : "outline"
                           }
                           onClick={() => {
-                            if (key === "ALL_TIME") {
-                              setFilterValue("createdAt", undefined);
-                              return;
-                            }
                             setFilterValue("createdAt", { op, value });
                           }}
                         >
@@ -167,13 +163,9 @@ export const CollectionFilter = ({
                   <label className="label mb-3 block">Visibility</label>
                   <Select
                     value={filter?.visibility?.value}
-                    onValueChange={(val: CollectionVisibility | "all") => {
-                      if (val !== "all") {
-                        setFilterValue("visibility.value", val);
-                        return;
-                      }
-                      setFilterValue("visibility", undefined);
-                    }}
+                    onValueChange={(val: Visibility | "*") =>
+                      setFilterValue("visibility.value", val)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -181,7 +173,7 @@ export const CollectionFilter = ({
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Audience</SelectLabel>
-                        <SelectItem key={"all"} value={"all"}>
+                        <SelectItem key={"*"} value={"*"}>
                           All
                         </SelectItem>
                         {VISIBILITY_ENUM.map((vis) => (
@@ -211,7 +203,7 @@ export const CollectionFilter = ({
                 Reset Fllters
               </Button>
               <SheetClose asChild>
-                <Button onClick={onUpdate} className="my-btn ">
+                <Button onClick={updateQuery} className="my-btn ">
                   Apply Filters
                 </Button>
               </SheetClose>

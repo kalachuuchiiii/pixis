@@ -1,92 +1,46 @@
-import { useQueryParam } from "@/hooks/useQueryParam";
+import { useFilter } from "@/hooks/useFilter";
 import type {
-  SortableDeckField,
-  FilterableDeckField,
-  Visibility,
-  SortingOrder,
   DeckFilterOperation,
+  SortableDeckField,
+  SortingOrder,
+  Visibility,
 } from "@pixis/constants";
-import { isDate } from "lodash";
-import React, {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-} from "react";
 import { useForm } from "react-hook-form";
 
 export type SortObject = {
-  field: SortableDeckField;
-  order: SortingOrder;
+  field?: SortableDeckField;
+  order?: SortingOrder;
 };
 
 export type FilterObject = {
   visibility?: {
     op: "eq";
-    value: Visibility | "all";
+    value: Visibility | "*";
   };
   createdAt?: {
     op: DeckFilterOperation;
-    value: string;
+    value: string | '*';
   };
 };
 
-export const useDeckFilter = (blacklistedFields: string[] = []) => {
-  const [query, setQuery] = useState("");
+export const useDeckFilter = () => {
   const sortForm = useForm<SortObject>({
     defaultValues: {
-      field: "createdAt",
-      order: "DESC",
-    },
+      field: 'createdAt',
+      order: 'DESC'
+    }
   });
-  const sort = sortForm.watch();
-  const [search, setSearch] = useState<string>("");
   const filterForm = useForm<FilterObject>({
     defaultValues: {
       visibility: {
-        op: "eq",
-        value: "all",
-      },
-    },
-  });
-  const resetFilter = () => {
-    sortForm.reset();
-    filterForm.reset();
-  };
-  const filter = filterForm.watch();
-
-  const { update } = useQueryParam(blacklistedFields);
-  const onUpdate = () => {
-    update((query) => setQuery(query), { filter, sort, search });
-  };
-  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  }, []);
-
-  const onEnterUpdate = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
-      if (!e.shiftKey && e.key === "Enter") {
-        onUpdate();
+        value: '*',
+        op: 'eq'
       }
-    },
-    [onUpdate]
-  );
+    }
+  });
 
-  return {
-    query,
-    onUpdate,
-    onChange,
-    onEnterUpdate,
-    setSortValue: sortForm.setValue,
-    setFilterValue: filterForm.setValue,
-    search,
-    blacklistedFields,
-    setSearch,
-    sort,
-    filter,
-    resetFilter,
-  };
+  const deckFilter = useFilter({ sortForm, filterForm });
+  return deckFilter;
 };
 
-export type DeckFilterHandlers = ReturnType<typeof useDeckFilter>;
+export type DeckFilterHandler = ReturnType<typeof useDeckFilter>;

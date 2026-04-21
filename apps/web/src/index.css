@@ -22,7 +22,7 @@
 }
 
 .page-container {
-  @apply py-12 px-6 max-w-7xl w-full
+  @apply py-12 px-8 max-w-7xl w-full min-h-screen
 }
 .heading {
   font-weight: 400;
@@ -82,7 +82,7 @@ h1, h2, h3, h4 {
 }
 
 .description {
-  @apply  text-stone-400 mt-1.5
+  @apply  text-stone-400 
 }
 
 .animate-fade-in-down {

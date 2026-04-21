@@ -39,7 +39,6 @@ export class DeckController {
       query,
       user,
     });
-    console.log(data);
     const archivedDecks = z.array(deckSchema).parse(data);
     return {
       archivedDecks,
@@ -78,7 +77,7 @@ export class DeckController {
     const user = authPayloadSchema.parse(request.user);
     const { data, nextPage } = await this.service.getMyDecks({ query, user });
     const cleanData = z
-      .array(deckWithAuthorAndFlashcardPreviewSchema)
+      .array(deckSchema)
       .max(query.limit ?? 10)
       .parse(data);
 
@@ -88,20 +87,27 @@ export class DeckController {
     };
   }
 
-  @Get(':deckId')
+  @Get('/:deckId')
   @UseGuards(AccessGuard)
-  async getMyDeck(@Req() request: Request) {
+  async getDeck(@Req() request: Request) {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authPayloadSchema.parse(request.user);
-    const deck = await this.service.getDeckById({ deckId, user });
+    const deck = await this.service.getDeck({
+      deckId,
+      user,
+      extend: (qb) =>
+        qb
+          .withDeleted().loadRelationCountAndMap('deck.flashcardCount', 'deck.flashcards')
+    });
     console.log(deck);
-    const cleanDeck = deckWithAuthorSchema.parse(deck);
+    const cleanDeck = deckSchema.parse(deck);
+    console.log(cleanDeck)
     return {
       deck: cleanDeck,
     };
   }
 
-  @Patch(':deckId')
+  @Patch('/:deckId')
   @UseGuards(AccessGuard)
   async updateMyDeck(@Req() request: Request) {
     const deckForm = rawDeckFormSchema.parse(request.body);
@@ -139,7 +145,6 @@ export class DeckController {
   @UseGuards(AccessGuard)
   async deleteMyDecks(@Req() request: Request) {
     const user = authPayloadSchema.parse(request.user);
-    console.log(request.body);
     const deckIds = z.array(idSchema).parse(request.body.deckIds);
     await this.service.deleteDecks({ user, deckIds });
     return {

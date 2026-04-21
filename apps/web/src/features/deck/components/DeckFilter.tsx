@@ -1,4 +1,3 @@
-import { useState, useEffect, useMemo, type ComponentProps } from "react";
 import {
   Sheet,
   SheetClose,
@@ -10,12 +9,11 @@ import {
   SheetTrigger,
 } from "../../../components/ui/sheet";
 import { Button } from "../../../components/ui/button";
-import { Filter, ChevronRight, Search, Archive } from "lucide-react";
+import { Filter, ChevronRight } from "lucide-react";
 import {
   SORTABLE_DECK_FIELDS,
   SORTING_ORDERS,
   VISIBILITY_ENUM,
-  type DeckFilterOperation,
   type SortableDeckField,
   type SortingOrder,
   type Visibility,
@@ -30,16 +28,10 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { capitalize } from "lodash";
-import type { DeckFilterHandlers } from "@/features/deck/hooks/useDeckFilter";
+import type { DeckFilterHandler } from "@/features/deck/hooks/useDeckFilter";
 import { creationDateFilters } from "../data/creationDateFilter";
-import {
-  InputGroup,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
 import { sortOrdersMap } from "@/data/sort";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
-import { Link } from "react-router-dom";
 
 export const sortableFieldsMap: Record<SortableDeckField, string> = {
   createdAt: "Creation Date",
@@ -50,23 +42,19 @@ export const sortableFieldsMap: Record<SortableDeckField, string> = {
 };
 
 export const DeckFilter = ({
-  deckFilterHandlers,
-  ...props
-}: { deckFilterHandlers: DeckFilterHandlers } & ComponentProps<"div">) => {
-  const {
-    setSortValue,
-    setFilterValue,
-    sort,
-    filter,
-    resetFilter,
-    onUpdate,
-    search,
-    blacklistedFields
-  } = deckFilterHandlers;
+  deckFilter,
+}: {
+  deckFilter: DeckFilterHandler;
+}) => {
+  const { filterForm, sortForm, resetFilter, updateQuery, blacklistedFields } =
+    deckFilter;
+
+  const sort = sortForm.watch();
+  const filter = filterForm.watch();
 
   return (
     <SearchFilterBar
-      handlers={deckFilterHandlers}
+      filter={deckFilter}
       className="w-full"
       placeholder="Search decks by title, description, or keywords"
       actions={[
@@ -104,10 +92,10 @@ export const DeckFilter = ({
                           }
                           onClick={() => {
                             if (key === "ALL_TIME") {
-                              setFilterValue("createdAt", undefined);
+                              filterForm.setValue("createdAt", undefined);
                               return;
                             }
-                            setFilterValue("createdAt", { op, value });
+                            filterForm.setValue("createdAt", { op, value });
                           }}
                         >
                           {description}
@@ -123,7 +111,7 @@ export const DeckFilter = ({
                   <Select
                     value={sort.field}
                     onValueChange={(val: SortableDeckField) =>
-                      setSortValue("field", val)
+                      sortForm.setValue("field", val)
                     }
                   >
                     <SelectTrigger className="flex-1">
@@ -146,7 +134,7 @@ export const DeckFilter = ({
                   <Select
                     value={sort.order}
                     onValueChange={(val: SortingOrder) =>
-                      setSortValue("order", val)
+                      sortForm.setValue("order", val)
                     }
                   >
                     <SelectTrigger className="w-48">
@@ -167,18 +155,14 @@ export const DeckFilter = ({
               </div>
 
               {/* Visibility */}
-              {!blacklistedFields.includes('visibility') && (
+              {!blacklistedFields.includes("visibility") && (
                 <div>
                   <label className="label mb-3 block">Visibility</label>
                   <Select
                     value={filter?.visibility?.value}
-                    onValueChange={(val: Visibility | "all") => {
-                      if (val !== "all") {
-                        setFilterValue("visibility.value", val);
-                        return;
-                      }
-                      setFilterValue("visibility", undefined);
-                    }}
+                    onValueChange={(val: Visibility | "*") =>
+                      filterForm.setValue("visibility.value", val)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -186,7 +170,7 @@ export const DeckFilter = ({
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Audience</SelectLabel>
-                        <SelectItem key={"all"} value={"all"}>
+                        <SelectItem key={"*"} value={"*"}>
                           All
                         </SelectItem>
                         {VISIBILITY_ENUM.map((vis) => (
@@ -216,7 +200,7 @@ export const DeckFilter = ({
                 Reset Fllters
               </Button>
               <SheetClose asChild>
-                <Button onClick={onUpdate} className="my-btn ">
+                <Button onClick={updateQuery} className="my-btn ">
                   Apply Filters
                 </Button>
               </SheetClose>

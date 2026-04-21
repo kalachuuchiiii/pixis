@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import type { FlashcardFilterHandlers } from "../hooks/useFlashcardFilter";
+import type { FlashcardFilterHandler } from "../hooks/useFlashcardFilter";
 import { ChevronRight, Filter, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -40,15 +40,20 @@ import { capitalize } from "lodash";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
 
 export const FlashcardFilter = ({
-  flashcardFilterHandlers,
+  flashcardFilter,
 }: {
-  flashcardFilterHandlers: FlashcardFilterHandlers;
+  flashcardFilter: FlashcardFilterHandler;
 }) => {
-  const { onUpdate, sort, filter, setFilterValue, setSortValue, resetFilter } =
-    flashcardFilterHandlers;
+  const { sortForm, filterForm, updateQuery, updateQueryOnEnter, resetFilter } =
+    flashcardFilter;
+  const sort = sortForm.watch();
+  const filter = filterForm.watch();
+  const setFilterValue = filterForm.setValue;
+  const setSortValue = sortForm.setValue;
+
   return (
     <SearchFilterBar
-      handlers={flashcardFilterHandlers}
+      filter={flashcardFilter}
       placeholder="Search flashcard by question or answer"
       actions={
         <Sheet>
@@ -116,7 +121,7 @@ export const FlashcardFilter = ({
               <div>
                 <label className="label mb-3 block">Type</label>
                 <Select
-                  value={filter.type.value}
+                  value={filter?.type?.value}
                   onValueChange={(val: FlashcardType) =>
                     setFilterValue("type.value", val)
                   }
@@ -127,12 +132,13 @@ export const FlashcardFilter = ({
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Audience</SelectLabel>
+                      <SelectItem key={'*'} value={"*"}>All</SelectItem>
                       {TYPE_ENUM.map((t: FlashcardType) => (
                         <SelectItem key={t} value={t}>
                           {capitalize(t).replaceAll("_", " ")}
                         </SelectItem>
                       ))}
-                      <SelectItem value="all_type">All</SelectItem>
+                      
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -153,7 +159,7 @@ export const FlashcardFilter = ({
                 Reset Fllters
               </Button>
               <SheetClose asChild>
-                <Button onClick={onUpdate} className="my-btn ">
+                <Button onClick={updateQuery} className="my-btn ">
                   Apply Filters
                 </Button>
               </SheetClose>

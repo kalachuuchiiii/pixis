@@ -1,20 +1,13 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type RawDeckForm, type Id, pageSchema } from '@pixis/schemas';
 import { Deck } from './entities/deck.entity';
-import {
-  Brackets,
-  ILike,
-  In,
-  IsNull,
-  Not,
-  type FindManyOptions,
-  type Repository,
-} from 'typeorm';
+import { Equal, In, IsNull, Not, Or, type Repository } from 'typeorm';
 import type { AuthPayload } from '../auth/dtos/auth.dtos';
 
 import { getNextPage } from '@/common/utils/pagination.util';
@@ -24,16 +17,18 @@ import {
   type PaginateConfig,
   type PaginateQuery,
 } from 'nestjs-paginate';
-import { SORTABLE_DECK_FIELDS } from '@pixis/constants';
+import { SEARCHABLE_DECK_FIELDS, SORTABLE_DECK_FIELDS } from '@pixis/constants';
 import { DataSource } from 'typeorm';
 import { Flashcard } from '../flashcard/entities/flashcard.entity';
+import type { FindOneOptions, SelectQueryBuilder } from 'typeorm';
+import { Collection } from '../collections/entities/collection.entity';
+import { CollectionsService } from '../collections/collections.service';
 import { log } from 'console';
-import type { SelectQueryBuilder } from 'typeorm/browser';
 type DeckIdWithUser = { deckId: number; user: AuthPayload };
 
 const paginationOption: PaginateConfig<Deck> = {
   sortableColumns: [...SORTABLE_DECK_FIELDS],
-  searchableColumns: ['topic', 'title', 'description'],
+  searchableColumns: [...SEARCHABLE_DECK_FIELDS],
   filterableColumns: {
     createdAt: [FilterOperator.GTE, FilterOperator.LTE, FilterOperator.BTW],
     updatedAt: [FilterOperator.GTE, FilterOperator.LTE, FilterOperator.EQ],
@@ -46,7 +41,7 @@ const paginationOption: PaginateConfig<Deck> = {
 @Injectable()
 export class DeckService {
   constructor(
-    @InjectRepository(Deck) private readonly deckRepo: Repository<Deck>,
+    @InjectRepository(Deck) public deckRepo: Repository<Deck>,
     public dataSource: DataSource,
   ) {}
 
@@ -60,7 +55,7 @@ export class DeckService {
     const qb = this.deckRepo
       .createQueryBuilder('deck')
       .withDeleted()
-      .where('deck.userId = :userId AND deck.deletedAt IS NOT NULL', {
+      .where('deck.user.id = :userId AND deck.deletedAt IS NOT NULL', {
         userId: user.id,
       });
     const { data, links } = await paginate(query, qb, paginationOption);
@@ -78,7 +73,7 @@ export class DeckService {
     user: AuthPayload;
   }) {
     const qb = this.deckRepo.createQueryBuilder('deck');
-    qb.where('deck.userId = :userId', { userId: user.id });
+    qb.where('deck.user.id = :userId', { userId: user.id });
 
     const qbWithJoins = this.populateDeckFields(qb);
 
@@ -113,21 +108,7 @@ export class DeckService {
   }
 
   populateDeckFields(qb: SelectQueryBuilder<Deck>) {
-    qb.leftJoinAndSelect('deck.user', 'user')
-      .leftJoinAndMapOne(
-        'deck.flashcardPreview',
-        Flashcard,
-        'flashcard',
-        'flashcard.deckId = deck.id',
-      )
-      .select([
-        'deck',
-        'user.username',
-        'user.nickname',
-        'user.avatarPublicUrl',
-        'flashcard.question',
-        'flashcard.type',
-      ]);
+    qb.leftJoinAndSelect('deck.user', 'user').loadRelationCountAndMap('deck.flashcardCount', 'deck.flashcards');
     return qb;
   }
 
@@ -138,7 +119,10 @@ export class DeckService {
     deckForm: RawDeckForm;
     user: AuthPayload;
   }) {
-    const newDeck = this.deckRepo.create({ ...deckForm, userId: user.id });
+    const newDeck = this.deckRepo.create({
+      ...deckForm,
+      user: { id: user.id },
+    });
     return await this.deckRepo.save(newDeck);
   }
 
@@ -152,7 +136,7 @@ export class DeckService {
     user: AuthPayload;
   }) {
     const result = await this.deckRepo.update(
-      { id: deckId, userId: user.id },
+      { id: deckId, user: { id: user.id } },
       deckForm,
     );
     if (result.affected === 0) {
@@ -161,37 +145,34 @@ export class DeckService {
     return result;
   }
 
-  async getDeckById({ deckId, user }: DeckIdWithUser) {
-    const deck = await this.deckRepo
-      .createQueryBuilder('deck')
-      .withDeleted()
-      .leftJoinAndSelect('deck.user', 'user')
-      .where('deck.id = :id AND deck.userId = :userId', {
-        id: deckId,
-        userId: user.id,
-      })
-      .select([
-        'deck',
-        'user.username',
-        'user.id',
-        'user.nickname',
-        'user.avatarPublicUrl',
-      ])
-      .getOne();
+  async getDeck({
+    deckId,
+    user,
+    extend
+  } : {
+    user?: AuthPayload;
+    deckId: number;
+    extend?: (qb: SelectQueryBuilder<Deck>) => SelectQueryBuilder<Deck>
+  }) {
+    const qb = this.deckRepo.createQueryBuilder('deck').where('deck.id = :deckId', { deckId });
+    
+    const finalQb = extend ? extend(qb) : qb;
+    const deck = await finalQb.getOne();
 
-    if (!deck) {
+    if (!deck || (deck.visibility === 'private' && deck.userId !== user?.id)) {
       throw new NotFoundException({
         message: 'Deck not found.',
         code: 'DECK_NOT_FOUND',
       });
     }
+
     return deck;
   }
 
   async softDeleteDeck({ deckId, user }: DeckIdWithUser) {
     const result = await this.deckRepo.softDelete({
       id: deckId,
-      userId: user.id,
+      user: { id: user.id },
     });
     if (result.affected === 0) {
       throw new NotFoundException({
@@ -203,7 +184,10 @@ export class DeckService {
   }
 
   async restoreDeck({ deckId, user }: DeckIdWithUser) {
-    const result = await this.deckRepo.restore({ id: deckId, userId: user.id });
+    const result = await this.deckRepo.restore({
+      id: deckId,
+      user: { id: user.id },
+    });
     if (result.affected === 0) {
       throw new NotFoundException({
         message: 'Deck not found',
@@ -214,7 +198,11 @@ export class DeckService {
   }
 
   async deleteDeck({ deckId, user }: DeckIdWithUser) {
-    const result = await this.deckRepo.delete({ id: deckId, userId: user.id });
+    const result = await this.deckRepo.delete({
+      id: deckId,
+      user: { id: user.id },
+      deletedAt: Not(IsNull()),
+    });
     if (result.affected === 0) {
       throw new NotFoundException({
         message: 'Deck not found',
@@ -237,7 +225,7 @@ export class DeckService {
       const existing = await repo.find({
         where: {
           id: In(deckIds),
-          userId: user.id,
+          user: { id: user.id },
           deletedAt: Not(IsNull()),
         },
         select: ['id'],
@@ -269,7 +257,7 @@ export class DeckService {
       const existing = await repo.find({
         where: {
           id: In(deckIds),
-          userId: user.id,
+          user: { id: user.id },
           deletedAt: Not(IsNull()),
         },
         select: ['id'],

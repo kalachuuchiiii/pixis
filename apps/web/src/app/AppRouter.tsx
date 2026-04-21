@@ -7,14 +7,13 @@ import Assistant from "@/features/assistant/pages/Assistant";
 import Layout from "@/features/auth/components/Layout";
 import SignIn from "@/features/auth/pages/SignIn";
 import SignUp from "@/features/auth/pages/SignUp";
-import CollectionList from "@/features/collection/pages/CollectionList";
+import CollectionDetails from "@/features/collection/pages/CollectionDetails";
+import MyCollections from "@/features/collection/pages/MyCollections";
 import ArchivedDecks from "@/features/deck/pages/ArchivedDecks";
 import DeckDetails from "@/features/deck/pages/DeckDetails";
-import DeckManager from "@/features/deck/pages/DeckManager";
 import MyDecks from "@/features/deck/pages/MyDecks";
 import PublicDecks from "@/features/deck/pages/PublicDecks";
 import FlashcardList from "@/features/flashcard/pages/FlashcardList";
-import FlashcardManager from "@/features/flashcard/pages/FlashcardManager";
 import LandingPage from "@/pages/LandingPage";
 import { useRoutes, type RouteObject } from "react-router-dom";
 
@@ -39,8 +38,13 @@ const routes: RouteObject[] = [
   {
     element: <AppLayout />,
     children: [
+      
       {
-         element: <CollectionList />,
+         element: <CollectionDetails />,
+         path: `/app/collections/:collectionId`
+      },
+      {
+         element: <MyCollections />,
          path: '/app/collections'
       },
       {
@@ -79,19 +83,10 @@ const routes: RouteObject[] = [
         element: <Settings />,
         path: '/app/settings'
       },
-      {
-        element: <DeckManager />,
-        path: '/app/decks/:deckId/manage'
-      },
        {
         element: <FlashcardList />,
         path: '/app/decks/:deckId/manage/flashcards'
       },
-      {
-        element: <FlashcardManager />,
-        path: '/app/flashcards/:flashcardId/manage'
-      }
-      
     ]
   }
 ];

@@ -21,7 +21,7 @@ export const DeleteDeckDialog = ({ deckId }: { deckId: number }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={"destructive"} className="h-full">
+        <Button variant={"destructive"} className="my-btn">
           <Trash />
         </Button>
       </AlertDialogTrigger>
