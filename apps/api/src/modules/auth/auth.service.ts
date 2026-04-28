@@ -14,13 +14,19 @@ import { type AuthPayload } from './dtos/auth.dtos';
 import env from '@/config/env';
 import { Point } from '../users/entities/point.entity';
 import { Streak } from '../users/entities/streak.entity';
-import { authPayloadSchema, type SignUpForm, type UpdatePasswordForm } from '@pixis/schemas';
+import {
+  authPayloadSchema,
+  type SignUpForm,
+  type UpdatePasswordForm,
+} from '@pixis/schemas';
+import { hashPassword } from '@/common/utils/hash.util';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
-    @InjectRepository(Credential) private readonly credentialRepo: Repository<Credential>,
+    @InjectRepository(Credential)
+    private readonly credentialRepo: Repository<Credential>,
     private readonly datasource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
@@ -43,12 +49,11 @@ export class AuthService {
       const user = manager.create(User, { username });
       await manager.save(User, user);
       const credential = manager.create(Credential, {
-        user,
-        user_id: user.id,
+        user: { id: user.id },
+        password,
       });
-      await credential.hashAndSetPassword(password);
-      const point = manager.create(Point, { user, user_id: user.id });
-      const streak = manager.create(Streak, { user, user_id: user.id });
+      const point = manager.create(Point, { user: { id: user.id }});
+      const streak = manager.create(Streak, { user: { id: user.id } });
 
       await manager.save(Credential, credential);
       await manager.save(Point, point);
@@ -78,7 +83,7 @@ export class AuthService {
   async refresh(authPayload: AuthPayload) {
     const accessToken = await this.jwtService.signAsync(authPayload, {
       expiresIn: env.ACCESS_TOKEN_TTL,
-      secret: env.ACCESS_TOKEN_SECRET
+      secret: env.ACCESS_TOKEN_SECRET,
     });
     return {
       accessToken,
@@ -99,24 +104,31 @@ export class AuthService {
     return user;
   }
 
+  async updatePassword(user: AuthPayload, form: UpdatePasswordForm) {
+    const myUser = await this.userRepo.findOne({
+      where: { id: user.id },
+      relations: ['credential']
+    });
 
-  async updatePassword(user: AuthPayload, form: UpdatePasswordForm){
-    const myUser = await this.userRepo.findOne({ where: { id: user.id }, relations: ['credential'] });
-    if(!myUser){
-      
-      throw new UnauthorizedException({ message: 'User not found', code: 'USER_NOT_FOUND'});
-    }
-    if(!myUser.credential){
-      throw new UnauthorizedException({ message: 'Credential not found', code: 'CREDENTIAL_NOT_FOUND'})
-    }
-    const isPasswordCorrect = await myUser.credential.comparePassword(form.oldPassword);
-    if(!isPasswordCorrect){
-      throw new BadRequestException({ message: 'Passwords do not match.', code: 'PASSWORDS_DO_NOT_MATCH'});
+    if (!myUser || !myUser.credential) {
+      throw new UnauthorizedException({
+        message: 'User not found',
+        code: 'USER_NOT_FOUND',
+      });
     }
 
-    await myUser.credential.hashAndSetPassword(form.newPassword);
+    const isPasswordCorrect = await myUser.credential.comparePassword(
+      form.oldPassword,
+    );
+
+    if (!isPasswordCorrect) {
+      throw new BadRequestException({
+        message: 'Incorrect Password',
+        code: 'INCORRECT_PASSWORD',
+      });
+    }
+
+    myUser.credential.password = await hashPassword(form.newPassword);
     return await this.credentialRepo.save(myUser.credential);
-
   }
-
 }

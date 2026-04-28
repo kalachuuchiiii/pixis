@@ -12,7 +12,6 @@ export const getMe = createAsyncThunk<User, void, { rejectValue: unknown }>(
   async function (_, thunkAPI) {
     try {
       const res = await api.get<User>("/auth/me");
-      console.log(res.data);
       return res.data;
     } catch (e) {
       if (isAxiosError(e)) {
@@ -46,14 +45,12 @@ export const initialState: ProfileState = {
     lastUsernameUpdate: new Date().toISOString(),
     point: {
       id: 0,
-      userId: 0,
       currentPoints: 0,
       highestPoints: 0,
       totalPoints: 0,
     },
     streak: {
       id: 0,
-      userId: 0,
       currentStreak: 0,
       highestStreak: 0,
       totalStreak: 0,
@@ -77,7 +74,6 @@ const profileSlice = createSlice({
       state.error = null;
     },
     updateUserState: (state, action: PayloadAction<User>) => {
-      console.log(action.payload);
       const { data, error } = userSchema.safeParse(action.payload);
       if (error) {
         return;
@@ -98,7 +94,6 @@ const profileSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(getMe.rejected, (state, action) => {
-        console.log(action.payload);
         state.isFetching = false;
         state.isError = true;
         state.error = action.payload ?? action.error;

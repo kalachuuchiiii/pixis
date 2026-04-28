@@ -1,42 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { IsString, IsOptional, IsEnum, MinLength } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, RelationId } from 'typeorm';
 import { Deck } from '@/modules/deck/entities/deck.entity';
-import { TYPE_ENUM } from '@pixis/constants';
+import { TYPE_ENUM, type FlashcardType } from '@pixis/constants';
 import { User } from '@/modules/users/entities/user.entity';
+import { Progress } from './progress.entity';
 
 @Entity('flashcard')
 export class Flashcard {
+
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Deck, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Deck, d => d.flashcards, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'deck_id' })
-  deck!: Deck;
+  deck?: Deck;
 
-  @Column({ name: 'deck_id'})
-  deckId!: number;
+  @RelationId((f: Flashcard) => f.deck)
+  deckId!: Number;
 
-  @Column({ name: 'user_id'})
-  userId!: number;
-
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, u => u.flashcards)
   @JoinColumn({ name: 'user_id'})
   user!: User;
 
+  @RelationId((flashcard: Flashcard) => flashcard.user)
+  userId!: number;
+
   @Column()
-  @IsString() 
-  @MinLength(1)
   question!: string;
 
   @Column()
-  @IsString()
-  @MinLength(1)
   answer!: string;
 
-  @Column({ nullable: true })
-  @IsOptional()
-  @IsEnum(TYPE_ENUM)
-  type!: string;
+  @Column({ nullable: false, enum: TYPE_ENUM })
+  type!: FlashcardType;
+
+  @OneToMany(() => Progress, (prog) => prog.flashcard, { cascade: true, nullable: true })
+  progresses?: Progress[]
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
@@ -46,4 +44,8 @@ export class Flashcard {
 
   @Column({ type: 'text', array: true, nullable: true })
   choices!: string[] | null;
+
+  @Column({ name: 'is_answer_case_sensitive', default: false })
+  isAnswerCaseSensitive!: boolean;
+
 }

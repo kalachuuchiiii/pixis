@@ -1,6 +1,4 @@
 import { SignOutDialog } from "@/features/auth/components/SignOutDialog";
-import z from "zod";
-import store from "@/app/store";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { UpdatePasswordDialog } from "@/features/auth/components/UpdatePasswordDialog";
 

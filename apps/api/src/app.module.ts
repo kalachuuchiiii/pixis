@@ -9,6 +9,10 @@ import { DeckModule } from './modules/deck/deck.module';
 import { FlashcardModule } from './modules/flashcard/flashcard.module';
 import { SessionModule } from './modules/session/session.module';
 import { AttemptModule } from './modules/attempt/attempt.module';
+import { CollectionsModule } from './modules/collections/collections.module';
+import { CollectionDeckModule } from './modules/collection-deck/collection-deck.module';
+import { UserSavedDeckModule } from './modules/user-saved-deck/user-saved-deck.module';
+import { UserSavedCollectionsModule } from './modules/user-saved-collections/user-saved-collections.module';
 import env from './config/env';
 
 @Module({
@@ -19,10 +23,10 @@ import env from './config/env';
       username: env.DB_USER,
       password: env.DB_PASS,
       database: env.DB_NAME,
-      autoLoadEntities: true,
-      synchronize: true,     
+      synchronize: true,
+      autoLoadEntities: true,    
       logging: env.NODE_ENV !== 'production',
-    }), UsersModule, LoggerModule, AuthModule, DeckModule, FlashcardModule, SessionModule, AttemptModule],
+    }), UsersModule, LoggerModule, AuthModule, DeckModule, FlashcardModule, SessionModule, AttemptModule, CollectionsModule, CollectionDeckModule, UserSavedDeckModule, UserSavedCollectionsModule],
   controllers: [AppController],
   providers: [AppService],
 })

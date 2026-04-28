@@ -7,12 +7,113 @@
 
 
 .my-btn {
-  @apply px-6 py-5 
+  @apply px-6 py-5 h-12
 }
 
-.text {
-  @apply text-[10px] font-semibold tracking-[0.18em] uppercase text-stone-400 mb-2
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.page-container {
+  @apply py-12 dark:bg-stone-950 px-8 max-w-7xl w-full min-h-screen 
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #78716c transparent; /* stone-500 */
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #78716c; /* stone-500 */
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #57534e; /* stone-600 for hover */
+}
+
+.heading {
+  @apply font-normal leading-tight font-[DM_Serif_Display] text-stone-900 dark:text-stone-100;
+}
+
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+@keyframes fade-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+h1, h2, h3, h4 {
+  user-select: none;
+}
+
+
+@keyframes fade-out-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+.animate-fade-out-up {
+  animation: fade-out-up 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+.animate-fade-in-right {
+  animation: fade-in-right 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+.description {
+  @apply  text-stone-400 
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 1s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
 
 @theme inline {
     --font-heading: var(--font-sans);
@@ -55,7 +156,12 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+  
 }
+
+  @import "tailwindcss";
+
+
 
 :root {
     --background: oklch(1 0 0);

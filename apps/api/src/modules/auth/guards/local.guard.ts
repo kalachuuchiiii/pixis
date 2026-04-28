@@ -1,13 +1,8 @@
-import { UnauthorizedException, type ExecutionContext } from '@nestjs/common';
+import { Injectable, type ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Observable } from 'rxjs';
-import z from 'zod';
 
-const signInFormSchema = z.object({
-  username: z.string(),
-  password: z.string(),
-});
-
+@Injectable()
 export class LocalGuard extends AuthGuard('local') {
   canActivate(
     context: ExecutionContext,

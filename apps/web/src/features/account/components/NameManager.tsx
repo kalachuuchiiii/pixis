@@ -1,16 +1,31 @@
 import { Button } from "@/components/ui/button";
-import { useNameManager } from "../hooks/useNameManager";
+import { Controller, useForm } from "react-hook-form";
+import { updateUserFormSchema, type UpdateUserForm } from "@pixis/schemas";
+import { useAppSelector } from "@/hooks/useReduxHook";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useProfile } from "../hooks/useProfile";
+import { Field, FieldError, FieldTitle } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export const NameManager = () => {
-  const {
-    user,
-    handleChange,
-    updateUser,
-    isUpdatingUser,
-    isFormValid,
-    form,
-    formError,
-  } = useNameManager();
+
+  const { user } = useAppSelector(state => state.profile);
+  const form = useForm<UpdateUserForm>({
+    resolver: zodResolver(updateUserFormSchema),
+    defaultValues: {
+      username: user.username || '',
+      nickname: user.nickname || ''
+    }
+  });
+  const { handleSubmit } = form;
+  const { updateUser, isUpdatingUser } = useProfile();
+
+  const onSubmit = handleSubmit(async(data) => {
+    await updateUser(data);
+  })
+
+
+
  
   return (
     <div className="mb-16">
@@ -35,44 +50,30 @@ export const NameManager = () => {
             </Button>
           </div>
           {/* Form Fields */}
-          <div className="flex-1 space-y-6">
+          <form onSubmit={onSubmit} className="flex-1 space-y-6">
             <div className="flex w-full gap-2 flex-col items-end">
-              <div className="w-full">
-                <label className="block text-xs font-semibold tracking-[0.125em] uppercase text-stone-400 mb-2">
-                  NICKNAME
-                </label>
-                <input
-                  type="text"
-                  value={form.nickname}
-                  onChange={handleChange}
-                  placeholder={user.nickname ?? 'your nickname'}
-                  name="nickname"
-                  className="w-full bg-stone-50 border border-stone-200 focus:border-stone-400 rounded-2xl px-5 py-3.5 text-[15px] focus:outline-none transition-colors"
-                />
-              </div>
-
-              <div className="w-full">
-                <label className="block text-xs font-semibold tracking-[0.125em] uppercase text-stone-400 mb-2">
-                  USERNAME
-                </label>
-                <div className="flex w-full">
-                  <span className="inline-flex items-center px-5 bg-stone-100 border border-r-0 border-stone-200 rounded-l-2xl text-stone-400 text-sm font-medium">
-                    @
-                  </span>
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder={user.username}
-                    onChange={handleChange}
-                    value={form.username}
-                    className="flex-1 bg-stone-50 border border-stone-200 focus:border-stone-400 rounded-r-2xl px-5 py-3.5 text-[15px] focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-              <p className="text-red-400 text-xs">{formError}</p>
-              <Button disabled = {isUpdatingUser || !isFormValid}  onClick={() => updateUser(form)} className="my-btn">Save Changes</Button>
+              <Controller control={form.control} name="nickname" render={({ field, fieldState}) => (
+                <Field>
+                  <FieldTitle>
+                    Nickname
+                  </FieldTitle>
+                  <Input {...field} placeholder="Your nickname" />
+                  {fieldState.invalid && (<FieldError errors={[fieldState.error]} />)}
+                </Field>
+              )} />
+              <Controller control={form.control} name="username" render={({ field, fieldState }) => (
+                <Field>
+                  <FieldTitle>
+                    Username 
+                  </FieldTitle>
+                  <Input {...field} placeholder="Your username" />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )} />
+  
+              <Button disabled = {isUpdatingUser} type="submit" className="my-btn">Save Changes</Button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

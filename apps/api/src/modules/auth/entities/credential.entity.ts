@@ -8,6 +8,7 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 
 @Entity()
@@ -16,17 +17,22 @@ export class Credential {
   id!: number;
 
   @OneToOne(() => User, (user) => user.credential, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user!: User;
+  user?: User;
 
-  @Column()
-  user_id!: number;
+  @RelationId((c: Credential) => c.user)
+  userId!: number;
 
   @Column()
   password!: string;
 
-  async hashAndSetPassword(password: string) {
-    this.password = await bcrypt.hash(password, 10);
+  @BeforeInsert()
+  async function() {
+    if (!this.password) return;
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  async hashPassword(pass: string) {
+    return await bcrypt.hash(pass, 10);
   }
 
   async comparePassword(password: string) {

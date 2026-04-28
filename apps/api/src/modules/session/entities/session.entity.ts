@@ -1,44 +1,57 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  OneToOne,
+  RelationId,
+  OneToMany,
+} from 'typeorm';
 import { IsBoolean, IsOptional, IsEnum } from 'class-validator';
 import { Deck } from '@/modules/deck/entities/deck.entity';
 import { User } from '@/modules/users/entities/user.entity';
 import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
+import { Progress } from '@/modules/flashcard/entities/progress.entity';
+import { EXAM_MODE_ENUM, type ExamMode } from '@pixis/constants';
 
 @Entity('session')
 export class Session {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Deck)
-  @JoinColumn({ name: 'deck_id' })
-  deck!: Deck;
+  @RelationId((s: Session) => s.user)
+  userId!: number;
 
-  @Column()
-  deck_id!: number;
-
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (u) => u.sessions)
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+  user?: User;
 
-  @Column()
-  user_id!: number;
+  @OneToMany(() => Progress, (p) => p.session, { onDelete: 'CASCADE' })
+  progresses?: Progress[];
 
-  @CreateDateColumn({ name: 'started_at' })
-  startedAt!: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date;
 
-  @Column({ nullable: true })
-  @IsOptional()
-  @IsEnum(['PM', 'SM', 'NM', 'TM'])
-  mode!: string;
+  @Column({
+    nullable: true,
+    type: 'enum',
+    enum: EXAM_MODE_ENUM,
+    default: 'NORMAL',
+  })
+  mode!: ExamMode
 
-  @OneToOne(() => Flashcard, { nullable: true })
-  @JoinColumn({ name: 'last_flashcard_id' })
-  lastFlashcard!: Flashcard;
+  @Column({ type: 'timestamp', nullable: true, name: 'cancelled_at' })
+  cancelledAt!: Date | null;
 
-  @Column({ default: false, name: 'is_cancelled' })
-  @IsBoolean()
-  isCancelled!: boolean;
+  @Column({ nullable: true, type: 'timestamp', name: 'finished_at' })
+  finishedAt!: Date | null;
 
-  @Column({ nullable: true, name: 'finished_at' })
-  finishedAt!: Date;
+  @ManyToOne(() => Deck, (d) => d.sessions, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'deck_id' })
+  deck?: Deck;
+
+  @RelationId((s: Session) => s.deck)
+  deckId!: number;
 }

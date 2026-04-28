@@ -73,7 +73,6 @@ export class AuthController {
 
   @Post('/signout')
   async signOut(@Res({ passthrough: true }) response: Response) {
-    console.log('hey')
     response.clearCookie('refreshToken', {
       httpOnly: true,
       sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',

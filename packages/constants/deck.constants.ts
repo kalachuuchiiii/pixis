@@ -10,10 +10,12 @@ export const DESCRIPTION_MAX = 250;
 
 export const TOTAL_FLASHCARDS_MAX = 100;
 export const TOTAL_FLASHCARDS_MIN = 0;
+export const SORTABLE_DECK_FIELDS = ['updatedAt', 'createdAt', 'popularityScore', 'userSavedDeckCount', 'participantCount'] as const;
+export const FILTERABLE_DECK_FIELDS = ['visibility', 'createdAt', 'updatedAt'] as const;
+export const SEARCHABLE_DECK_FIELDS = ['title'] as const;
+export const DECK_FILTER_OPERATIONS = ['btw', 'lte', 'gte'] as const;
 
-export const VISIBILITY_ENUM = ['public', 'private', 'unlisted'] as const;
-
-export const SORT_BY_ENUM = ['updatedAt', 'createdAt'] as const;
-
-export type SortBy = typeof SORT_BY_ENUM[number];
-export type Visibility = typeof VISIBILITY_ENUM[number];
+export type DeckFilterOperation = typeof DECK_FILTER_OPERATIONS[number];
+export type FilterableDeckField = typeof FILTERABLE_DECK_FIELDS[number]
+export type SortableDeckField = typeof SORTABLE_DECK_FIELDS[number];
+export type SearchableDeckField = typeof SEARCHABLE_DECK_FIELDS[number];

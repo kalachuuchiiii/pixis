@@ -3,13 +3,13 @@ import { FlashcardService } from './flashcard.service';
 import { FlashcardController } from './flashcard.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Flashcard } from './entities/flashcard.entity';
-import { UserFlashcardProgress } from './entities/user-flashcard-progress.entity';
-import { AccessStrategy } from '../auth/strategies/access.strategy';
+import { Progress } from './entities/progress.entity';
 import { Deck } from '../deck/entities/deck.entity';
+import { DeckModule } from '../deck/deck.module';
 
 @Module({
   controllers: [FlashcardController],
-  providers: [FlashcardService, AccessStrategy],
-  imports: [TypeOrmModule.forFeature([Flashcard, UserFlashcardProgress, Deck])]
+  providers: [FlashcardService],
+  imports: [TypeOrmModule.forFeature([Flashcard, Progress, Deck]), DeckModule],
 })
 export class FlashcardModule {}

@@ -9,6 +9,7 @@ import {
 } from "@pixis/constants";
 import z from "zod";
 import { idSchema } from "./user.schemas";
+import { timestampSchema } from "./timestamp.schemas";
 
 export const questionSchema = z.string().min(QUESTION_MIN).max(QUESTION_MAX);
 export const answerSchema = z.string().min(ANSWER_MIN).max(ANSWER_MAX);
@@ -19,22 +20,48 @@ export const choicesSchema = z
 
 export const typeSchema = z.enum(TYPE_ENUM);
 
-export const openEndedFlashcardSchema = z.object({
-    type: z.literal('open_ended'),
+export const openEndedFlashcardSchema = z
+  .object({
+    type: z.literal("open_ended"),
     question: questionSchema,
-    deckId: idSchema,
     answer: answerSchema,
     choices: z.null().catch(null),
-})
+    isAnswerCaseSensitive: z.boolean(),
+  })
+  .strip();
 
-export const closeEndedFlashcardSchema = z.object({
-    type: z.literal('close_ended'),
+export const closeEndedFlashcardSchema = z
+  .object({
+    type: z.literal("close_ended"),
     question: questionSchema,
-    deckId: idSchema,
     answer: answerSchema,
-    choices: choicesSchema
-}).refine((data) => data.choices.includes(data.answer));
+    choices: choicesSchema,
+    isAnswerCaseSensitive: z.literal(false),
+  })
+  .refine((data) => data.choices.includes(data.answer))
+  .strip();
 
-export const flashcardSchema = z.discriminatedUnion('type', [openEndedFlashcardSchema, closeEndedFlashcardSchema]);
+export const flashcardFormSchema = z.discriminatedUnion("type", [
+  openEndedFlashcardSchema,
+  closeEndedFlashcardSchema,
+]);
+
+export const timeSchema = z.object({
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
+});
+
+export const flashcardSchema = flashcardFormSchema
+  .and(timeSchema)
+  .and(
+    z.object({
+      id: idSchema,
+      userId: idSchema,
+      deckId: idSchema
+    })
+  );
+export type CloseEndedFlashcardForm = z.infer<typeof closeEndedFlashcardSchema>;
+export type OpenEndedFlashcardForm = z.infer<typeof openEndedFlashcardSchema>;
 
 export type Flashcard = z.infer<typeof flashcardSchema>;
+export type FlashcardForm = z.infer<typeof flashcardFormSchema>;

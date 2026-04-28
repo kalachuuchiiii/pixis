@@ -1,0 +1,94 @@
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Pencil } from "lucide-react";
+import { DeckForm } from "./DeckForm";
+import { useForm } from "react-hook-form";
+import {
+  rawDeckFormSchema,
+  type Deck,
+  type DeckWithAuthor,
+  type RawDeckForm,
+} from "@pixis/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDeck } from "../hooks/useDeck";
+import { isEqual } from "lodash";
+import { memo } from "react";
+
+export const UpdateDeckDialog = memo(({ deck }: { deck: DeckWithAuthor | Deck }) => {
+  const { title, color, visibility, topic } = deck;
+  const deckForm = useForm<RawDeckForm>({
+    defaultValues: {
+      title,
+      color,
+      visibility,
+      topic,
+    },
+    resolver: zodResolver(rawDeckFormSchema),
+  });
+  const values = deckForm.watch();
+  const { updateDeck, isUpdatingDeck } = useDeck();
+  const hasNoChanges = isEqual(values, {
+    title,
+    color,
+    visibility,
+    topic,
+  });
+
+  return (
+    <Dialog >
+      <DialogTrigger asChild>
+        <Button className="my-btn" variant={"outline"}>
+          <Pencil />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className= {`min-w-8/12 h-[84vh] overflow-y-auto  px-10 py-5 border-l-20 border-l-[${values.color}] rounded-xl`}>
+        <DeckForm
+         
+          deckForm={deckForm}
+          header={
+            <header>
+              <h1 className="text-4xl heading">Update deck</h1>
+              <p className="text-sm description">Update your deck</p>
+            </header>
+          }
+          footer={
+            <footer className="flex gap-2 items-center justify-end">
+              <DialogClose>
+                <Button className="my-btn" variant={"ghost"}>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button
+                disabled={hasNoChanges}
+                className="my-btn"
+                onClick={() => deckForm.reset()}
+                variant={"outline"}
+              >
+                Reset Changes
+              </Button>
+              <DialogClose>
+                <Button
+                  disabled={isUpdatingDeck || hasNoChanges}
+                  onClick={() =>
+                    updateDeck({
+                      rawDeckForm: values,
+                      deckId: Number(deck?.id ?? 0),
+                    })
+                  }
+                  className="my-btn"
+                >
+                  Update
+                </Button>
+              </DialogClose>
+            </footer>
+          }
+        />
+      </DialogContent>
+    </Dialog>
+  );
+});
