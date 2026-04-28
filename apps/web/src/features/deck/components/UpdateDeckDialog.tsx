@@ -40,15 +40,15 @@ export const UpdateDeckDialog = memo(({ deck }: { deck: DeckWithAuthor | Deck })
   });
 
   return (
-    <Dialog>
+    <Dialog >
       <DialogTrigger asChild>
         <Button className="my-btn" variant={"outline"}>
           <Pencil />
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-8/12 p-0">
+      <DialogContent className= {`min-w-8/12 h-[84vh] overflow-y-auto  px-10 py-5 border-l-20 border-l-[${values.color}] rounded-xl`}>
         <DeckForm
-          className={`space-y-4 w-full px-8 py-4 rounded-xl border-l-8 border-l-[${values.color}] `}
+         
           deckForm={deckForm}
           header={
             <header>

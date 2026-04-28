@@ -1,24 +1,54 @@
 import type { ComponentProps, ReactNode } from "react";
 
-export const AppHeader = ({
-  heading,
-  description,
-  beside,
-  ...props
-}: {
+interface AppHeaderProps extends ComponentProps<"header"> {
   heading: string;
+  subheading?: string;
   description: string;
   beside?: ReactNode;
-} & ComponentProps<'div'>) => {
+}
+
+export const AppHeader = ({
+  heading,
+  subheading,
+  description,
+  beside,
+  className = "",
+  ...props
+}: AppHeaderProps) => {
   return (
-    <header className="flex items-end w-full mb-12 my-6 justify-between">
-      <div className="w-6/12" {...props}>
-        <h1 className="heading text-5xl">{heading}</h1>
-        <p className="description">{description}</p>
+    <header
+      className={`flex flex-col lg:flex-row lg:items-end gap-8 lg:gap-12 mb-12 ${className}`}
+      {...props}
+    >
+      {/* Left Content */}
+      <div className="flex-1 space-y-3">
+        <h1
+          className="text-5xl md:text-6xl font-normal tracking-tighter text-stone-900 dark:text-white"
+          style={{ fontFamily: "'DM Serif Display', serif" }}
+        >
+          {heading}
+        </h1>
+
+        {(subheading || description) && (
+          <div className="space-y-2">
+            {subheading && (
+              <h2 className="text-2xl font-medium text-stone-700 dark:text-stone-300">
+                {subheading}
+              </h2>
+            )}
+            <p className="text-lg text-stone-600 dark:text-stone-400 leading-relaxed max-w-2xl">
+              {description}
+            </p>
+          </div>
+        )}
       </div>
-      <div className="w-6/12">
-        {beside}
-      </div>
+
+      {/* Right Side Content */}
+      {beside && (
+        <div className="flex-shrink-0 lg:w-auto lg:self-end">
+          {beside}
+        </div>
+      )}
     </header>
   );
 };

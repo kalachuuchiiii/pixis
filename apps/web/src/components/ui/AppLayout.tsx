@@ -46,6 +46,7 @@ import { useEffect } from "react";
 import { getMe } from "@/features/account/slice/profileSlice";
 import { useAppSelector } from "@/hooks/useReduxHook";
 import AppErrorBoundary from "@/app/AppErrorBoundary";
+import { Pixis, PixisAvatar } from "./PixisAvatar";
 
 // ── Hardcoded user data ────────────────────────────────────────────────────
 
@@ -156,8 +157,8 @@ const NavItem = ({
             `flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-colors w-full
              ${
                a
-                 ? "bg-stone-900 text-white"
-                 : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
+                 ? "bg-stone-900  text-white"
+                 : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-400 hover:bg-stone-100"
              }`
           }
           style={{ fontFamily: "'DM Sans', sans-serif" }}
@@ -179,25 +180,21 @@ const AppSidebar = () => {
 
   return (
     <Sidebar
-      className="border-r border-stone-100"
+      className="border-r dark:border-stone-800 border-stone-100"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Header — brand */}
-      <SidebarHeader className="px-4 py-5 border-b border-stone-100">
+      <SidebarHeader className="px-4 py-5 border-b dark:border-stone-800 border-stone-100">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-stone-900 flex items-center justify-center flex-shrink-0">
-            <BoltIcon />
-          </div>
-          <span className="text-[16px] font-semibold text-stone-900 tracking-tight">
-            pixis
-          </span>
+          <PixisAvatar />
+          <Pixis/>
         </div>
       </SidebarHeader>
 
       <SidebarContent className="px-3 py-3 flex flex-col gap-1">
         {/* Primary — core study actions */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase text-stone-300 px-3 mb-1">
+          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase dark:text-stone-200 text-stone-300 px-3 mb-1">
             Study
           </SidebarGroupLabel>
           <SidebarMenu>
@@ -221,7 +218,7 @@ const AppSidebar = () => {
       </SidebarContent>
 
       {/* Footer — account / system (least frequent, bottom) */}
-      <SidebarFooter className="px-3 py-3 border-t border-stone-100">
+      <SidebarFooter className="px-3 py-3 dark:border-stone-800 border-t border-stone-100">
         <SidebarMenu>
           {NAV_SYSTEM.map((item) => (
             <NavItem key={item.to} item={item} />
@@ -319,7 +316,7 @@ const Topbar = () => {
 
   return (
     <header
-      className="h-[60px] border-b border-stone-100 bg-white/90 backdrop-blur-md flex items-center justify-between px-5 gap-4 sticky top-0 z-40"
+      className="h-[60px] border-b border-stone-100 dark:border-stone-800 s backdrop-blur-md flex items-center justify-between px-5 gap-4 sticky top-0 z-40"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Left: hamburger trigger (mobile / collapse) */}
@@ -379,9 +376,9 @@ const AppLayout = () => {
   }, []);
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider  defaultOpen={true}>
       <div
-        className="flex min-h-screen w-full bg-white"
+        className="flex min-h-screen  w-full"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         <AppSidebar />

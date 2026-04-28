@@ -13,15 +13,18 @@ import ArchivedDecks from "@/features/deck/pages/ArchivedDecks";
 import DeckDetails from "@/features/deck/pages/DeckDetails";
 import MyDecks from "@/features/deck/pages/MyDecks";
 import PublicDecks from "@/features/deck/pages/PublicDecks";
+import Exam from "@/features/exam/pages/Exam";
 import FlashcardList from "@/features/flashcard/pages/FlashcardList";
+import MySavedCollections from "@/features/user-saved-collection/pages/MySavedCollections";
+import MySavedDecks from "@/features/user-saved-deck/pages/MySavedDecks";
 import LandingPage from "@/pages/LandingPage";
 import { useRoutes, type RouteObject } from "react-router-dom";
 
 const routes: RouteObject[] = [
   {
     element: <LandingPage />,
-    path: '/'
-  }, 
+    path: "/",
+  },
   {
     element: <Layout />,
     children: [
@@ -35,62 +38,73 @@ const routes: RouteObject[] = [
       },
     ],
   },
+   {
+        element: <Exam />,
+        path: "/app/exam/:mode/:sessionId",
+      },
   {
     element: <AppLayout />,
     children: [
-      
+     
       {
-         element: <CollectionDetails />,
-         path: `/app/collections/:collectionId`
+        element: <MySavedCollections />,
+        path: `/app/saved-collections`,
       },
       {
-         element: <MyCollections />,
-         path: '/app/collections'
+        element: <MySavedDecks />,
+        path: `/app/saved-decks`,
       },
       {
-          element: <DeckDetails />,
-          path: '/app/decks/:deckId'
+        element: <CollectionDetails />,
+        path: `/app/collections/:collectionId`,
+      },
+      {
+        element: <MyCollections />,
+        path: "/app/collections",
+      },
+      {
+        element: <DeckDetails />,
+        path: "/app/decks/:deckId",
       },
       {
         element: <ArchivedDecks />,
-        path: '/app/archived/decks'
+        path: "/app/archived/decks",
       },
       {
         element: <Assistant />,
-        path: '/app'
+        path: "/app",
       },
       {
         element: <MyDecks />,
-        path: '/app/decks'
+        path: "/app/decks",
       },
       {
         element: <MyActivity />,
-        path: '/app/activity'
+        path: "/app/activity",
       },
       {
         element: <Leaderboard />,
-        path: '/app/leaderboard'
+        path: "/app/leaderboard",
       },
       {
         element: <PublicDecks />,
-        path: '/app/explore'
+        path: "/app/explore",
       },
       {
         element: <MyProfile />,
-        path: '/app/profile'
+        path: "/app/profile",
       },
       {
         element: <Settings />,
-        path: '/app/settings'
+        path: "/app/settings",
       },
-       {
+      {
         element: <FlashcardList />,
-        path: '/app/decks/:deckId/manage/flashcards'
+        path: "/app/decks/:deckId/manage/flashcards",
       },
-    ]
-  }
+    ],
+  },
 ];
-
 
 const AppRouter = () => {
   return useRoutes(routes);

@@ -92,16 +92,12 @@ export class DeckController {
   async getDeck(@Req() request: Request) {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authPayloadSchema.parse(request.user);
-    const deck = await this.service.getDeck({
+    const deck = await this.service.findAccessibleDeck({
       deckId,
-      user,
-      extend: (qb) =>
-        qb
-          .withDeleted().loadRelationCountAndMap('deck.flashcardCount', 'deck.flashcards')
-    });
-    console.log(deck);
+      user });
+   console.log(deck);
     const cleanDeck = deckSchema.parse(deck);
-    console.log(cleanDeck)
+ console.log(cleanDeck);
     return {
       deck: cleanDeck,
     };

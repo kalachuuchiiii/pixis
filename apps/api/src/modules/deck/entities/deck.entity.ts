@@ -1,17 +1,41 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, DeleteDateColumn, OneToOne, OneToMany, RelationId } from 'typeorm';
-import { IsString, IsOptional, IsEnum, IsBoolean, MinLength, MaxLength } from 'class-validator';
-import  { User } from '@/modules/users/entities/user.entity';
-import { DESCRIPTION_MAX, TITLE_MAX, TITLE_MIN, VISIBILITY_ENUM, type Visibility } from '@pixis/constants';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  DeleteDateColumn,
+  OneToOne,
+  OneToMany,
+  RelationId,
+} from 'typeorm';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
+import { User } from '@/modules/users/entities/user.entity';
+import {
+  DESCRIPTION_MAX,
+  TITLE_MAX,
+  TITLE_MIN,
+  VISIBILITY_ENUM,
+  type Visibility,
+} from '@pixis/constants';
 import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
 import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
-
+import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
+import { Session } from '@/modules/session/entities/session.entity';
 
 @Entity('deck')
 export class Deck {
-
-  @DeleteDateColumn({ name: 'deleted_at'})
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
-  
+
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -22,23 +46,32 @@ export class Deck {
   @RelationId((d: Deck) => d.user)
   userId!: number;
 
-  @OneToMany(() => CollectionDeck, cd => cd.deck, { onDelete: 'CASCADE' })
-  collectionDecks?: CollectionDeck[]
+  @OneToMany(() => Session, s => s.deck, { onDelete: 'CASCADE' })
+  sessions?: Session[];
 
-  @OneToMany(() => Flashcard, f => f.deck, { onDelete: 'CASCADE'})
-  flashcards?: Flashcard[]
+  @OneToMany(() => CollectionDeck, (cd) => cd.deck, { onDelete: 'CASCADE' })
+  collectionDecks?: CollectionDeck[];
+
+  @OneToMany(() => Flashcard, (f) => f.deck, { onDelete: 'CASCADE' })
+  flashcards?: Flashcard[];
+
+  @RelationId((d: Deck) => d.flashcards)
+  flashcardIds!: number[];
 
   @Column({ name: 'flashcard_count', nullable: false, default: 0 })
   flashcardCount!: number;
 
   @Column({ type: 'text', nullable: true })
   topic!: string;
-  
+
   @Column({ name: 'participant_count', default: 0 })
   participantCount!: number;
 
-  @Column({ name: 'saved_count', default: 0 })
-  savedCount!: number;
+  @OneToMany(() => UserSavedDeck, (usd) => usd.deck, { onDelete: 'CASCADE' })
+  userSavedDecks?: UserSavedDeck[];
+
+  @Column({ name: 'user_saved_deck_count', default: 0 })
+  userSavedDeckCount!: number;
 
   @Column()
   title!: string;
@@ -53,8 +86,8 @@ export class Deck {
   visibility!: Visibility;
 
   @Column({ default: 0, name: 'popularity_score' })
-  popularityScore!: number
+  popularityScore!: number;
 
-  @Column({ nullable: true, name: 'color', default: "#000000" })
+  @Column({ nullable: true, name: 'color', default: '#000000' })
   color!: string; // e.g., '#FF5733'
 }

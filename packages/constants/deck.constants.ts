@@ -10,7 +10,7 @@ export const DESCRIPTION_MAX = 250;
 
 export const TOTAL_FLASHCARDS_MAX = 100;
 export const TOTAL_FLASHCARDS_MIN = 0;
-export const SORTABLE_DECK_FIELDS = ['updatedAt', 'createdAt', 'popularityScore', 'savedCount', 'participantCount'] as const;
+export const SORTABLE_DECK_FIELDS = ['updatedAt', 'createdAt', 'popularityScore', 'userSavedDeckCount', 'participantCount'] as const;
 export const FILTERABLE_DECK_FIELDS = ['visibility', 'createdAt', 'updatedAt'] as const;
 export const SEARCHABLE_DECK_FIELDS = ['title'] as const;
 export const DECK_FILTER_OPERATIONS = ['btw', 'lte', 'gte'] as const;

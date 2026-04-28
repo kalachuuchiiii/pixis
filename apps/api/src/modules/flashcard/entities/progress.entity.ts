@@ -1,45 +1,31 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn, Index, RelationId } from 'typeorm';
 import { Flashcard } from './flashcard.entity';
 import { User } from '@/modules/users/entities/user.entity';
+import { Session } from '@/modules/session/entities/session.entity';
 
 @Entity('progress')
 export class Progress {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Session, s => s.progresses, { onDelete: 'CASCADE' })
+  session?: Session;
+
+  @RelationId((p: Progress) => p.session)
+  sessionId!: number;
+
+  @ManyToOne(() => User, u => u.progresses, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: User;
 
   @RelationId((p: Progress) => p.user)
   userId!: number;
 
-  @ManyToOne(() => Flashcard, (flashcard) => flashcard.progress, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'flashcard_id' }) 
-  flashcard?: Flashcard;
 
   @RelationId((p: Progress) => p.flashcard)
   flashcardId!: number;
-  
-  @Column({ nullable: true, name: 'next_due_at' })
-  nextDueAt!: Date;
 
-  @Column({ default: 1, name: 'interval_days' })
-  intervalDays!: number;
-
-  @Column({ type: 'float', default: 2.5, name: 'ease_factor' })
-  easeFactor!: number;
-
-  @Column({ default: 0 })
-  repetitions!: number;
-
-  @Column({ default: 0 })
-  lapses!: number;
-
-  @Column({ nullable: true, name: 'last_reviewed_at' })
-  lastReviewedAt!: Date;
-
-
-  @Column({ name: 'last_rating' })
-  lastRating!: number; // 1=Hard, 2=Good, 3=Easy
+  @ManyToOne(() => Flashcard, (flashcard) => flashcard.progresses, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'flashcard_id' }) 
+  flashcard?: Flashcard;
 }

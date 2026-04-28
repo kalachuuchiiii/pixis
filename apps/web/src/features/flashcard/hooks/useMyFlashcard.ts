@@ -82,18 +82,9 @@ export const useMyFlashcard = () => {
         return await promise;
       },
       onSuccess: (result) => {
-        console.log(ctx, result);
-        if (!ctx) return;
-        queryClient.setQueryData(ctx.queryKey, (old: InfiniteFlashcardData) => {
-          return {
-            ...old,
-            pages: old?.pages.map((p) => ({
-              ...p,
-              totalFlashcards: p.totalFlashcards + 1,
-              flashcards: [...p.flashcards, result.data.flashcard],
-            })),
-          };
-        });
+        queryClient.invalidateQueries({ queryKey: ['flashcards'] })
+      
+  
       },
 
     });

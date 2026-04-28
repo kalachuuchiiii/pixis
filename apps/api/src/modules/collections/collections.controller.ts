@@ -31,7 +31,7 @@ export class CollectionsController {
     @Paginate() query: PaginateQuery,
   ) {
     const { data, nextPage, totalItems } =
-      await this.collectionsService.getCollections({ query });
+      await this.collectionsService.getPublicCollections({ query });
     const cleanCollections = z.array(collectionSchema).parse(data);
     return {
       collections: cleanCollections,
@@ -68,17 +68,6 @@ export class CollectionsController {
     };
   }
 
-  @Delete('/:collectionId')
-  @UseGuards(AccessGuard)
-  async softDeleteCollection(@Req() request: Request) {
-    const collectionId = idSchema.parse(request.params.collectionId);
-    const user = authPayloadSchema.parse(request.user);
-    await this.collectionsService.softDeleteCollection({ collectionId, user });
-    return {
-      message: 'Collection deleted',
-    };
-  }
-
   @Delete('/:collectionId/permanent')
   @UseGuards(AccessGuard)
   async deleteCollection(@Req() request: Request) {
@@ -106,27 +95,16 @@ export class CollectionsController {
     };
   }
 
-  @Patch('/:collectionId/restore')
-  @UseGuards(AccessGuard)
-  async restoreCollection(@Req() request: Request) {
-    const collectionId = idSchema.parse(request.params.collectionId);
-    const user = authPayloadSchema.parse(request.user);
-    await this.collectionsService.restoreCollection({ collectionId, user });
-    return {
-      message: 'Collection restored',
-    };
-  }
-
   @Get('/:collectionId')
   @UseGuards(AccessGuard)
   async getCollection(@Req() request: Request) {
     const collectionId = idSchema.parse(request.params.collectionId);
     const user = authPayloadSchema.parse(request.user);
-    const collection = await this.collectionsService.getCollection({
-      collectionId,
-      user,
-      options: (qb) => qb.leftJoinAndSelect('collection.user', 'user'),
-    });
+    const collection =
+      await this.collectionsService.findAccessibleCollectionById({
+        collectionId,
+        user,
+      });
 
     const cleanCollection = collectionSchema.parse(collection);
     return {

@@ -56,7 +56,7 @@ export class FlashcardController {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authPayloadSchema.parse(request.user);
     const { data, nextPage, totalItems } =
-      await this.flashcardService.getFlashcards({
+      await this.flashcardService.findAccessibleFlashcards({
         deckId,
         query,
         user
@@ -77,11 +77,11 @@ export class FlashcardController {
     const flashcardId = idSchema.parse(request.params.flashcardId);
     const user = authPayloadSchema.parse(request.user);
 
-    const flashcard = await this.flashcardService.getFlashcard({
+    const flashcard = await this.flashcardService.findAccessibleFlashcardById({
       flashcardId,
       user,
     });
-    console.log(flashcard, 'flash');
+
     const cleanFlashcard = flashcardSchema.parse(flashcard);
     return {
       flashcard: cleanFlashcard,

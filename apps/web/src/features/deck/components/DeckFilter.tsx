@@ -37,7 +37,7 @@ export const sortableFieldsMap: Record<SortableDeckField, string> = {
   createdAt: "Creation Date",
   updatedAt: "Updated Date",
   popularityScore: "Popularity",
-  savedCount: "Saved count",
+  userSavedDeckCount: "Saved count",
   participantCount: "Participants",
 };
 
@@ -81,7 +81,6 @@ export const DeckFilter = ({
                 <div className="flex flex-wrap gap-2">
                   {creationDateFilters.map(
                     ({ op, value, key, description }) => {
-                      console.log(value, filter.createdAt);
                       return (
                         <Button
                           key={key}

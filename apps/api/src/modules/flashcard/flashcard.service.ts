@@ -7,7 +7,7 @@ import type { FlashcardForm, Query } from '@pixis/schemas';
 import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck } from '../deck/entities/deck.entity';
-import type { Repository } from 'typeorm';
+import { Equal, Not, type Repository } from 'typeorm';
 import { Flashcard } from './entities/flashcard.entity';
 import { FilterOperator, paginate, type PaginateQuery } from 'nestjs-paginate';
 import type { SelectQueryBuilder } from 'typeorm/browser';
@@ -90,9 +90,12 @@ export class FlashcardService {
     return await this.flashcardRepo.save(newFlashcard);
   }
 
-  async getFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
+  async findAccessibleFlashcardById({ flashcardId, user }: FlashcardIdAndUser) {
     const flashcard = await this.flashcardRepo.findOne({
-      where: { id: flashcardId, userId: user.id },
+      where: [
+        { id: flashcardId, user: { id: user.id } },
+        { id:  flashcardId, deck: { visibility: Not(Equal('private'))}}
+      ],
       withDeleted: true,
     });
     if (!flashcard) {
@@ -101,7 +104,6 @@ export class FlashcardService {
         code: 'FLASHCARD_NOT_FOUND',
       });
     }
-    console.log(flashcard)
     return flashcard;
   }
 
@@ -155,23 +157,24 @@ export class FlashcardService {
     return result;
   }
 
-  async getFlashcards({
+  async findAccessibleFlashcards({
     deckId,
     query,
     user,
     extend,
   }: {
     deckId: number;
-    user?: AuthPayload;
+    user: AuthPayload;
     query: PaginateQuery;
     extend?: (
       query: SelectQueryBuilder<Flashcard>,
     ) => SelectQueryBuilder<Flashcard>;
   }) {
-    const deck = await this.deckService.getDeck({ deckId, user, extend: (qb) => qb.withDeleted() })
     const qb = this.flashcardRepo
       .createQueryBuilder('flashcard')
-      .where('flashcard.deck.id = :deckId', { deckId });
+      .leftJoin('flashcard.deck', 'deck')
+      .where('deck.id = :deckId', { deckId })
+      .andWhere('(deck.visibility != :visibility OR deck.user.id = :userId)', { visibility: 'private', userId: user.id});
 
     const {
       data,
@@ -185,7 +188,6 @@ export class FlashcardService {
       },
       searchableColumns: [...SEARCHABLE_FLASHCARD_FIELDS],
     });
-    console.log(data);
     return {
       data,
       totalItems,

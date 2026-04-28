@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   RelationId,
 } from 'typeorm';
-import { Deck } from './deck.entity';
+import { Deck } from '../../deck/entities/deck.entity';
 import { User } from '@/modules/users/entities/user.entity';
 @Entity('user_saved_deck')
 export class UserSavedDeck {

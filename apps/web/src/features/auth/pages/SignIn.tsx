@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const SignIn = () => {
   const { signIn, isSigningIn } = useAuth();
+
   const form = useForm<SignInForm>({
     defaultValues: {
       username: "",
@@ -17,62 +18,75 @@ const SignIn = () => {
     resolver: zodResolver(signInFormSchema),
   });
 
-  const { handleSubmit } = form;
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = form.handleSubmit(async (data) => {
     await signIn(data);
   });
 
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      {/* Heading */}
-      <h2
-        className="text-[26px] font-normal text-stone-900 mb-1.5"
-        style={{ fontFamily: "'DM Serif Display', serif" }}
-      >
-        Welcome back
-      </h2>
-      <p className="text-sm text-stone-400 mb-8">
-        Sign in to continue learning.
-      </p>
+    <div className="space-y-8" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      {/* Header */}
+      <div>
+        <h2
+          className="text-[26px] font-normal text-stone-900 dark:text-white mb-1"
+          style={{ fontFamily: "'DM Serif Display', serif" }}
+        >
+          Welcome back
+        </h2>
+        <p className="text-sm text-stone-500 dark:text-stone-400">
+          Sign in to continue learning.
+        </p>
+      </div>
 
-      <form onSubmit={onSubmit} className="space-y-3.5">
-        {/* Username */}
+      {/* Form */}
+      <form onSubmit={onSubmit} className="space-y-5">
         <Controller
           control={form.control}
           name="username"
           render={({ field, fieldState }) => (
             <Field>
               <FieldLabel>Username</FieldLabel>
-              <Input {...field} placeholder="Your username" />
+              <Input
+                {...field}
+                placeholder="Your username"
+                className="dark:bg-stone-900 dark:border-stone-700"
+              />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
+
         <Controller
           control={form.control}
           name="password"
           render={({ field, fieldState }) => (
             <Field>
               <FieldLabel>Password</FieldLabel>
-              <Input {...field} type="password" placeholder="******" />
+              <Input
+                {...field}
+                type="password"
+                placeholder="••••••••"
+                className="dark:bg-stone-900 dark:border-stone-700"
+              />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
 
-   
-        {/* Submit */}
-        <Button className="my-btn w-full" type="submit" disabled={isSigningIn}>
-          Sign in
+        <Button
+          type="submit"
+          className="w-full h-11 text-base font-medium"
+          disabled={isSigningIn}
+        >
+          {isSigningIn ? "Signing in..." : "Sign in"}
         </Button>
       </form>
 
-      {/* Footer */}
-      <p className="text-center text-[13px] text-stone-400 mt-7">
-        Doesn't have an account?{" "}
+      {/* Footer Link */}
+      <p className="text-center text-sm text-stone-500 dark:text-stone-400">
+        Don't have an account?{" "}
         <NavLink
           to="/sign-up"
-          className="text-stone-800 font-medium hover:text-stone-600 transition-colors"
+          className="text-stone-900 dark:text-white font-medium hover:underline transition-all"
         >
           Create one
         </NavLink>

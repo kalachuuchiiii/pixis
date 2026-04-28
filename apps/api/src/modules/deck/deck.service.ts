@@ -1,42 +1,22 @@
 import {
-  BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { type RawDeckForm, type Id, pageSchema } from '@pixis/schemas';
+import { type RawDeckForm } from '@pixis/schemas';
 import { Deck } from './entities/deck.entity';
-import { Equal, In, IsNull, Not, Or, type Repository } from 'typeorm';
+import {  In, IsNull, Not, type Repository } from 'typeorm';
 import type { AuthPayload } from '../auth/dtos/auth.dtos';
-
 import { getNextPage } from '@/common/utils/pagination.util';
 import {
-  FilterOperator,
   paginate,
-  type PaginateConfig,
   type PaginateQuery,
 } from 'nestjs-paginate';
-import { SEARCHABLE_DECK_FIELDS, SORTABLE_DECK_FIELDS } from '@pixis/constants';
 import { DataSource } from 'typeorm';
-import { Flashcard } from '../flashcard/entities/flashcard.entity';
-import type { FindOneOptions, SelectQueryBuilder } from 'typeorm';
-import { Collection } from '../collections/entities/collection.entity';
-import { CollectionsService } from '../collections/collections.service';
-import { log } from 'console';
+import type {  SelectQueryBuilder } from 'typeorm';
+import { deckPaginationConfig } from '@/config/pagination.config';
 type DeckIdWithUser = { deckId: number; user: AuthPayload };
 
-const paginationOption: PaginateConfig<Deck> = {
-  sortableColumns: [...SORTABLE_DECK_FIELDS],
-  searchableColumns: [...SEARCHABLE_DECK_FIELDS],
-  filterableColumns: {
-    createdAt: [FilterOperator.GTE, FilterOperator.LTE, FilterOperator.BTW],
-    updatedAt: [FilterOperator.GTE, FilterOperator.LTE, FilterOperator.EQ],
-    visibility: [FilterOperator.EQ],
-  },
-  defaultLimit: 10,
-  defaultSortBy: [['createdAt', 'DESC']],
-};
 
 @Injectable()
 export class DeckService {
@@ -58,7 +38,7 @@ export class DeckService {
       .where('deck.user.id = :userId AND deck.deletedAt IS NOT NULL', {
         userId: user.id,
       });
-    const { data, links } = await paginate(query, qb, paginationOption);
+    const { data, links } = await paginate(query, qb, deckPaginationConfig);
     return {
       data,
       nextPage: getNextPage(links, query.page),
@@ -80,7 +60,7 @@ export class DeckService {
     const { data, links } = await paginate(
       query,
       qbWithJoins,
-      paginationOption,
+      deckPaginationConfig,
     );
 
     return {
@@ -94,9 +74,9 @@ export class DeckService {
     const qbWithJoins = this.populateDeckFields(qb);
 
     const { data, links } = await paginate(query, qbWithJoins, {
-      ...paginationOption,
+      ...deckPaginationConfig,
       filterableColumns: {
-        ...paginationOption.filterableColumns,
+        ...deckPaginationConfig.filterableColumns,
         visibility: [],
       },
     });
@@ -108,7 +88,10 @@ export class DeckService {
   }
 
   populateDeckFields(qb: SelectQueryBuilder<Deck>) {
-    qb.leftJoinAndSelect('deck.user', 'user').loadRelationCountAndMap('deck.flashcardCount', 'deck.flashcards');
+    qb.leftJoinAndSelect('deck.user', 'user').loadRelationCountAndMap(
+      'deck.flashcardCount',
+      'deck.flashcards',
+    );
     return qb;
   }
 
@@ -145,27 +128,35 @@ export class DeckService {
     return result;
   }
 
-  async getDeck({
+  async findAccessibleDeck({
     deckId,
     user,
-    extend
-  } : {
-    user?: AuthPayload;
+    throwOnNotFound = false,
+  }: {
+    user: AuthPayload;
     deckId: number;
-    extend?: (qb: SelectQueryBuilder<Deck>) => SelectQueryBuilder<Deck>
+    throwOnNotFound?: boolean;
   }) {
-    const qb = this.deckRepo.createQueryBuilder('deck').where('deck.id = :deckId', { deckId });
+    const qb = this.deckRepo
+      .createQueryBuilder('deck')
+      .leftJoin('deck.user', 'user')
+      .where('deck.id = :deckId', { deckId })
+      .andWhere('(deck.visibility != :visibility OR user.id = :userId)', {
+        visibility: 'private',
+        userId: user.id,
+      })
+      .loadRelationCountAndMap('deck.userSavedDeckCount', 'deck.userSavedDecks')
+      .loadRelationCountAndMap('deck.flashcardCount', 'deck.flashcards')
+      .leftJoinAndMapOne('deck.savedByMe', 'deck.userSavedDecks', 'usd', 'usd.user.id = :userId', { userId: user.id }).select(['deck', 'usd.id']);
     
-    const finalQb = extend ? extend(qb) : qb;
-    const deck = await finalQb.getOne();
-
-    if (!deck || (deck.visibility === 'private' && deck.userId !== user?.id)) {
+    const deck = await qb.getOne();
+    if (!deck && throwOnNotFound) {
       throw new NotFoundException({
-        message: 'Deck not found.',
+        message: 'Deck not found',
         code: 'DECK_NOT_FOUND',
       });
+      
     }
-
     return deck;
   }
 

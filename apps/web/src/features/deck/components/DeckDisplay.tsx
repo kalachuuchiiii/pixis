@@ -11,11 +11,9 @@ import type {
   DeckWithAuthorAndFlashcardPreview,
 } from "@pixis/schemas";
 import { formatDistanceToNow } from "date-fns";
-import { Calendar } from "lucide-react";
+import { Calendar, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "@/hooks/useReduxHook";
-import { capitalize } from "lodash";
-import clsx from "clsx";
+import { clsx } from "clsx";
 
 type DeckDisplay = DeckWithAuthor | DeckWithAuthorAndFlashcardPreview | Deck;
 
@@ -27,7 +25,7 @@ const DeckContext = createContext<DeckContextType | null>(null);
 
 const useDeck = () => {
   const ctx = useContext(DeckContext);
-  if (!ctx) throw new Error("Use inside DeckPreviewCard");
+  if (!ctx) throw new Error("useDeck must be used inside DeckDisplay");
   return ctx;
 };
 
@@ -37,29 +35,42 @@ const useDeck = () => {
 const Root = ({
   deck,
   children,
+  className,
   ...props
 }: {
-  deck: DeckWithAuthorAndFlashcardPreview | Deck;
-  children: React.ReactNode;
+  deck: DeckDisplay;
+  children: ReactNode;
 } & ComponentProps<"div">) => {
   return (
     <DeckContext.Provider value={{ deck }}>
-      <div {...props}>{children}</div>
+      <div className={clsx("group", className)} {...props}>
+        {children}
+      </div>
     </DeckContext.Provider>
   );
 };
 
+// --------------------
+// Card (Main Deck Card with Stack Effect)
+// --------------------
 const Card = ({ children }: { children: ReactNode }) => {
   const { deck } = useDeck();
 
   return (
-    <div
-      className={clsx(
-        "bg-white border h-full flex flex-col justify-between rounded-2xl p-6 shadow-sm overflow-hidden",
-        `border-l-8 border-l-[${deck.color}]`
-      )}
-    >
-      {children}
+    <div className="relative">
+      {/* Stacked Card Layers (Leak Effect) */}
+      <div className="absolute -bottom-2 -right-2 w-full h-full bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-2xl shadow-sm rotate-[3deg]  z-0" />
+      <div className="absolute -bottom-1 -right-1 w-full h-full bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-2xl shadow-sm rotate-[1.5deg]  z-10" />
+
+      {/* Main Card */}
+      <div
+        className={clsx(
+          "relative bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-3xl p-7 shadow-sm h-full flex flex-col justify-between overflow-hidden z-20 transition-all group-hover:shadow-xl ",
+          deck.color && `border-l-8 border-l-[${deck.color}]`
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 };
@@ -69,79 +80,92 @@ const Card = ({ children }: { children: ReactNode }) => {
 // --------------------
 const Header = () => {
   const { deck } = useDeck();
+
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-5">
       <div className="flex items-center gap-2">
-        <h2 className="text-[10px] font-semibold uppercase text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded">
-          {deck.topic}
-        </h2>
-        <h2 className="text-[10px] font-semibold uppercase text-stone-400">
-          {deck.visibility}
-        </h2>
+        {deck.topic && (
+          <span className="text-[10px] font-semibold uppercase tracking-widest px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 rounded-full">
+            {deck.topic}
+          </span>
+        )}
+        <span className="text-[10px] font-medium uppercase text-stone-400 dark:text-stone-500">
+          {deck.visibility || "Private"}
+        </span>
       </div>
     </div>
   );
 };
 
 // --------------------
-// Title
+// Title & Stats
 // --------------------
-const Title = ({ textSize = 17.5 }: { textSize?: number }) => {
+const Title = () => {
   const { deck } = useDeck();
+
   return (
-    <header className="mb-3">
-      <h1 className={`text-[${textSize}px] font-semibold text-stone-900 `}>
-        {deck.title || <span className="opacity-50">Untitled</span>}
-      </h1>
-      <p className="text-xs gap-2">
-        {deck.flashcardCount === 0 ? "No" : deck.flashcardCount}{' '}
-        {deck.flashcardCount >= 2 ? "Flashcards" : "Flashcard"}
-      </p>
-    </header>
+    <div className="mb-6">
+      <h3 className="text-2xl font-semibold text-stone-900 dark:text-white leading-tight tracking-tight mb-3">
+        {deck.title || <span className="opacity-40">Untitled Deck</span>}
+      </h3>
+
+      <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-stone-500 dark:text-stone-400">
+        {deck.flashcardCount > 0 && (
+          <span>{deck.flashcardCount} flashcard(s)</span>
+        )}
+        {deck.userSavedDeckCount > 0 && (
+          <span>{deck.userSavedDeckCount} saved</span>
+        )}
+      </div>
+    </div>
   );
 };
 
+// --------------------
+// Footer
+// --------------------
 const Footer = () => {
   const { deck } = useDeck();
 
   return (
-    <div className="flex items-center justify-between pt-3 border-t border-stone-100">
-      <div className="flex items-center gap-1.5 text-[11px] text-stone-400">
-        <Calendar size={13} />
-        <span>Created {formatDistanceToNow(new Date(deck.createdAt))}</span>
-        <span>Updated {formatDistanceToNow(new Date(deck.updatedAt))}</span>
+    <div className="pt-5 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs">
+      <div className="flex items-center gap-1.5 text-stone-400 dark:text-stone-500">
+        <Calendar size={15} />
+        <span>
+          {formatDistanceToNow(new Date(deck.createdAt), { addSuffix: true })}
+        </span>
       </div>
 
-      <nav className="space-x-2 flex items-center">
-        <Link to={`/app/decks/${deck.id}`}>
-          <Button className="my-btn">View Deck</Button>
-        </Link>
-      </nav>
+      <Link to={`/app/decks/${deck.id}`}>
+        <Button variant="default" size="sm" className="gap-2">
+          <Eye size={16} />
+          View Deck
+        </Button>
+      </Link>
     </div>
   );
 };
 
 // --------------------
-// Export (Object.assign 🔥)
+// Default Export
 // --------------------
+const Default = ({ deck }: { deck: DeckDisplay }) => (
+  <Root deck={deck}>
+    <Card>
+      <Header />
+      <Title />
+      <Footer />
+    </Card>
+  </Root>
+);
 
-export const Default = ({ deck }: DeckContextType) => {
-  return (
-    <Root deck={deck}>
-      <Card>
-        <Header />
-        <Title />
-        <Footer />
-      </Card>
-    </Root>
-  );
-};
-
+// Compound Component
 export const DeckDisplay = Object.assign(Root, {
   Root,
+  Card,
   Header,
   Title,
-  Card,
   Default,
   Footer,
 });
+

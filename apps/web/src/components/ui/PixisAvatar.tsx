@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { Zap } from "lucide-react";
 
 
@@ -9,3 +10,9 @@ export const PixisAvatar = ({ size = 28 }: { size?: number }) => (
     <Zap size={size * 0.46} className="text-white" />
   </div>
 )
+
+export const Pixis = ({ size = 'sm' }:{ size?: 'xs' | 'sm' | 'md' | 'lg'; }) => {
+  return <div className={clsx('uppercase tracking-widest font-medium', `text-${size}`)}>
+    PIXIS 
+  </div>
+}

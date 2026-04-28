@@ -4,6 +4,7 @@ import { MessageBubble } from "./MessageBubble";
 import { SuggestionChips } from "./SuggestionChips";
 import { GreetingCard } from "./GreetingCard";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 interface Message {
   id: number;
@@ -62,9 +63,8 @@ export const GenerateFlashcardAssistant = () => {
   return (
     <>
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-5">
+      <div className="flex-1 overflow-hidden  px-4 sm:px-8 py-6 space-y-5">
         {/* Greeting */}
-        <GreetingCard mode="generate" />
 
         {/* Quick-start suggestions — only before first message */}
         {!hasStarted && (
@@ -78,15 +78,17 @@ export const GenerateFlashcardAssistant = () => {
         )}
 
         {/* Conversation messages */}
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} />
-        ))}
-
+        <main className=" max-h-[50vh] p-2 overflow-y-scroll space-y-1 h-full">
+          <GreetingCard mode="generate" />
+          {messages.map((msg) => (
+            <MessageBubble key={msg.id} msg={msg} />
+          ))}
+        </main>
         <div ref={bottomRef} />
       </div>
 
       {/* Input area (Generate mode only) */}
-      <div className="flex-shrink-0 border-t border-stone-100 bg-white px-4 sm:px-8 py-4">
+      <div className="flex-shrink-0  px-4 sm:px-8 py-4">
         {/* Attachment preview */}
         {attachment && (
           <div className="mb-2 flex items-center gap-2 px-3 py-2 rounded-xl border border-stone-200 bg-stone-50 w-fit max-w-full">
@@ -103,22 +105,8 @@ export const GenerateFlashcardAssistant = () => {
           </div>
         )}
 
-        <div className="flex items-end gap-2 bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3 focus-within:border-stone-400 focus-within:bg-white transition-colors">
+        <div className="flex items-end gap-2  rounded-2xl px-4 py-3  transition-colors">
           {/* PDF upload button */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors self-end mb-0.5"
-            title="Upload PDF"
-          >
-            <Paperclip size={15} strokeWidth={1.8} />
-          </button>
 
           <Textarea
             rows={1}
@@ -126,27 +114,45 @@ export const GenerateFlashcardAssistant = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Enter a topic, paste notes, or upload a PDF…"
-            className="flex-1 bg-transparent resize-none text-[13.5px] text-stone-800 placeholder:text-stone-400 outline-none leading-relaxed max-h-[140px] overflow-y-auto"
+            className="flex-1 bg-transparent dark:text-white resize-none text-[13.5px] text-stone-800 placeholder:text-stone-400 outline-none leading-relaxed max-h-[140px] overflow-y-auto"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           />
 
-          {/* Mode badge */}
-          <div className="flex-shrink-0 self-end mb-0.5 flex items-center gap-1 px-2 py-1 rounded-lg text-[10.5px] font-semibold hidden sm:flex bg-amber-50 text-amber-600">
-            <Layers size={11} />
-            Generate
-          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <div className="flex items-center gap-1.5">
+            {/* Attach Button */}
+            <Button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl text-stone-400 hover:text-stone-600 hover:bg-stone-100 dark:hover:bg-stone-800"
+              title="Upload PDF"
+            >
+              <Paperclip size={19} strokeWidth={2} />
+            </Button>
 
-          <button
-            onClick={() => handleSend()}
-            disabled={!canSend}
-            className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center self-end mb-0.5 transition-all ${
-              canSend
-                ? "bg-stone-900 text-white hover:opacity-80"
-                : "bg-stone-100 text-stone-300 cursor-not-allowed"
-            }`}
-          >
-            <Send size={14} strokeWidth={2} />
-          </button>
+            {/* Send Button */}
+            <Button
+              type="button"
+              onClick={() => handleSend()}
+              disabled={!canSend}
+              size="icon"
+              className={`h-10 w-10 rounded-xl transition-all ${
+                canSend
+                  ? "bg-stone-900 hover:bg-stone-950 dark:bg-white dark:text-stone-950 dark:hover:bg-stone-100 shadow-sm"
+                  : "bg-stone-200 dark:bg-stone-800 text-stone-400 cursor-not-allowed"
+              }`}
+            >
+              <Send size={19} strokeWidth={2.75} />
+            </Button>
+          </div>
         </div>
 
         <p className="text-center text-[11px] text-stone-300 mt-2.5">

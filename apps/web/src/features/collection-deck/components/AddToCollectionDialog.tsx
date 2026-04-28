@@ -10,7 +10,7 @@ import { CollectionCard } from "@/features/collection/components/CollectionCard"
 import { CollectionFilter } from "@/features/collection/components/CollectionFilter";
 import { useMyCollections } from "@/features/collection/hooks/useMyCollections";
 import {  Plus } from "lucide-react";
-import { useCollectionDeck } from "@/features/collection/hooks/useCollectionDeck";
+import { useCollectionDeck } from "@/features/collection-deck/hooks/useCollectionDeck";
 
 export const AddToCollectionDialog = ({
   deckId,
@@ -28,29 +28,35 @@ export const AddToCollectionDialog = ({
       </SheetTrigger>
       <SheetContent className="px=">
         <SheetHeader>
-          <h1 className="heading text-4xl ">Add to collection</h1>
+          <div className="my-4 mb-10">
+             <h1 className="heading text-4xl ">Add to collection</h1>
           <p className="description">
             Which collection you want this deck to add?
           </p>
-        </SheetHeader>
-        <div className="p-2 space-y-10">
-          <header>
+          </div>
+            <header>
             <CollectionFilter collectionFilter={collectionFilterHandlers} />
           </header>
-          <main className="overflow-y-scroll px-5 h-[65vh] flex items- flex-col gap-1">
+        </SheetHeader>
+        
+        <div className="p-2 space-y-10">
+        
+          <main className="overflow-y-scroll rounded-xl border-1 p-2 dark:bg-stone-900 h-[65vh] flex items- flex-col gap-1">
             {collections.map((c) => (
               <CollectionCard.Root collection={c}>
+                <CollectionCard.Header />
                 <CollectionCard.Title />
                 <CollectionCard.DeckCount />
                 <SheetClose asChild>
                   <Button
                     disabled={isAddingDeckToCollection}
+                    className="my-btn"
                     onClick={() =>
                       addDeckToCollection({ collectionId: c.id, deckId })
                     }
                     variant={"secondary"}
                   >
-                    <Plus />
+                    Add here <Plus />
                   </Button>
                 </SheetClose>
               </CollectionCard.Root>

@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash } from "lucide-react";
+import { Bookmark, Pencil, Trash } from "lucide-react";
 import { useAppSelector } from "@/hooks/useReduxHook";
 import { useForm } from "react-hook-form";
 import { CollectionForm } from "../components/CollectionForm";
@@ -33,10 +33,21 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { UpdateCollectionDialog } from "../components/UpdateCollectionDialog";
+import { UserBadge } from "@/features/account/components/ui/UserBadge";
+import { DeckFilter } from "@/features/deck/components/DeckFilter";
+import { useDeckFilter } from "@/features/deck/hooks/useDeckFilter";
+import { useInViewRefetch } from "@/hooks/useInViewRefetch";
+import { useUserSavedCollection } from "@/features/user-saved-collection/hooks/useUserSavedCollection";
+import { SaveOrUnsaveCollection } from "@/features/user-saved-collection/components/SaveOrUnsaveCollection";
 
 const CollectionDetails = () => {
   const { collectionId = 0 } = useParams();
   const { user } = useAppSelector((state) => state.profile);
+  const deckFilter = useDeckFilter();
+  const { query } = deckFilter;
+  const { saveCollection, isSavingCollection } = useUserSavedCollection();
+
   const collectionForm = useForm<CF>({
     defaultValues: {
       name: "",
@@ -44,24 +55,15 @@ const CollectionDetails = () => {
       visibility: "private",
     },
   });
-  const {
-    updateCollection,
-    isUpdatingCollection,
-    deleteCollection,
-    isDeletingCollection,
-  } = useMyCollection();
 
-  const {
-    data: collection,
-    isPending,
-    isFetching,
-  } = useQuery({
+  const { deleteCollection, isDeletingCollection } = useMyCollection();
+
+  const { data: collection, isPending } = useQuery({
     queryFn: async () => {
       const res = await api.get<{ collection: Collection }>(
         `/collections/${collectionId}`
       );
       const cleanCollection = collectionFormSchema.parse(res.data.collection);
-      console.log(cleanCollection);
       collectionForm.reset(cleanCollection);
       return res.data.collection;
     },
@@ -70,92 +72,47 @@ const CollectionDetails = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  const infiniteCollectionDeckQuery = useInfiniteQuery({
+    queryFn: async ({ pageParam = 1 }) => {
+      const result = await api.get(
+        `/collection-deck/${collectionId}/?page=${pageParam}&limit=${6}&${query}`
+      );
+      return result.data;
+    },
+    queryKey: ["collections", collectionId, query],
+    initialPageParam: 1,
+    getNextPageParam: (prev) => prev.nextPage,
+    enabled: !!collection,
+  });
   const {
     data: decks,
     isPending: isPendingDecks,
     isFetching: isFetchingDecks,
     hasNextPage,
-  } = useInfiniteQuery({
-    queryFn: async ({ pageParam = 1 }) => {
-      const result = await api.get(
-        `/collection-deck/${collectionId}/?page=${pageParam}&limit=${6}`
-      );
-      return result.data;
-    },
-    queryKey: ["collections", collectionId],
-    initialPageParam: 1,
-    getNextPageParam: (prev) => prev.nextPage,
-    enabled: !!collection,
-  });
-
+  } = infiniteCollectionDeckQuery;
+  const { ref } = useInViewRefetch(infiniteCollectionDeckQuery);
   const collectionDecks = decks?.pages.flatMap((p) => p.decks) ?? [];
-  const values = collectionForm.watch();
 
-  if (!collection || isPending || isFetching) {
+  if (!collection || isPending) {
     return <LoadingDisplay />;
   }
 
   return (
     <div className={`page-container animate-fade-in-right rounded-2xl`}>
       <AppHeader
+        subheading={`${collection.user.username}'s collection`}
         heading={`${collection.name}`}
         description={`${collection.deckCount} Deck(s)`}
         beside={
           user.id === collection.userId && (
-            <div className="w-full text-right">
-              <Dialog>
-                <DialogTrigger>
-                  <Button variant={"outline"} className="my-btn">
-                    <Pencil />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  className={`min-w-5/12 rounded-xl space-y-10  p-6 border-l-8 border-l-[${values.color}]`}
-                >
-                  <CollectionForm
-                    className="flex flex-col items-start h-full justify-between"
-                    header={
-                      <header>
-                        <h1 className="heading text-4xl">
-                          Update {collection.name}
-                        </h1>
-                        <p className="description">Update your collection</p>
-                      </header>
-                    }
-                    footer={
-                      <footer className="flex items-center w-full justify-end gap-1">
-                        <DialogClose>
-                          <Button className="my-btn" variant={"ghost"}>
-                            Cancel
-                          </Button>
-                        </DialogClose>
-                        <Button
-                          onClick={() => collectionForm.reset()}
-                          className="my-btn"
-                          variant={"outline"}
-                        >
-                          Reset Changes
-                        </Button>
-                        <DialogClose>
-                          <Button
-                            disabled={isUpdatingCollection}
-                            onClick={() =>
-                              updateCollection({
-                                collectionId,
-                                collectionForm: values,
-                              })
-                            }
-                            className="my-btn"
-                          >
-                            Update
-                          </Button>
-                        </DialogClose>
-                      </footer>
-                    }
-                    collectionFormHandlers={collectionForm}
-                  />
-                </DialogContent>
-              </Dialog>
+            <div className="w-full text-right flex items-end justify-end gap-2">
+              <DeckFilter deckFilter={deckFilter} />
+              <SaveOrUnsaveCollection collection={collection} />
+              <UpdateCollectionDialog
+                collection={collection}
+                collectionForm={collectionForm}
+              />
+
               <AlertDialog>
                 <AlertDialogTrigger>
                   <Button variant={"destructive"} className="my-btn">
@@ -189,12 +146,12 @@ const CollectionDetails = () => {
           )
         }
       />
-      <main className="grid grid-cols-2 gap-1">
+      <main className="grid grid-cols-3 gap-4">
         {collectionDecks?.map((d) => (
           <DeckDisplay.Default key={d.id} deck={d} />
         ))}
       </main>
-      <div>
+      <div className="my-20">
         {isFetchingDecks || isPendingDecks ? (
           <Spinner />
         ) : !hasNextPage && collectionDecks?.length > 0 ? (
@@ -206,17 +163,13 @@ const CollectionDetails = () => {
           !hasNextPage && (
             <EmptyResource
               title="No decks"
-              description="No decks in here yet. Start by adding one"
-              content={
-                <div>
-                  <Link to={'/app/decks'}>
-                    <Button>My decks</Button></Link>
-                </div>
-              }
+              description="No decks in here yet"
+            
             />
           )
         )}
       </div>
+      <div ref={ref} />
     </div>
   );
 };

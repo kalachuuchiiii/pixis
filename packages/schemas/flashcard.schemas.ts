@@ -57,7 +57,7 @@ export const flashcardSchema = flashcardFormSchema
     z.object({
       id: idSchema,
       userId: idSchema,
-
+      deckId: idSchema
     })
   );
 export type CloseEndedFlashcardForm = z.infer<typeof closeEndedFlashcardSchema>;

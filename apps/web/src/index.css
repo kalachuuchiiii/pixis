@@ -22,13 +22,38 @@
 }
 
 .page-container {
-  @apply py-12 px-8 max-w-7xl w-full min-h-screen
+  @apply py-12 dark:bg-stone-950 px-8 max-w-7xl w-full min-h-screen 
 }
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #78716c transparent; /* stone-500 */
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #78716c; /* stone-500 */
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #57534e; /* stone-600 for hover */
+}
+
 .heading {
-  font-weight: 400;
-  color: #1c1917; /* stone-900 */
-  line-height: 1.25; /* leading-tight */
-  font-family: 'DM Serif Display', serif;
+  @apply font-normal leading-tight font-[DM_Serif_Display] text-stone-900 dark:text-stone-100;
 }
 
 @keyframes fade-in-down {
@@ -131,7 +156,12 @@ h1, h2, h3, h4 {
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+  
 }
+
+  @import "tailwindcss";
+
+
 
 :root {
     --background: oklch(1 0 0);

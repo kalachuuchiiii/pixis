@@ -1,5 +1,4 @@
 import { useFilter } from "@/hooks/useFilter";
-import { useQueryParam } from "@/hooks/useQueryParam";
 import type {
   SortableCollectionField,
   SortingOrder,

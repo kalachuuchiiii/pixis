@@ -6,8 +6,6 @@ import { toast } from "sonner";
 
 
 export const useCollectionDeck = () => {
-
-
     
   const { mutate: addDeckToCollection, isPending: isAddingDeckToCollection } = useMutation({
     mutationFn: async ({ collectionId, deckId }:{collectionId: string | number; deckId: string | number;}) => {

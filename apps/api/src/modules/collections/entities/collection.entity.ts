@@ -17,6 +17,7 @@ import {
 } from 'typeorm';
 import { VISIBILITY_ENUM, type Visibility } from '@pixis/constants';
 import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
+import { UserSavedCollection } from '@/modules/user-saved-collections/entities/user-saved-collection.entity';
 
 @Entity('collection')
 export class Collection {
@@ -28,6 +29,9 @@ export class Collection {
 
   @Column({ enum: VISIBILITY_ENUM, default: 'private' })
   visibility!: Visibility;
+
+  @OneToMany(() => UserSavedCollection, usc => usc.collection, { onDelete: 'CASCADE' })
+  userSavedCollections?: UserSavedCollection[];
 
   @ManyToOne(() => User, u => u.collections)
   @JoinColumn({ name: 'user_id' })

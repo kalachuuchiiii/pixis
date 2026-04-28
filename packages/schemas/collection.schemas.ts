@@ -19,6 +19,10 @@ export const collectionSchema = z.object({
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
   userId: idSchema,
+  userSavedCollection: z.object({
+    id: idSchema
+  }).optional().nullable(),
+  userSavedCollectionCount: z.number().nonnegative(),
   deckCount: z.coerce.number().nonnegative(),
   deletedAt: timestampSchema.optional().nullable(),
   color: z.string(),

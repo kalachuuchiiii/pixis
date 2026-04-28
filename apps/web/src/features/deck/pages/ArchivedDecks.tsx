@@ -27,12 +27,6 @@ import {
 } from "lucide-react";
 import { useArchiveSelector } from "../hooks/useArchiveSelector";
 import clsx from "clsx";
-import { createPortal } from "react-dom";
-import { toast } from "sonner";
-import {
-  getErrorMessage,
-  getSuccessMessage,
-} from "@/utils/message-extractor.utils";
 import { useArchive } from "../hooks/useArchive";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "../../../components/ui/EmptyResource";
@@ -80,7 +74,7 @@ const ArchivedDecks = () => {
           description="Restore or permanently delete decks"
           beside={
             <div className="w-full gap-1 flex items-center justify-end">
-              <DeckFilter deckFilterHandlers={deckFilterHandlers} />
+              <DeckFilter deckFilter={deckFilterHandlers} />
 
               <Tooltip>
                 <TooltipTrigger>

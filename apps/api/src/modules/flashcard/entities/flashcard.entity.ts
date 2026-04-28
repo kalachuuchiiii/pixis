@@ -12,7 +12,10 @@ export class Flashcard {
 
   @ManyToOne(() => Deck, d => d.flashcards, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'deck_id' })
-  deck!: Deck;
+  deck?: Deck;
+
+  @RelationId((f: Flashcard) => f.deck)
+  deckId!: Number;
 
   @ManyToOne(() => User, u => u.flashcards)
   @JoinColumn({ name: 'user_id'})
@@ -31,7 +34,7 @@ export class Flashcard {
   type!: FlashcardType;
 
   @OneToMany(() => Progress, (prog) => prog.flashcard, { cascade: true, nullable: true })
-  progress?: Progress[]
+  progresses?: Progress[]
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;

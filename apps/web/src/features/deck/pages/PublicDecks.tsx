@@ -22,7 +22,6 @@ const PublicDecksPage = () => {
           decks: DeckWithAuthorAndFlashcardPreview[];
           nextPage: number | null;
         }>(`/decks/explore?${queries}`);
-        console.log(res);
         return res.data;
       },
       initialPageParam: 1,
@@ -63,14 +62,14 @@ const PublicDecksPage = () => {
           </div>
         </div>
       </div>
-      <main className="grid grid-cols-2 gap-1">
+      <main className="grid grid-cols-3 gap-4">
         {decks.map((d) => (
           <DeckDisplay.Default deck={d} />
         ))}
       </main>
-      <div className="h-40">
+      <div className="my-20">
         {isPending || isFetching ? (
-          <Spinner className="my-16" />
+          <Spinner  />
         ) : !hasNextPage && decks.length > 0 ? (
           <EmptyResource
             title="No more decks"

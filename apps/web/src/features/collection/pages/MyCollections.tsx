@@ -11,7 +11,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import { Bookmark, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/hooks/useReduxHook";
 import { useForm } from "react-hook-form";
@@ -20,6 +20,13 @@ import { useMyCollection } from "../hooks/useMyCollection";
 import { CollectionCard } from "../components/CollectionCard";
 import { useMyCollections } from "../hooks/useMyCollections";
 import { Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Spinner } from "@/components/ui/spinner";
+import { EmptyResource } from "@/components/ui/EmptyResource";
 
 const MyCollections = () => {
   const { user } = useAppSelector((state) => state.profile);
@@ -35,7 +42,15 @@ const MyCollections = () => {
 
   const collectionTriggerRef = useRef<HTMLButtonElement | null>(null);
 
-  const { collectionFilterHandlers, collections, ref } = useMyCollections();
+  const {
+    collectionFilterHandlers,
+    infiniteCollectionQuery: { hasNextPage, isPending, isFetching },
+    collections,
+    ref,
+  } = useMyCollections();
+  const hasNoMoreData = !hasNextPage && collections.length > 0;
+  const hasNoData = !hasNextPage && collections.length === 0;
+  const isLoading = isPending || isFetching;
 
   return (
     <div className="page-container animate-fade-in-right">
@@ -45,6 +60,16 @@ const MyCollections = () => {
         beside={
           <div className=" flex items-center gap-2 w-full">
             <CollectionFilter collectionFilter={collectionFilterHandlers} />
+            <Tooltip>
+              <TooltipTrigger>
+                <Link to={"/app/saved-collections"}>
+                  <Button className="my-btn" variant={"outline"}>
+                    <Bookmark className="text-yellow-500" />
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Go to your saved collections</TooltipContent>
+            </Tooltip>
             <Dialog>
               <DialogTrigger ref={collectionTriggerRef}>
                 <Button className="my-btn">
@@ -52,7 +77,7 @@ const MyCollections = () => {
                 </Button>
               </DialogTrigger>
               <DialogContent
-                className={`border-l-8 border-l-[${collectionValues.color}] min-w-8/12`}
+                className={`border-l-20 border-l-[${collectionValues.color}] min-w-5/12`}
               >
                 <CollectionForm
                   className="space-y-4"
@@ -93,12 +118,31 @@ const MyCollections = () => {
           </div>
         }
       />
-      <main className="grid grid-cols-3 gap-1">
+      <main className="grid grid-cols-2 gap-1">
         {collections.map((c) => (
           <Link to={`/app/collections/${c.id}`}>
-          <CollectionCard.Default collection={c} /></Link>
+            <CollectionCard.Default collection={c} />
+          </Link>
         ))}
       </main>
+      <div className="my-20">
+        {isLoading ? (
+          <Spinner />
+        ) : hasNoMoreData ? (
+          <EmptyResource
+            title="No more collections"
+            description="You've reached the last page"
+          />
+        ) : (
+          hasNoData && (
+            <EmptyResource
+              title="No collections"
+              description="No collections yet"
+              content={<Button onClick={() => collectionTriggerRef.current?.click()}>Create</Button>}
+            />
+          )
+        )}
+      </div>
       <div ref={ref} />
     </div>
   );

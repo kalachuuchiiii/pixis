@@ -27,7 +27,7 @@ export class CollectionDeckController {
       collectionId,
       user,
     });
-    const cleanDecks = z.array(deckSchema).parse(data.map((d) => d.deck));
+    const cleanDecks = z.array(deckSchema).parse(data)
     return {
       decks: cleanDecks,
       nextPage,

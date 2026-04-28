@@ -1,4 +1,4 @@
-import type { User } from "@pixis/schemas";
+import type { User, UserBadge as UB } from "@pixis/schemas";
 import {
   createContext,
   useContext,
@@ -12,9 +12,10 @@ import {
   Avatar as AvatarIcon,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
+import clsx from "clsx";
 
 interface UserProviderProps {
-  user: User;
+  user: UB;
   children: ReactNode;
 }
 
@@ -32,9 +33,7 @@ const Root = ({
   ...props
 }: UserProviderProps & ComponentProps<"div">) => (
   <UserContext.Provider value={user}>
-    <div {...props}>
-     {children}
-    </div>
+    <div {...props}>{children}</div>
   </UserContext.Provider>
 );
 
@@ -60,32 +59,50 @@ const Avatar = ({ ...props }: ComponentProps<"div">) => {
   );
 };
 
+const Username = ({ ...props }: ComponentProps<'p'>) => {
+  const user = useUser();
+  return (<p {...props}>{user.username}</p>)
+}
+
+const Nickname = () => {
+  const user = useUser();
+  return (  <p className="text-[13px] dark:text-stone-200 w-fit font-semibold text-stone-800 truncate leading-tight">
+        {user.nickname || user.username}
+      </p>)
+}
+
 const Info = () => {
   const user = useUser();
 
+  return !user.username ? (
+    <div className="w-full flex-1 space-y-1">
+      {/* Nickname / Username skeleton */}
+      <div className="h-3 w-26 bg-stone-200 rounded animate-pulse"></div>
+
+      {/* Username skeleton */}
+      <div className="h-2 w-20 bg-stone-200 rounded animate-pulse"></div>
+    </div>
+  ) : (
+    <div className="min-w-0 flex-1 w-fit">
+      <Nickname />
+      <Username className="text-xs dark:text-stone-300 text-stone-500" />
+    </div>
+  );
+};
+
+const Default = ({ user }: { user: UB }) => {
   return (
-
-      !user.username ? (
-        <div className="w-full flex-1 space-y-1">
-          {/* Nickname / Username skeleton */}
-          <div className="h-3 w-26 bg-stone-200 rounded animate-pulse"></div>
-
-          {/* Username skeleton */}
-          <div className="h-2 w-20 bg-stone-200 rounded animate-pulse"></div>
-        </div>
-      ) : (
-        <div className="min-w-0 flex-1 w-fit">
-          <p className="text-[13px] w-fit font-semibold text-stone-800 truncate leading-tight">
-            {user.nickname || user.username}
-          </p>
-          <p className="text-[11px] text-stone-400 truncate">{user.username}</p>
-        </div>
-      )
-   
+    <Root className="flex items-center gap-4" user={user}>
+      <Avatar />
+      <Info />
+    </Root>
   );
 };
 
 export const UserBadge = Object.assign(Root, {
   Avatar,
+  Username,
+  Nickname,
+  Default,
   Info,
 });

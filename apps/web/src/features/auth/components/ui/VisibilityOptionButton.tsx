@@ -1,4 +1,5 @@
-import type { VisibilityOption } from "@/features/deck/data/visibilityOptions";
+
+import type { VisibilityOption } from "@/data/visibility";
 import type { Visibility } from "@pixis/constants";
 import clsx from "clsx";
 import type { ComponentProps } from "react";

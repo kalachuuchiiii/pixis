@@ -41,25 +41,23 @@ export const UpdateFlashcardDialog = ({
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button className="my-btn" variant={"ghost"}>
+      <DialogTrigger asChild>
+        <Button className="my-btn w-full" variant={"ghost"}>
           <Pencil /> Edit
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="min-w-4/12"
+        className=" min-w-6/12 px-12 py-6"
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         {flashcard?.type === "open_ended" &&
         flashcardFormValues.type === "open_ended" ? (
           <>
-            <h1>Open Ended</h1>
             <OpenEndedForm openEndedForm={flashcardForm as OpenEndedFormType} />
           </>
         ) : (
           flashcard?.type === 'close_ended' && flashcardFormValues.type === "close_ended" && (
             <>
-              <h1>Close Ended</h1>
               <CloseEndedForm
                 className="min-w-8/12"
                 closeEndedForm={flashcardForm as CloseEndedFormType}
