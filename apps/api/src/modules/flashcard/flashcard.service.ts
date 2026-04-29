@@ -7,10 +7,20 @@ import type { FlashcardForm, Query } from '@pixis/schemas';
 import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck } from '../deck/entities/deck.entity';
-import { Equal, Not, type Repository } from 'typeorm';
+import { Equal, In, Not, type Repository } from 'typeorm';
 import { Flashcard } from './entities/flashcard.entity';
-import { FilterOperator, paginate, type PaginateQuery } from 'nestjs-paginate';
-import type { SelectQueryBuilder } from 'typeorm/browser';
+import {
+  FilterOperator,
+  paginate,
+  Select,
+  type PaginateQuery,
+} from 'nestjs-paginate';
+import type {
+  FindManyOptions,
+  FindOptionsSelect,
+  FindOptionsSelectByString,
+  SelectQueryBuilder,
+} from 'typeorm';
 import {
   SEARCHABLE_FLASHCARD_FIELDS,
   SORTABLE_FLASHCARD_FIELDS,
@@ -26,7 +36,7 @@ export class FlashcardService {
     @InjectRepository(Deck) private deckRepo: Repository<Deck>,
     @InjectRepository(Flashcard)
     private flashcardRepo: Repository<Flashcard>,
-    public readonly deckService: DeckService
+    public readonly deckService: DeckService,
   ) {}
 
   addAnalytics(queryBuilder: SelectQueryBuilder<Flashcard>) {
@@ -72,7 +82,7 @@ export class FlashcardService {
     user: AuthPayload;
   }) {
     const myDeck = await this.deckRepo.findOne({
-      where: { id: deckId, user: { id: user.id }},
+      where: { id: deckId, user: { id: user.id } },
       withDeleted: true,
     });
     if (!myDeck) {
@@ -84,8 +94,8 @@ export class FlashcardService {
 
     const newFlashcard = this.flashcardRepo.create({
       ...flashcardForm,
-      user: { id:  user.id },
-      deck: { id:  myDeck.id }
+      user: { id: user.id },
+      deck: { id: myDeck.id },
     });
     return await this.flashcardRepo.save(newFlashcard);
   }
@@ -94,7 +104,7 @@ export class FlashcardService {
     const flashcard = await this.flashcardRepo.findOne({
       where: [
         { id: flashcardId, user: { id: user.id } },
-        { id:  flashcardId, deck: { visibility: Not(Equal('private'))}}
+        { id: flashcardId, deck: { visibility: Not(Equal('private')) } },
       ],
       withDeleted: true,
     });
@@ -132,7 +142,7 @@ export class FlashcardService {
   async softDeleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const result = await this.flashcardRepo.softDelete({
       id: flashcardId,
-      user: { id: user.id }
+      user: { id: user.id },
     });
     if (result.affected === 0) {
       throw new NotFoundException({
@@ -146,7 +156,7 @@ export class FlashcardService {
   async restoreFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const result = await this.flashcardRepo.restore({
       id: flashcardId,
-      user: { id: user.id }
+      user: { id: user.id },
     });
     if (result.affected === 0) {
       throw new NotFoundException({
@@ -157,7 +167,7 @@ export class FlashcardService {
     return result;
   }
 
-  async findAccessibleFlashcards({
+  async findAccessibleDeckFlashcards({
     deckId,
     query,
     user,
@@ -174,7 +184,10 @@ export class FlashcardService {
       .createQueryBuilder('flashcard')
       .leftJoin('flashcard.deck', 'deck')
       .where('deck.id = :deckId', { deckId })
-      .andWhere('(deck.visibility != :visibility OR deck.user.id = :userId)', { visibility: 'private', userId: user.id});
+      .andWhere('(deck.visibility != :visibility OR deck.user.id = :userId)', {
+        visibility: 'private',
+        userId: user.id,
+      });
 
     const {
       data,
@@ -198,7 +211,7 @@ export class FlashcardService {
   async deleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
     const result = await this.flashcardRepo.delete({
       id: flashcardId,
-      user: { id: user.id }
+      user: { id: user.id },
     });
     if (result.affected === 0) {
       throw new NotFoundException({
@@ -207,5 +220,37 @@ export class FlashcardService {
       });
     }
     return result;
+  }
+
+  async findAccessibleFlashcardsByIds({
+    flashcardIds,
+    user,
+    matchAll = true,
+    options = {},
+  }: {
+    flashcardIds: number[];
+    user: AuthPayload;
+    matchAll?: boolean;
+    options?: FindManyOptions<Flashcard> | undefined;
+  }) {
+    const flashcards = await this.flashcardRepo.find({
+      where: {
+        deck: [
+          { visibility: Not(Equal('private')) },
+          { user: { id: user.id } },
+        ],
+        id: In(flashcardIds),
+      },
+      ...options,
+    });
+
+    const isFullMatch = flashcards.length === flashcardIds.length;
+    if (!isFullMatch && matchAll) {
+      throw new NotFoundException({
+        message: 'Flashcards not found',
+        code: 'FLASHCARDS_NOT_FOUND',
+      });
+    }
+    return flashcards;
   }
 }

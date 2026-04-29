@@ -1,10 +1,3 @@
-import api from "@/lib/api";
-import type { Flashcard, Session } from "@pixis/schemas";
-import { useQuery } from "@tanstack/react-query";
-import React, { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-
-// Shadcn/UI Components
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -18,51 +11,49 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { useExam } from "../hooks/useExam";
+import { Spinner } from "@/components/ui/spinner";
 
 const Exam = () => {
-  const { sessionId = "0" } = useParams();
+  const {
+    onNext,
+    onPrevious,
+    flashcard,
+    flashcardIds,
+    session,
+    answer,
+    currentFlashcardIdx,
+    setAnswer,
+    isFlashcardLoading,
+    isSessionLoading,
+    isProcessingExamAnswers,
+  } = useExam();
 
-  const [flashcardIds, setFlashcardIds] = useState<number[]>([]);
-  const [currentFlashcardIdx, setCurrentFlashcardIdx] = useState<number>(0);
-  const currentFlashcardId = useMemo(
-    () => flashcardIds[currentFlashcardIdx],
-    [flashcardIds, currentFlashcardIdx]
-  );
-
-  const { data: session, isLoading } = useQuery({
-    queryKey: ["session", sessionId],
-    queryFn: async () => {
-      const res = await api.get<{ session: Session }>(`/session/${sessionId}`);
-      setFlashcardIds(res.data.session.deck.flashcardIds ?? [])
-      return res.data.session;
-    },
-    staleTime: Infinity,
-  });
-
-  const { data: flashcard, isLoading: isFlashcardLoading } = useQuery({
-    queryKey: ["flashcard", currentFlashcardId],
-    queryFn: async (flash) => {
-      const res = await api.get<{ flashcard: Flashcard }>(
-        `/flashcards/${currentFlashcardId}`
-      );
-      return res.data.flashcard;
-    },
-  });
-
-  if (isLoading) {
+  if (isProcessingExamAnswers) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        Loading session...
-      </div>
+      <main className=" text-4xl tracking-tighter overflow-hidden w-screen h-screen flex items-center justify-center">
+        <div className="flex items-center gap-4 overflow-hidden">
+          <Spinner /> Assessing Exam...
+        </div>
+      </main>
+    );
+  }
+
+  if (isSessionLoading) {
+    return (
+      <main className=" text-4xl tracking-tighter overflow-hidden w-screen h-screen flex items-center justify-center">
+        <div className="flex items-center gap-4 overflow-hidden">
+          <Spinner /> Preparing Exam...
+        </div>
+      </main>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 flex flex-col">
-      {/* Top Navigation Bar */}
       <div className="border-b bg-white dark:bg-zinc-900 py-4 px-6 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
-          {/* Leave Button with AlertDialog */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
@@ -94,12 +85,14 @@ const Exam = () => {
           {/* Progress Indicator */}
           <div className="flex items-center gap-3">
             <div className="text-sm font-medium text-muted-foreground">
-              {2 + 1} / {100}
+              {currentFlashcardIdx + 1} / {session?.deck.flashcardIds?.length}
             </div>
             <div className="w-64 h-1.5 bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary transition-all duration-300"
-                style={{ width: `${((2 + 1) / 100) * 100}%` }}
+                style={{
+                  width: `${((currentFlashcardIdx + 1) / flashcardIds.length) * 100}%`,
+                }}
               />
             </div>
           </div>
@@ -116,12 +109,30 @@ const Exam = () => {
           <div className="bg-white dark:bg-zinc-900 border border-border rounded-3xl shadow-xl min-h-[420px] flex flex-col items-center justify-center p-12 relative">
             <div className="text-center w-full">
               <div className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-                QUESTION {2 + 1}
+                QUESTION {currentFlashcardIdx + 1}
               </div>
 
               <h2 className="text-3xl leading-tight font-medium text-foreground mb-12">
                 {flashcard?.question}
               </h2>
+              <div>
+                {flashcard?.type === "close_ended" ? (
+                  <main className="grid grid-cols-2 gap-1">
+                    {flashcard.choices.map((c) => (
+                      <Button
+                        onClick={() => setAnswer(c)}
+                        variant={answer?.answer === c ? "default" : "outline"}
+                      >
+                        {c}
+                      </Button>
+                    ))}
+                  </main>
+                ) : (
+                  <div>
+                    <Textarea />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -130,6 +141,8 @@ const Exam = () => {
             <Button
               variant="outline"
               size="lg"
+              disabled={isFlashcardLoading}
+              onClick={onPrevious}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -139,9 +152,11 @@ const Exam = () => {
             <Button
               variant="outline"
               size="lg"
+              disabled={isFlashcardLoading}
+              onClick={onNext}
               className="flex items-center gap-2"
             >
-              Nexta
+              Next
               <ArrowRight className="w-5 h-5" />
             </Button>
           </div>

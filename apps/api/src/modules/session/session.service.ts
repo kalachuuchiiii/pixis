@@ -48,6 +48,10 @@ export class SessionService {
         '(deck.visibility != :visibility OR deck.user.id = :userId)',
         { visibility: 'private', userId: user.id },
       )
+      .leftJoin('deck.flashcards', 'flashcards')
+      .groupBy('session.id')
+      .addGroupBy('deck.id')
+      .having('COUNT(flashcards) > 0')
       .select(['session', 'deck.id'])
       .getOne();
 

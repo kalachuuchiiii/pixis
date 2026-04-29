@@ -1,0 +1,13 @@
+{
+	"Inject Repository (NestJS TypeORM)": {
+		"scope": "typescript",
+		"prefix": "injrepo",
+		"body": [
+			"constructor(",
+			"  @InjectRepository($1)",
+			"  private readonly $2: Repository<$1>",
+			") {}"
+		],
+		"description": "Inject TypeORM repository with matching entity"
+	}
+}

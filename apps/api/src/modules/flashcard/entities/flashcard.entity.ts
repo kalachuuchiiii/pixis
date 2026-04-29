@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 import { Deck } from '@/modules/deck/entities/deck.entity';
 import { TYPE_ENUM, type FlashcardType } from '@pixis/constants';
 import { User } from '@/modules/users/entities/user.entity';
-import { Progress } from './progress.entity';
+import { FlashcardProgress } from '../../flashcard-progress/entities/flashcardProgress.entity';
 
 @Entity('flashcard')
 export class Flashcard {
@@ -33,8 +33,8 @@ export class Flashcard {
   @Column({ nullable: false, enum: TYPE_ENUM })
   type!: FlashcardType;
 
-  @OneToMany(() => Progress, (prog) => prog.flashcard, { cascade: true, nullable: true })
-  progresses?: Progress[]
+  @OneToMany(() => FlashcardProgress, (prog) => prog.flashcard, { cascade: true, nullable: true })
+  progresses?: FlashcardProgress[]
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;

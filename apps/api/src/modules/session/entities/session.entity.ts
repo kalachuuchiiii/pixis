@@ -13,7 +13,7 @@ import { IsBoolean, IsOptional, IsEnum } from 'class-validator';
 import { Deck } from '@/modules/deck/entities/deck.entity';
 import { User } from '@/modules/users/entities/user.entity';
 import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
-import { Progress } from '@/modules/flashcard/entities/progress.entity';
+import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcardProgress.entity';
 import { EXAM_MODE_ENUM, type ExamMode } from '@pixis/constants';
 
 @Entity('session')
@@ -28,8 +28,8 @@ export class Session {
   @JoinColumn({ name: 'user_id' })
   user?: User;
 
-  @OneToMany(() => Progress, (p) => p.session, { onDelete: 'CASCADE' })
-  progresses?: Progress[];
+  @OneToMany(() => FlashcardProgress, (p) => p.session, { onDelete: 'CASCADE' })
+  progresses?: FlashcardProgress[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;

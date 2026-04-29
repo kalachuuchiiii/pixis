@@ -7,19 +7,20 @@ import {
 } from "@/components/ui/dialog";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useExam } from "../hooks/useExam";
+import { useSession } from "../../session/hooks/useExam";
+import type { Deck } from "@pixis/schemas";
 
 export const SelectExamModeDialog = ({
-  deckId,
+  deck,
 }: {
-  deckId: number | string;
+  deck: Deck
 }) => {
-  const { createNewSession, isCreatingNewSession } = useExam();
+  const { createNewSession, isCreatingNewSession } = useSession();
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="my-btn fixed right-10 bottom-10">
+    <Dialog >
+      <DialogTrigger disabled = {deck.flashcardCount === 0} asChild>
+        <Button disabled = {deck.flashcardCount === 0} className="my-btn fixed right-10 bottom-10">
           Start Exam <ChevronRight className="size-5 opacity-80" />
         </Button>
       </DialogTrigger>
@@ -36,7 +37,7 @@ export const SelectExamModeDialog = ({
 
         <div className="mt-6 grid gap-3">
           <button
-            onClick={() => createNewSession({ mode: "NORMAL", deckId })}
+            onClick={() => createNewSession({ mode: "NORMAL", deckId: deck.id })}
             disabled={isCreatingNewSession}
             className="group w-full rounded-xl border p-4 text-left transition-all hover:bg-muted/50"
           >
@@ -52,7 +53,7 @@ export const SelectExamModeDialog = ({
           </button>
 
           <button
-            onClick={() => createNewSession({ mode: "TIMED", deckId })}
+            onClick={() => createNewSession({ mode: "TIMED", deckId: deck.id })}
             disabled={isCreatingNewSession}
             className="group w-full rounded-xl border p-4 text-left transition-all hover:bg-muted/50"
           >

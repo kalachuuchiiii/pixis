@@ -141,7 +141,7 @@ const DeckDetails = () => {
         </main>
       </div>
 
-      <SelectExamModeDialog deckId={deck.id} />
+      <SelectExamModeDialog   deck = { deck} />
     </>
   );
 };

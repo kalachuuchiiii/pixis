@@ -56,7 +56,7 @@ export class FlashcardController {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authPayloadSchema.parse(request.user);
     const { data, nextPage, totalItems } =
-      await this.flashcardService.findAccessibleFlashcards({
+      await this.flashcardService.findAccessibleDeckFlashcards({
         deckId,
         query,
         user
@@ -81,7 +81,7 @@ export class FlashcardController {
       flashcardId,
       user,
     });
-
+    console.log(flashcard);
     const cleanFlashcard = flashcardSchema.parse(flashcard);
     return {
       flashcard: cleanFlashcard,

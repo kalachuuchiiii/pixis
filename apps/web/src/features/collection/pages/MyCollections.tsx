@@ -138,7 +138,11 @@ const MyCollections = () => {
             <EmptyResource
               title="No collections"
               description="No collections yet"
-              content={<Button onClick={() => collectionTriggerRef.current?.click()}>Create</Button>}
+              content={
+                <Button onClick={() => collectionTriggerRef.current?.click()}>
+                  Create
+                </Button>
+              }
             />
           )
         )}

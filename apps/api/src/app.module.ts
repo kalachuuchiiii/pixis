@@ -13,6 +13,7 @@ import { CollectionsModule } from './modules/collections/collections.module';
 import { CollectionDeckModule } from './modules/collection-deck/collection-deck.module';
 import { UserSavedDeckModule } from './modules/user-saved-deck/user-saved-deck.module';
 import { UserSavedCollectionsModule } from './modules/user-saved-collections/user-saved-collections.module';
+import { FlashcardProgressModule } from './modules/flashcard-progress/flashcard-progress.module';
 import env from './config/env';
 
 @Module({
@@ -26,7 +27,7 @@ import env from './config/env';
       synchronize: true,
       autoLoadEntities: true,    
       logging: env.NODE_ENV !== 'production',
-    }), UsersModule, LoggerModule, AuthModule, DeckModule, FlashcardModule, SessionModule, AttemptModule, CollectionsModule, CollectionDeckModule, UserSavedDeckModule, UserSavedCollectionsModule],
+    }), UsersModule, LoggerModule, AuthModule, DeckModule, FlashcardModule, SessionModule, AttemptModule, CollectionsModule, CollectionDeckModule, UserSavedDeckModule, UserSavedCollectionsModule, FlashcardProgressModule],
   controllers: [AppController],
   providers: [AppService],
 })

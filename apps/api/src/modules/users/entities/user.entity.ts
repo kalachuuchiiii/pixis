@@ -7,7 +7,7 @@ import { Deck } from '@/modules/deck/entities/deck.entity';
 import { Collection } from '@/modules/collections/entities/collection.entity';
 import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
 import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
-import { Progress } from '@/modules/flashcard/entities/progress.entity';
+import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcardProgress.entity';
 import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
 import { UserSavedCollection } from '@/modules/user-saved-collections/entities/user-saved-collection.entity';
 import { Session } from '@/modules/session/entities/session.entity';
@@ -38,8 +38,8 @@ export class User {
   @OneToMany(() => Flashcard, f => f.user, { onDelete: 'CASCADE' })
   flashcards?: Flashcard[];
 
-  @OneToMany(() => Progress, p => p.user, { onDelete: 'CASCADE' })
-  progresses?: Progress[];
+  @OneToMany(() => FlashcardProgress, p => p.user, { onDelete: 'CASCADE' })
+  progresses?: FlashcardProgress[];
 
   @OneToMany(() => Session, s => s.user, { onDelete: 'CASCADE' })
   sessions?: Session[];
