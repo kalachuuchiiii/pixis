@@ -23,7 +23,7 @@ export const AppHeader = ({
       {/* Left Content */}
       <div className="flex-1 space-y-3">
         <h1
-          className="text-5xl md:text-6xl font-normal tracking-tighter text-stone-900 dark:text-white"
+          className="text-5xl md:text-6xl font-normal tracking-tighter text-zinc-900 dark:text-white"
           style={{ fontFamily: "'DM Serif Display', serif" }}
         >
           {heading}
@@ -32,11 +32,11 @@ export const AppHeader = ({
         {(subheading || description) && (
           <div className="space-y-2">
             {subheading && (
-              <h2 className="text-2xl font-medium text-stone-700 dark:text-stone-300">
+              <h2 className="text-2xl font-medium text-zinc-700 dark:text-zinc-300">
                 {subheading}
               </h2>
             )}
-            <p className="text-lg text-stone-600 dark:text-stone-400 leading-relaxed max-w-2xl">
+            <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-2xl">
               {description}
             </p>
           </div>
@@ -45,9 +45,7 @@ export const AppHeader = ({
 
       {/* Right Side Content */}
       {beside && (
-        <div className="flex-shrink-0 lg:w-auto lg:self-end">
-          {beside}
-        </div>
+        <div className="flex-shrink-0 lg:w-auto lg:self-end">{beside}</div>
       )}
     </header>
   );

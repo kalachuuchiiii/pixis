@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { FlashcardForm, Query } from '@pixis/schemas';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck } from '../deck/entities/deck.entity';
 import { Equal, In, Not, type Repository } from 'typeorm';
@@ -25,10 +24,11 @@ import {
   SEARCHABLE_FLASHCARD_FIELDS,
   SORTABLE_FLASHCARD_FIELDS,
 } from '@pixis/constants';
-import { getNextPage } from '@/common/utils/pagination.util';
+import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
 import { DeckService } from '../deck/deck.service';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
 
-type FlashcardIdAndUser = { flashcardId: number; user: AuthPayload };
+type FlashcardIdAndUser = { flashcardId: number; user: AuthUser };
 
 @Injectable()
 export class FlashcardService {
@@ -79,7 +79,7 @@ export class FlashcardService {
   }: {
     deckId: number;
     flashcardForm: FlashcardForm;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const myDeck = await this.deckRepo.findOne({
       where: { id: deckId, user: { id: user.id } },
@@ -123,7 +123,7 @@ export class FlashcardService {
     flashcardForm,
   }: {
     flashcardId: number;
-    user: AuthPayload;
+    user: AuthUser;
     flashcardForm: FlashcardForm;
   }) {
     const result = await this.flashcardRepo.update(
@@ -174,7 +174,7 @@ export class FlashcardService {
     extend,
   }: {
     deckId: number;
-    user: AuthPayload;
+    user: AuthUser;
     query: PaginateQuery;
     extend?: (
       query: SelectQueryBuilder<Flashcard>,
@@ -189,11 +189,7 @@ export class FlashcardService {
         userId: user.id,
       });
 
-    const {
-      data,
-      links,
-      meta: { totalItems },
-    } = await paginate(query, extend ? extend(qb) : qb, {
+    const result = await paginate(query, extend ? extend(qb) : qb, {
       sortableColumns: [...SORTABLE_FLASHCARD_FIELDS],
       filterableColumns: {
         type: [FilterOperator.EQ],
@@ -201,11 +197,7 @@ export class FlashcardService {
       },
       searchableColumns: [...SEARCHABLE_FLASHCARD_FIELDS],
     });
-    return {
-      data,
-      totalItems,
-      nextPage: getNextPage(links, query.page),
-    };
+    return getPaginationData(result);
   }
 
   async deleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
@@ -225,12 +217,10 @@ export class FlashcardService {
   async findAccessibleFlashcardsByIds({
     flashcardIds,
     user,
-    matchAll = true,
     options = {},
   }: {
     flashcardIds: number[];
-    user: AuthPayload;
-    matchAll?: boolean;
+    user: AuthUser;
     options?: FindManyOptions<Flashcard> | undefined;
   }) {
     const flashcards = await this.flashcardRepo.find({
@@ -245,12 +235,9 @@ export class FlashcardService {
     });
 
     const isFullMatch = flashcards.length === flashcardIds.length;
-    if (!isFullMatch && matchAll) {
-      throw new NotFoundException({
-        message: 'Flashcards not found',
-        code: 'FLASHCARDS_NOT_FOUND',
-      });
-    }
-    return flashcards;
+    return {
+      flashcards,
+      isFullMatch,
+    };
   }
 }

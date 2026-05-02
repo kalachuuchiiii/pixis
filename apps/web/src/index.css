@@ -22,13 +22,13 @@
 }
 
 .page-container {
-  @apply py-12 dark:bg-stone-950 px-8 max-w-7xl w-full min-h-screen 
+  @apply py-12 dark:bg-zinc-950 px-3 max-w-7xl w-full min-h-screen 
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #78716c transparent; /* stone-500 */
+  scrollbar-color: #78716c transparent; /* zinc-500 */
 }
 
 /* Chrome, Edge, Safari */
@@ -42,18 +42,18 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #78716c; /* stone-500 */
+  background-color: #78716c; /* zinc-500 */
   border-radius: 999px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #57534e; /* stone-600 for hover */
+  background-color: #57534e; /* zinc-600 for hover */
 }
 
 .heading {
-  @apply font-normal leading-tight font-[DM_Serif_Display] text-stone-900 dark:text-stone-100;
+  @apply font-normal leading-tight font-[DM_Serif_Display] text-zinc-900 dark:text-zinc-100;
 }
 
 @keyframes fade-in-down {
@@ -107,7 +107,7 @@ h1, h2, h3, h4 {
 }
 
 .description {
-  @apply  text-stone-400 
+  @apply  text-zinc-400 
 }
 
 .animate-fade-in-down {

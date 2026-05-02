@@ -50,7 +50,7 @@ const Avatar = ({ ...props }: ComponentProps<"div">) => {
           src={
             user.avatarPublicUrl
               ? `https://res.cloudinary.com/<cloud-name>/image/upload/${user.avatarPublicUrl}`
-              : undefined
+              : "https://i.pinimg.com/550x/04/29/6e/04296eecc2068ff6326efffca76f7836.jpg"
           }
         />
         <AvatarFallback>{firstTwoLetters}</AvatarFallback>
@@ -59,17 +59,19 @@ const Avatar = ({ ...props }: ComponentProps<"div">) => {
   );
 };
 
-const Username = ({ ...props }: ComponentProps<'p'>) => {
+const Username = ({ ...props }: ComponentProps<"p">) => {
   const user = useUser();
-  return (<p {...props}>{user.username}</p>)
-}
+  return <p {...props}>@{user.username}</p>;
+};
 
 const Nickname = () => {
   const user = useUser();
-  return (  <p className="text-[13px] dark:text-stone-200 w-fit font-semibold text-stone-800 truncate leading-tight">
-        {user.nickname || user.username}
-      </p>)
-}
+  return (
+    <p className="text-[13px] dark:text-zinc-200 w-fit font-semibold text-zinc-800 truncate leading-tight">
+      {user.nickname || user.username}
+    </p>
+  );
+};
 
 const Info = () => {
   const user = useUser();
@@ -77,15 +79,15 @@ const Info = () => {
   return !user.username ? (
     <div className="w-full flex-1 space-y-1">
       {/* Nickname / Username skeleton */}
-      <div className="h-3 w-26 bg-stone-200 rounded animate-pulse"></div>
+      <div className="h-3 w-26 bg-zinc-200 rounded animate-pulse"></div>
 
       {/* Username skeleton */}
-      <div className="h-2 w-20 bg-stone-200 rounded animate-pulse"></div>
+      <div className="h-2 w-20 bg-zinc-200 rounded animate-pulse"></div>
     </div>
   ) : (
     <div className="min-w-0 flex-1 w-fit">
       <Nickname />
-      <Username className="text-xs dark:text-stone-300 text-stone-500" />
+      <Username className="text-xs dark:text-zinc-300 opacity-75 text-zinc-500" />
     </div>
   );
 };
@@ -93,7 +95,7 @@ const Info = () => {
 const Default = ({ user }: { user: UB }) => {
   return (
     <Root className="flex items-center gap-4" user={user}>
-      <Avatar />
+      <Avatar className="outline-[2.5px] outline-offset-3 outline-sky-500" />
       <Info />
     </Root>
   );

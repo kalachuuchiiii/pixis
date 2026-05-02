@@ -12,10 +12,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
-import { useMyFlashcard } from "../hooks/useMyFlashcard";
+import { useFlashcard } from "../hooks/useFlashcard";
 
 export const DeleteFlashcardDialog = ({ flashcardId, deckId }: { flashcardId: number | string; deckId: number | string; }) => {
-  const { deleteFlashcard, isDeletingFlashcard } = useMyFlashcard();
+  const { deleteFlashcard, isDeletingFlashcard } = useFlashcard();
 
   return (
     <AlertDialog>

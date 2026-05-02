@@ -65,14 +65,14 @@ const FadeIn = ({
 
 // ── Shared Components ─────────────────────────────────────────────────────
 const SectionTag = ({ children }: { children: ReactNode }) => (
-  <p className="text-xs font-semibold tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 mb-3">
+  <p className="text-xs font-semibold tracking-[0.2em] uppercase text-zinc-500 dark:text-zinc-400 mb-3">
     {children}
   </p>
 );
 
 const SectionTitle = ({ children }: { children: ReactNode }) => (
   <h2
-    className="text-[clamp(28px,5vw,48px)] font-normal leading-tight text-stone-900 dark:text-white"
+    className="text-[clamp(28px,5vw,48px)] font-normal leading-tight text-zinc-900 dark:text-white"
     style={{ fontFamily: "'DM Serif Display', serif" }}
   >
     {children}
@@ -87,7 +87,7 @@ const SectionSub = ({
   className?: string;
 }) => (
   <p
-    className={`text-[15px] text-stone-600 dark:text-stone-400 leading-relaxed ${className}`}
+    className={`text-[15px] text-zinc-600 dark:text-zinc-400 leading-relaxed ${className}`}
   >
     {children}
   </p>
@@ -95,17 +95,17 @@ const SectionSub = ({
 
 // ── Navigation ────────────────────────────────────────────────────────────
 const Nav = () => (
-  <nav className="sticky top-0 z-50 bg-white/90 dark:bg-stone-950/90 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 h-16 px-6 md:px-8 flex items-center justify-between">
+  <nav className="sticky top-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 h-16 px-6 md:px-8 flex items-center justify-between">
     <div className="flex tracking-widest items-center gap-3">
       <PixisAvatar /> <Pixis />
     </div>
 
-    <div className="hidden md:flex items-center gap-8 text-sm text-stone-600 dark:text-stone-400">
+    <div className="hidden md:flex items-center gap-8 text-sm text-zinc-600 dark:text-zinc-400">
       {["Features", "Modes", "Dashboard", "Docs"].map((item) => (
         <a
           key={item}
           href={`#${item.toLowerCase()}`}
-          className="hover:text-stone-900 dark:hover:text-white transition-colors"
+          className="hover:text-zinc-900 dark:hover:text-white transition-colors"
         >
           {item}
         </a>
@@ -113,7 +113,7 @@ const Nav = () => (
     </div>
 
     <Link to="/sign-up">
-      <button className="h-9 px-5 rounded-xl bg-stone-900 dark:bg-white dark:text-stone-900 text-white text-sm font-medium hover:bg-stone-800 dark:hover:bg-stone-100 transition-colors">
+      <button className="h-9 px-5 rounded-xl bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
         Get started free
       </button>
     </Link>
@@ -122,7 +122,7 @@ const Nav = () => (
 
 // ── Hero ──────────────────────────────────────────────────────────────────
 const Hero = () => (
-  <section className="relative overflow-hidden px-6 md:px-8 pt-20 pb-24 text-center bg-white dark:bg-stone-950">
+  <section className="relative overflow-hidden px-6 md:px-8 pt-20 pb-24 text-center bg-white dark:bg-zinc-950">
     {/* Background Grid */}
     <div
       className="absolute inset-0 pointer-events-none"
@@ -136,18 +136,17 @@ const Hero = () => (
 
     <div className="relative z-10 max-w-3xl mx-auto">
       <FadeIn>
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-xs text-stone-500 mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-500 mb-8">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           Free forever • No email needed
         </div>
       </FadeIn>
 
       <FadeIn delay={80}>
-        <h1 className="text-[clamp(42px,7vw,68px)] font-normal leading-[1.05] text-stone-900 dark:text-white mb-6">
+        <h1 className="text-[clamp(42px,7vw,68px)] font-normal leading-[1.05] text-zinc-900 dark:text-white mb-6">
           The smarter way
           <br />
-          to{" "}
-          <span className="text-stone-400 dark:text-stone-500">
+          to <span className="text-zinc-400 dark:text-zinc-500">
             actually
           </span>{" "}
           remember.
@@ -155,7 +154,7 @@ const Hero = () => (
       </FadeIn>
 
       <FadeIn delay={140}>
-        <p className="text-lg text-stone-600 dark:text-stone-400 max-w-xl mx-auto mb-10">
+        <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto mb-10">
           AI-powered flashcards that adapt to how you learn. From quick reviews
           to exam crunch — Pixis helps you retain what matters.
         </p>
@@ -164,15 +163,15 @@ const Hero = () => (
       <FadeIn delay={190}>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link to="/sign-up">
-            <button className="w-full sm:w-auto h-12 px-8 rounded-2xl bg-stone-900 hover:bg-black dark:bg-white dark:text-stone-900 dark:hover:bg-stone-100 text-white text-base font-medium transition-all">
+            <button className="w-full sm:w-auto h-12 px-8 rounded-2xl bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-white text-base font-medium transition-all">
               Start studying free →
             </button>
           </Link>
-          <button className="w-full sm:w-auto h-12 px-8 rounded-2xl border border-stone-300 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-900 text-stone-700 dark:text-stone-300 transition-colors">
+          <button className="w-full sm:w-auto h-12 px-8 rounded-2xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 transition-colors">
             Watch 45s demo
           </button>
         </div>
-        <p className="text-xs text-stone-500 mt-4">
+        <p className="text-xs text-zinc-500 mt-4">
           No signup. Open and start instantly.
         </p>
       </FadeIn>
@@ -185,21 +184,21 @@ const CardPreview = () => (
   <FadeIn className="flex justify-center px-6 pb-20">
     <div className="relative w-full max-w-md h-[220px]">
       {/* Background cards */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-80 h-48 rounded-3xl border border-stone-200 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 rotate-[-6deg]" />
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-80 h-48 rounded-3xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 rotate-[-2deg]" />
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-80 h-48 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 rotate-[-6deg]" />
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-80 h-48 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 rotate-[-2deg]" />
 
       {/* Main Card */}
-      <div className="absolute left-1/2 -translate-x-1/2 w-80 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-3xl p-6 shadow-xl">
-        <p className="text-[10px] font-semibold tracking-widest uppercase text-stone-400 mb-3">
+      <div className="absolute left-1/2 -translate-x-1/2 w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-6 shadow-xl">
+        <p className="text-[10px] font-semibold tracking-widest uppercase text-zinc-400 mb-3">
           Biology • Exam Mode • 4/18
         </p>
-        <p className="text-[15px] leading-snug font-medium text-stone-800 dark:text-stone-200 mb-6">
+        <p className="text-[15px] leading-snug font-medium text-zinc-800 dark:text-zinc-200 mb-6">
           Explain the sodium-potassium pump and its role in resting membrane
           potential.
         </p>
 
-        <div className="flex items-center justify-between pt-4 border-t border-stone-100 dark:border-stone-800">
-          <span className="flex items-center gap-1.5 text-xs text-stone-500">
+        <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <span className="flex items-center gap-1.5 text-xs text-zinc-500">
             <Clock className="w-3.5 h-3.5" />
             Spaced • due in 2 days
           </span>
@@ -211,7 +210,7 @@ const CardPreview = () => (
                   i === 0
                     ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400"
                     : i === 1
-                      ? "border-stone-300 dark:border-stone-700 text-stone-600 dark:text-stone-400"
+                      ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400"
                       : "border-green-200 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400"
                 }`}
               >
@@ -264,8 +263,8 @@ const features = [
   },
   {
     icon: BookOpen,
-    color: "text-stone-600",
-    bg: "bg-stone-100 dark:bg-stone-800",
+    color: "text-zinc-600",
+    bg: "bg-zinc-100 dark:bg-zinc-800",
     title: "Built-in Study Guides",
     desc: "Learn proven techniques: spaced repetition, active recall, Feynman, etc.",
   },
@@ -274,7 +273,7 @@ const features = [
 const Features = () => (
   <section
     id="features"
-    className="px-6 md:px-8 py-20 bg-white dark:bg-stone-950"
+    className="px-6 md:px-8 py-20 bg-white dark:bg-zinc-950"
   >
     <div className="max-w-6xl mx-auto">
       <FadeIn className="text-center mb-16">
@@ -292,16 +291,16 @@ const Features = () => (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((f, i) => (
           <FadeIn key={f.title} delay={i * 50}>
-            <div className="group border border-stone-200 dark:border-stone-800 rounded-3xl p-8 bg-white dark:bg-stone-900 hover:border-stone-300 dark:hover:border-stone-700 transition-all hover:shadow-sm">
+            <div className="group border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all hover:shadow-sm">
               <div
                 className={`w-11 h-11 rounded-2xl ${f.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}
               >
                 <f.icon className={`w-6 h-6 ${f.color}`} />
               </div>
-              <h3 className="text-xl font-semibold text-stone-900 dark:text-white mb-3">
+              <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-3">
                 {f.title}
               </h3>
-              <p className="text-stone-600 dark:text-stone-400 text-[15px] leading-relaxed">
+              <p className="text-zinc-600 dark:text-zinc-400 text-[15px] leading-relaxed">
                 {f.desc}
               </p>
             </div>
@@ -347,7 +346,7 @@ const modes = [
 const Modes = () => (
   <section
     id="modes"
-    className="px-6 md:px-8 py-20 bg-stone-50 dark:bg-stone-900 border-y border-stone-100 dark:border-stone-800"
+    className="px-6 md:px-8 py-20 bg-zinc-50 dark:bg-zinc-900 border-y border-zinc-100 dark:border-zinc-800"
   >
     <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
       <FadeIn>
@@ -365,7 +364,7 @@ const Modes = () => (
           {modes.map((m) => (
             <div
               key={m.name}
-              className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-3xl p-6 hover:shadow transition-shadow"
+              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-6 hover:shadow transition-shadow"
             >
               <div
                 className={`w-9 h-9 rounded-xl bg-${m.color}-100 dark:bg-${m.color}-950 flex items-center justify-center mb-4`}
@@ -379,10 +378,10 @@ const Modes = () => (
               >
                 {m.tag}
               </span>
-              <p className="font-semibold text-lg mt-4 mb-1 text-stone-900 dark:text-white">
+              <p className="font-semibold text-lg mt-4 mb-1 text-zinc-900 dark:text-white">
                 {m.name}
               </p>
-              <p className="text-sm text-stone-600 dark:text-stone-400">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 {m.desc}
               </p>
             </div>
@@ -408,7 +407,7 @@ const FreeCTA = () => (
     <FadeIn>
       <div
         className="
-       mx-auto bg-gradient-to-br from-stone-900 to-black dark:from-stone-800 dark:to-black  text-white p-12 md:p-20 text-center relative overflow-hidden"
+       mx-auto bg-gradient-to-br from-zinc-900 to-black dark:from-zinc-800 dark:to-black  text-white p-12 md:p-20 text-center relative overflow-hidden"
       >
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-white/20 bg-white/10 text-sm mb-6">
@@ -424,11 +423,11 @@ const FreeCTA = () => (
             Free. Forever.
           </h2>
 
-          <p className="text-xl text-stone-300 max-w-lg mx-auto mb-10">
+          <p className="text-xl text-zinc-300 max-w-lg mx-auto mb-10">
             No paywalls. No premium tiers. Just powerful flashcards.
           </p>
 
-          <div className="flex flex-wrap gap-x-8 gap-y-4 justify-center mb-12 text-stone-300">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 justify-center mb-12 text-zinc-300">
             {perks.map((perk) => (
               <div key={perk} className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
@@ -440,7 +439,7 @@ const FreeCTA = () => (
           </div>
 
           <Link to="/sign-up">
-            <button className="h-14 px-10 rounded-2xl bg-white text-stone-900 text-lg font-medium hover:bg-stone-100 transition-colors">
+            <button className="h-14 px-10 rounded-2xl bg-white text-zinc-900 text-lg font-medium hover:bg-zinc-100 transition-colors">
               Start studying now →
             </button>
           </Link>
@@ -453,14 +452,14 @@ const FreeCTA = () => (
 // ── Offline Banner ────────────────────────────────────────────────────────
 const OfflineBanner = () => (
   <FadeIn className="px-6 max-w-5xl mx-auto py-20">
-    <div className="border border-dashed border-stone-300 dark:border-stone-700 rounded-3xl px-8 py-8 bg-white dark:bg-stone-900 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="border border-dashed border-zinc-300 dark:border-zinc-700 rounded-3xl px-8 py-8 bg-white dark:bg-zinc-900 flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex items-center gap-5">
-        <WifiOff className="w-10 h-10 text-stone-400" />
+        <WifiOff className="w-10 h-10 text-zinc-400" />
         <div>
-          <p className="font-semibold text-lg text-stone-900 dark:text-white">
+          <p className="font-semibold text-lg text-zinc-900 dark:text-white">
             Offline Mode
           </p>
-          <p className="text-stone-600 dark:text-stone-400">
+          <p className="text-zinc-600 dark:text-zinc-400">
             Study your decks anywhere — even without internet.
           </p>
         </div>
@@ -474,7 +473,7 @@ const OfflineBanner = () => (
 
 // ── Footer ────────────────────────────────────────────────────────────────
 const Footer = () => (
-  <footer className="border-t border-stone-200 dark:border-stone-800 px-6 py-10 text-sm text-stone-500 dark:text-stone-400">
+  <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-10 text-sm text-zinc-500 dark:text-zinc-400">
     <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex items-center gap-1">
         <div className="flex items-center gap-2">
@@ -490,7 +489,7 @@ const Footer = () => (
           <a
             key={link}
             href="#"
-            className="hover:text-stone-900 dark:hover:text-white transition-colors"
+            className="hover:text-zinc-900 dark:hover:text-white transition-colors"
           >
             {link}
           </a>
@@ -502,7 +501,7 @@ const Footer = () => (
 
 // ── Main Landing Page ─────────────────────────────────────────────────────
 const LandingPage = () => (
-  <div className="min-h-screen bg-white dark:bg-stone-950 text-stone-900 dark:text-stone-100">
+  <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
     <Nav />
     <Hero />
     <CardPreview />

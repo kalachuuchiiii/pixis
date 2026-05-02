@@ -13,3 +13,4 @@ export * from  './exam.schemas';
 export * from './timestamp.schemas';
 export * from './common.schemas';
 export * from './session.schemas';
+export * from './leaderboard.schemas';

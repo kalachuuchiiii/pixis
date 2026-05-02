@@ -13,22 +13,22 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 import type { CollectionForm } from '@pixis/schemas';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import {
   FilterOperator,
   paginate,
   type PaginateConfig,
   type PaginateQuery,
 } from 'nestjs-paginate';
-import { getNextPage } from '@/common/utils/pagination.util';
+import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
 import { SORTABLE_COLLECTION_FIELDS } from '@pixis/constants';
 import { CollectionDeck } from '../collection-deck/entities/collection-deck.entity';
 import { options } from 'axios';
-import { collectionPaginationConfig } from '@/config/pagination.config';
+import { collectionPaginationConfig } from '@/config/paginationConfigs';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 type CollectionIdWithUser = {
   collectionId: number;
-  user: AuthPayload;
+  user: AuthUser;
 };
 
 @Injectable()
@@ -42,7 +42,7 @@ export class CollectionsService {
     user,
   }: {
     collectionForm: CollectionForm;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const newCollection = this.collectionRepo.create({
       ...collectionForm,
@@ -59,7 +59,7 @@ export class CollectionsService {
   }: {
     collectionForm: CollectionForm;
     collectionId: number;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const result = await this.collectionRepo.update(
       { id: collectionId, user: { id: user.id } },
@@ -91,7 +91,7 @@ export class CollectionsService {
   async getPublicCollections({ query }: { query: PaginateQuery }) {
     const qb = this.findAccessibleCollectionsQuery({});
 
-    const { data, links, meta } = await paginate(query, qb, {
+    const result = await paginate(query, qb, {
       ...collectionPaginationConfig,
       filterableColumns: {
         ...collectionPaginationConfig.filterableColumns,
@@ -99,11 +99,7 @@ export class CollectionsService {
       },
     });
 
-    return {
-      data,
-      nextPage: getNextPage(links),
-      totalItems: meta.totalItems,
-    };
+    return getPaginationData(result);
   }
 
   async findAccessibleCollectionById({
@@ -113,7 +109,7 @@ export class CollectionsService {
   }: {
     collectionId: number;
     throwErrorOnNotFound?: boolean;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const qb = this.collectionRepo
       .createQueryBuilder('collection')
@@ -129,12 +125,14 @@ export class CollectionsService {
         'usc',
         'usc.user.id = :userId',
         { userId: user.id },
-      ).loadRelationCountAndMap(
+      )
+      .loadRelationCountAndMap(
         'collection.deckCount',
-        'collection.collectionDecks'
-      ).loadRelationCountAndMap(
+        'collection.collectionDecks',
+      )
+      .loadRelationCountAndMap(
         'collection.userSavedCollectionCount',
-        'collection.userSavedCollections'
+        'collection.userSavedCollections',
       )
       .select([
         'collection',
@@ -156,7 +154,7 @@ export class CollectionsService {
     return result;
   }
 
-  findAccessibleCollectionsQuery({ user = undefined }: { user?: AuthPayload }) {
+  findAccessibleCollectionsQuery({ user = undefined }: { user?: AuthUser }) {
     return this.collectionRepo
       .createQueryBuilder('collection')
       .where(
@@ -170,7 +168,7 @@ export class CollectionsService {
       )
       .loadRelationCountAndMap(
         'collection.userSavedCollectionCount',
-        'collection.userSavedCollections'
+        'collection.userSavedCollections',
       )
       .select([
         'collection',
@@ -185,20 +183,15 @@ export class CollectionsService {
     user,
   }: {
     query: PaginateQuery;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
-    const qb = this.findAccessibleCollectionsQuery({ user }).andWhere('collection.user.id = :userId', { userId: user.id });
-
-    const { data, links, meta } = await paginate(
-      query,
-      qb,
-      collectionPaginationConfig,
+    const qb = this.findAccessibleCollectionsQuery({ user }).andWhere(
+      'collection.user.id = :userId',
+      { userId: user.id },
     );
 
-    return {
-      data,
-      nextPage: getNextPage(links),
-      totalItems: meta.totalItems,
-    };
+    const result = await paginate(query, qb, collectionPaginationConfig);
+
+    return getPaginationData(result);
   }
 }

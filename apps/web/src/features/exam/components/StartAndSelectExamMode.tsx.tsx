@@ -7,20 +7,19 @@ import {
 } from "@/components/ui/dialog";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useSession } from "../../session/hooks/useExam";
+import { useSession } from "../../session/hooks/useSession";
 import type { Deck } from "@pixis/schemas";
 
-export const SelectExamModeDialog = ({
-  deck,
-}: {
-  deck: Deck
-}) => {
+export const StartAndSelectExamMode = ({ deck }: { deck: Deck }) => {
   const { createNewSession, isCreatingNewSession } = useSession();
 
   return (
-    <Dialog >
-      <DialogTrigger disabled = {deck.flashcardCount === 0} asChild>
-        <Button disabled = {deck.flashcardCount === 0} className="my-btn fixed right-10 bottom-10">
+    <Dialog>
+      <DialogTrigger disabled={deck.flashcardCount === 0}>
+        <Button
+          disabled={deck.flashcardCount === 0}
+          className="my-btn fixed right-10 bottom-10"
+        >
           Start Exam <ChevronRight className="size-5 opacity-80" />
         </Button>
       </DialogTrigger>
@@ -37,7 +36,9 @@ export const SelectExamModeDialog = ({
 
         <div className="mt-6 grid gap-3">
           <button
-            onClick={() => createNewSession({ mode: "NORMAL", deckId: deck.id })}
+            onClick={() =>
+              createNewSession({ mode: "NORMAL", deckId: deck.id })
+            }
             disabled={isCreatingNewSession}
             className="group w-full rounded-xl border p-4 text-left transition-all hover:bg-muted/50"
           >

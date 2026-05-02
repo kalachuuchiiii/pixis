@@ -1,16 +1,15 @@
-export const useIndex = (
-  ceilIndex: number,
-  set: React.Dispatch<React.SetStateAction<number>>
-) => {
-  const onNext = () => {
-    let hasNext: boolean = false;
-    let hasPrevious: boolean = false;
-    set((prev) => {
-      hasNext = prev < ceilIndex;
-      hasPrevious = prev > 0;
-      return hasNext ? prev + 1 : prev;
-    });
+export type UseIndexProps = {
+  ceilIndex: number;
+  currentIdx: number;
+  set: React.Dispatch<React.SetStateAction<number>>;
+};
 
+export const useIndex = ({ ceilIndex, currentIdx, set }: UseIndexProps) => {
+  const onNext = () => {
+    const nextValue = currentIdx < ceilIndex ? currentIdx + 1 : currentIdx;
+    set(nextValue);
+    const hasNext = nextValue < ceilIndex;
+    const hasPrevious = nextValue > 0;
     return {
       hasNext,
       hasPrevious,
@@ -18,13 +17,11 @@ export const useIndex = (
   };
 
   const onPrevious = () => {
-    let hasNext: boolean = false;
-    let hasPrevious: boolean = false;
-    set((prev) => {
-      hasNext = prev < ceilIndex;
-      hasPrevious = prev > 0;
-      return hasPrevious ? prev - 1 : prev;
-    });
+    const nextValue = currentIdx > 0 ? currentIdx - 1 : currentIdx;
+
+    set(nextValue);
+    const hasNext = nextValue < ceilIndex;
+    const hasPrevious = nextValue > 0;
     return {
       hasNext,
       hasPrevious,

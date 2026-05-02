@@ -26,7 +26,10 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
     <div className="space-y-8 my-4">
       {header}
 
-      <div className="space-y-8" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      <div
+        className="space-y-8"
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
+      >
         {/* Title */}
         <Controller
           name="title"
@@ -37,7 +40,7 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
               <Input
                 {...field}
                 placeholder="e.g. Cell Biology — Chapter 3"
-                className="dark:bg-stone-900 dark:border-stone-700"
+                className="dark:bg-zinc-900 dark:border-zinc-700"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -54,7 +57,7 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
               <Input
                 {...field}
                 placeholder="e.g. Biology"
-                className="dark:bg-stone-900 dark:border-stone-700"
+                className="dark:bg-zinc-900 dark:border-zinc-700"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 
@@ -65,7 +68,7 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
                     key={topic}
                     type="button"
                     onClick={() => setValue("topic", topic)}
-                    className="flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800 hover:border-stone-300 active:bg-stone-100 transition-all text-stone-700 dark:text-stone-300"
+                    className="flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-zinc-300 active:bg-zinc-100 transition-all text-zinc-700 dark:text-zinc-300"
                   >
                     <Tag size={14} strokeWidth={2.5} />
                     {topic}
@@ -81,34 +84,38 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
           {/* Color Picker */}
           <Field className="col-span-1">
             <FieldLabel>Deck Color</FieldLabel>
-          
-              <ColorPicker 
+
+            <ColorPicker
               className=""
-                onChange={(selectedColor) => setValue("color", selectedColor.getHex())}
-                color={{ type: "hex", value: color }}
-              >
-                <ColorPicker.Saturation className="h-52 rounded-xl mb-4" />
+              onChange={(selectedColor) =>
+                setValue("color", selectedColor.getHex())
+              }
+              color={{ type: "hex", value: color }}
+            >
+              <ColorPicker.Saturation className="h-52 rounded-xl mb-4" />
 
-                <div className="flex items-center px-2 gap-4">
-                  <ColorPicker.EyeDropper>
-                    <Button variant="outline" size="icon" className="dark:bg-stone-800">
-                      <Pipette size={20} />
-                    </Button>
-                  </ColorPicker.EyeDropper>
+              <div className="flex items-center px-2 gap-4">
+                <ColorPicker.EyeDropper>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="dark:bg-zinc-800"
+                  >
+                    <Pipette size={20} />
+                  </Button>
+                </ColorPicker.EyeDropper>
 
-                  <div className="flex-1 space-y-3">
-                    <ColorPicker.Hue className="h-3 rounded" />
-                    <ColorPicker.Alpha className="h-3 rounded" />
-                  </div>
+                <div className="flex-1 space-y-3">
+                  <ColorPicker.Hue className="h-3 rounded" />
+                  <ColorPicker.Alpha className="h-3 rounded" />
                 </div>
-              </ColorPicker>
-         
+              </div>
+            </ColorPicker>
           </Field>
 
           {/* Visibility */}
           <Controller
             name="visibility"
-            
             control={control}
             render={({ fieldState }) => (
               <Field className="col-span-2">
@@ -123,7 +130,9 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
                     />
                   ))}
                 </div>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />

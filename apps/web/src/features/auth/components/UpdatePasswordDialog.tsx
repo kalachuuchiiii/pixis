@@ -40,8 +40,8 @@ export const UpdatePasswordDialog = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <p className="font-medium text-stone-900">Change Password</p>
-        <p className="text-sm text-stone-500">Update your account password</p>
+        <p className="font-medium text-zinc-900">Change Password</p>
+        <p className="text-sm text-zinc-500">Update your account password</p>
       </div>
       <Dialog>
         <DialogTrigger asChild>
@@ -79,7 +79,7 @@ export const UpdatePasswordDialog = () => {
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel>New Password</FieldLabel>
-                    <Input {...field}  placeholder="Your new password"/>
+                    <Input {...field} placeholder="Your new password" />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

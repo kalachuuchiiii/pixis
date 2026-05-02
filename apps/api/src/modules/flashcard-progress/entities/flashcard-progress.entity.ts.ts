@@ -11,6 +11,7 @@ import {
 import { Flashcard } from '../../flashcard/entities/flashcard.entity';
 import { User } from '@/modules/users/entities/user.entity';
 import { Session } from '@/modules/session/entities/session.entity';
+import { Deck } from '@/modules/deck/entities/deck.entity';
 
 @Entity('flashcard_progress')
 export class FlashcardProgress {
@@ -41,4 +42,12 @@ export class FlashcardProgress {
   })
   @JoinColumn({ name: 'flashcard_id' })
   flashcard?: Flashcard;
+
+  @ManyToOne(() => Deck, (d) => d.progresses, {
+    onDelete: 'CASCADE',
+  })
+  deck?: Deck;
+
+  @RelationId((fp: FlashcardProgress) => fp.deck)
+  deckId!: number;
 }

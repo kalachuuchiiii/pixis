@@ -10,13 +10,13 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMyFlashcard } from "./useMyFlashcard";
+import { useFlashcard } from "./useFlashcard";
 
 export const useCreateFlashcard = () => {
   const [type, setType] = useState<Flashcard["type"] | "">("");
   const { deckId = 0 } = useParams();
 
-  const { createFlashcard, isCreatingFlashcard } = useMyFlashcard();
+  const { createFlashcard, isCreatingFlashcard } = useFlashcard();
   const closeEndedForm = useForm<CloseEndedFlashcardForm>({
     defaultValues: {
       type: "close_ended",

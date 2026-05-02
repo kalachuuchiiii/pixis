@@ -1,22 +1,17 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type RawDeckForm } from '@pixis/schemas';
 import { Deck } from './entities/deck.entity';
-import {  In, IsNull, Not, type Repository } from 'typeorm';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
-import { getNextPage } from '@/common/utils/pagination.util';
-import {
-  paginate,
-  type PaginateQuery,
-} from 'nestjs-paginate';
+import { In, IsNull, Not, type Repository } from 'typeorm';
+import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
+import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { DataSource } from 'typeorm';
-import type {  SelectQueryBuilder } from 'typeorm';
-import { deckPaginationConfig } from '@/config/pagination.config';
-type DeckIdWithUser = { deckId: number; user: AuthPayload };
-
+import type { SelectQueryBuilder } from 'typeorm';
+import { deckPaginationConfig } from '@/config/paginationConfigs';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
+import { withDeckSavedInfo } from './query/withDeckSavedInfo';
+import { withDeckStats } from './query/withDeckStats';
+type DeckIdWithUser = { deckId: number; user: AuthUser };
 
 @Injectable()
 export class DeckService {
@@ -25,12 +20,33 @@ export class DeckService {
     public dataSource: DataSource,
   ) {}
 
+  async getLatestDecksAnsweredByUserId({ userId }: { userId: number }) {
+    const qb = this.deckRepo
+      .createQueryBuilder('deck')
+      .leftJoin('deck.sessions', 'session')
+      .leftJoin('session.user', 'user')
+      .where(
+        '(deck.user.id = :userId OR deck.visibility != :visibility) AND (user.id = :userId) AND user.isPrivate != :isPrivate',
+        {
+          userId,
+          visibility: 'private',
+          isPrivate: true,
+        },
+      )
+      .orderBy('session.createdAt', 'DESC')
+      .limit(3);
+
+    const decks = await withDeckStats(qb).getMany();
+
+    return decks;
+  }
+
   async getSoftDeletedDecks({
     query,
     user,
   }: {
     query: PaginateQuery;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const qb = this.deckRepo
       .createQueryBuilder('deck')
@@ -38,61 +54,41 @@ export class DeckService {
       .where('deck.user.id = :userId AND deck.deletedAt IS NOT NULL', {
         userId: user.id,
       });
-    const { data, links } = await paginate(query, qb, deckPaginationConfig);
-    return {
-      data,
-      nextPage: getNextPage(links, query.page),
-    };
+    const qbWithCount = withDeckStats(qb);
+    const result = await paginate(query, qbWithCount, deckPaginationConfig);
+    return getPaginationData(result);
   }
 
-  async getMyDecks({
+  async findAccessibleDecks({
     query,
     user,
   }: {
     query: PaginateQuery;
-    user: AuthPayload;
+    user?: AuthUser;
   }) {
-    const qb = this.deckRepo.createQueryBuilder('deck');
-    qb.where('deck.user.id = :userId', { userId: user.id });
+    const qb = this.deckRepo
+      .createQueryBuilder('deck')
+      .leftJoinAndSelect('deck.user', 'user');
 
-    const qbWithJoins = this.populateDeckFields(qb);
+    if (user) {
+      qb.where('deck.user.id = :userId ', { userId: user.id });
+    } else {
+      qb.where('deck.visibility != :visibility', { visibility: 'private' });
+    }
 
-    const { data, links } = await paginate(
-      query,
-      qbWithJoins,
-      deckPaginationConfig,
-    );
+    const qbWithCount = withDeckStats(qb);
 
-    return {
-      data,
-      nextPage: getNextPage(links, query.page),
-    };
-  }
-
-  async getDecks({ query }: { query: PaginateQuery }) {
-    const qb = this.deckRepo.createQueryBuilder('deck');
-    const qbWithJoins = this.populateDeckFields(qb);
-
-    const { data, links } = await paginate(query, qbWithJoins, {
+    const result = await paginate(query, qbWithCount, {
       ...deckPaginationConfig,
       filterableColumns: {
         ...deckPaginationConfig.filterableColumns,
-        visibility: [],
+        visibility: user
+          ? deckPaginationConfig.filterableColumns?.visibility
+          : [],
       },
     });
 
-    return {
-      data,
-      nextPage: getNextPage(links, query.page),
-    };
-  }
-
-  populateDeckFields(qb: SelectQueryBuilder<Deck>) {
-    qb.leftJoinAndSelect('deck.user', 'user').loadRelationCountAndMap(
-      'deck.flashcardCount',
-      'deck.flashcards',
-    );
-    return qb;
+    return getPaginationData(result);
   }
 
   async createDeck({
@@ -100,7 +96,7 @@ export class DeckService {
     user,
   }: {
     deckForm: RawDeckForm;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const newDeck = this.deckRepo.create({
       ...deckForm,
@@ -116,7 +112,7 @@ export class DeckService {
   }: {
     deckId: number;
     deckForm: RawDeckForm;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const result = await this.deckRepo.update(
       { id: deckId, user: { id: user.id } },
@@ -133,7 +129,7 @@ export class DeckService {
     user,
     throwOnNotFound = false,
   }: {
-    user: AuthPayload;
+    user: AuthUser;
     deckId: number;
     throwOnNotFound?: boolean;
   }) {
@@ -141,21 +137,24 @@ export class DeckService {
       .createQueryBuilder('deck')
       .leftJoin('deck.user', 'user')
       .where('deck.id = :deckId', { deckId })
+      .withDeleted()
       .andWhere('(deck.visibility != :visibility OR user.id = :userId)', {
         visibility: 'private',
         userId: user.id,
-      })
-      .loadRelationCountAndMap('deck.userSavedDeckCount', 'deck.userSavedDecks')
-      .loadRelationCountAndMap('deck.flashcardCount', 'deck.flashcards')
-      .leftJoinAndMapOne('deck.savedByMe', 'deck.userSavedDecks', 'usd', 'usd.user.id = :userId', { userId: user.id }).select(['deck', 'usd.id']);
-    
-    const deck = await qb.getOne();
+      });
+    ({ deckId, user });
+
+    const finalQb = withDeckSavedInfo({
+      qb: withDeckStats(qb),
+      userId: user.id,
+    });
+
+    const deck = await finalQb.getOne();
     if (!deck && throwOnNotFound) {
       throw new NotFoundException({
         message: 'Deck not found',
         code: 'DECK_NOT_FOUND',
       });
-      
     }
     return deck;
   }
@@ -203,13 +202,7 @@ export class DeckService {
     return result;
   }
 
-  async deleteDecks({
-    deckIds,
-    user,
-  }: {
-    deckIds: number[];
-    user: AuthPayload;
-  }) {
+  async deleteDecks({ deckIds, user }: { deckIds: number[]; user: AuthUser }) {
     return await this.dataSource.transaction(async (manager) => {
       const repo = manager.getRepository(Deck);
 
@@ -235,13 +228,7 @@ export class DeckService {
     });
   }
 
-  async restoreDecks({
-    deckIds,
-    user,
-  }: {
-    deckIds: number[];
-    user: AuthPayload;
-  }) {
+  async restoreDecks({ deckIds, user }: { deckIds: number[]; user: AuthUser }) {
     return await this.dataSource.transaction(async (manager) => {
       const repo = manager.getRepository(Deck);
 

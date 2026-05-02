@@ -14,10 +14,15 @@ import { CollectionDeckModule } from './modules/collection-deck/collection-deck.
 import { UserSavedDeckModule } from './modules/user-saved-deck/user-saved-deck.module';
 import { UserSavedCollectionsModule } from './modules/user-saved-collections/user-saved-collections.module';
 import { FlashcardProgressModule } from './modules/flashcard-progress/flashcard-progress.module';
+import { LeaderboardsService } from './modules/leaderboards/leaderboards.service';
+import { LeaderboardsController } from './modules/leaderboards/leaderboards.controller';
+import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
+import { DashboardsModule } from './modules/dashboards/dashboards.module';
 import env from './config/env';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [
+    TypeOrmModule.forRoot({
       type: 'postgres',
       host: env.DB_HOST,
       port: env.DB_PORT,
@@ -25,9 +30,24 @@ import env from './config/env';
       password: env.DB_PASS,
       database: env.DB_NAME,
       synchronize: true,
-      autoLoadEntities: true,    
+      autoLoadEntities: true,
       logging: env.NODE_ENV !== 'production',
-    }), UsersModule, LoggerModule, AuthModule, DeckModule, FlashcardModule, SessionModule, AttemptModule, CollectionsModule, CollectionDeckModule, UserSavedDeckModule, UserSavedCollectionsModule, FlashcardProgressModule],
+    }),
+    UsersModule,
+    LoggerModule,
+    AuthModule,
+    DeckModule,
+    FlashcardModule,
+    SessionModule,
+    AttemptModule,
+    CollectionsModule,
+    CollectionDeckModule,
+    UserSavedDeckModule,
+    UserSavedCollectionsModule,
+    FlashcardProgressModule,
+    LeaderboardsModule,
+    DashboardsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

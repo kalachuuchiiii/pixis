@@ -18,8 +18,6 @@ export const useArchiveSelector = () => {
     []
   );
 
-
-
   return {
     handleSelectOrDeselect,
     handleToggleIsSelecting,
@@ -28,3 +26,5 @@ export const useArchiveSelector = () => {
     setIsSelecting,
   };
 };
+
+export type UseArchiveSelectReturn = ReturnType<typeof useArchiveSelector>;

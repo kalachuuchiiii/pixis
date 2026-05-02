@@ -30,6 +30,8 @@ const Exam = () => {
     isProcessingExamAnswers,
   } = useExam();
 
+  console.log(currentFlashcardIdx)
+
   if (isProcessingExamAnswers) {
     return (
       <main className=" text-4xl tracking-tighter overflow-hidden w-screen h-screen flex items-center justify-center">

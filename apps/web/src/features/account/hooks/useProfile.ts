@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
+import { useAppDispatch } from "@/hooks/useReduxHook";
 import api from "@/lib/api";
 import {
   getErrorMessage,
@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import { toast } from "sonner";
 import { updateUserState } from "../slice/profileSlice";
+import { useProfileDetails } from "./useProfileDetails";
 
 type UpdateUserResponse = Pick<
   User,
@@ -16,8 +17,8 @@ type UpdateUserResponse = Pick<
 >;
 
 export const useProfile = () => {
-  const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.profile);
+  const { data: user, refetch } = useProfileDetails();
+
   const { mutate: updateUser, isPending: isUpdatingUser } = useMutation({
     mutationFn: async (updateUserForm: UpdateUserForm) => {
       const promise = new Promise<AxiosResponse<UpdateUserResponse>>(
@@ -39,7 +40,7 @@ export const useProfile = () => {
       return result.data;
     },
     onSuccess: (data) => {
-      dispatch(updateUserState({ ...user, ...data }));
+      refetch();
     },
   });
 
@@ -51,7 +52,7 @@ export const useProfile = () => {
       return result.data;
     },
     onSuccess: (data) => {
-      dispatch(updateUserState({ ...user, isPrivate: data.isPrivate }));
+      refetch();
     },
   });
 
@@ -59,6 +60,6 @@ export const useProfile = () => {
     updateUser,
     togglePrivacy,
     isUpdatingUser,
-    isTogglingPrivacy
+    isTogglingPrivacy,
   };
 };

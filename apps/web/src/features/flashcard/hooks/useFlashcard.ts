@@ -21,22 +21,10 @@ import type { AxiosResponse } from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { FlashcardListContext } from "../pages/FlashcardList";
 
-type InfiniteFlashcardData =
-  | InfiniteData<
-      {
-        nextPage: number | undefined;
-        flashcards: Flashcard[];
-        totalFlashcards: number;
-      },
-      unknown
-    >
-  | undefined;
 
-export const useMyFlashcard = () => {
+export const useFlashcard = () => {
   const nav = useNavigate();
-  const ctx = useContext(FlashcardListContext);
   const queryClient = useQueryClient();
 
   const { mutate: createFlashcard, isPending: isCreatingFlashcard } =

@@ -6,11 +6,12 @@ import { User } from './entities/user.entity';
 import { Point } from './entities/point.entity';
 import { Streak } from './entities/streak.entity';
 import { AccessStrategy } from '../auth/strategies/access.strategy';
+import { DeckModule } from '../deck/deck.module';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService, AccessStrategy],
-  imports: [TypeOrmModule.forFeature([User, Point, Streak])],
-  exports: [UsersService]
+  imports: [TypeOrmModule.forFeature([User, Point, Streak]), DeckModule],
+  exports: [UsersService],
 })
 export class UsersModule {}

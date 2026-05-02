@@ -11,7 +11,6 @@ import {
 import { CollectionsService } from './collections.service';
 import type { Request } from 'express';
 import {
-  authPayloadSchema,
   collectionFormSchema,
   collectionSchema,
   idSchema,
@@ -19,6 +18,7 @@ import {
 import { AccessGuard } from '../auth/guards/access.guard';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 import z from 'zod';
+import { authUserSchema } from '../auth/schemas/auth.schemas';
 
 @Controller('collections')
 export class CollectionsController {
@@ -46,7 +46,7 @@ export class CollectionsController {
     @Req() request: Request,
     @Paginate() query: PaginateQuery,
   ) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const { data, nextPage, totalItems } =
       await this.collectionsService.getMyCollections({ query, user });
     const cleanCollections = z.array(collectionSchema).parse(data);
@@ -61,7 +61,7 @@ export class CollectionsController {
   @UseGuards(AccessGuard)
   async createCollection(@Req() request: Request) {
     const collectionForm = collectionFormSchema.parse(request.body);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     await this.collectionsService.createCollection({ collectionForm, user });
     return {
       message: 'Collection created',
@@ -72,7 +72,7 @@ export class CollectionsController {
   @UseGuards(AccessGuard)
   async deleteCollection(@Req() request: Request) {
     const collectionId = idSchema.parse(request.params.collectionId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     await this.collectionsService.deleteCollection({ collectionId, user });
     return {
       message: 'Collection deleted',
@@ -84,7 +84,7 @@ export class CollectionsController {
   async updateCollection(@Req() request: Request) {
     const collectionForm = collectionFormSchema.parse(request.body);
     const collectionId = idSchema.parse(request.params.collectionId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     await this.collectionsService.updateCollection({
       collectionForm,
       collectionId,
@@ -99,7 +99,7 @@ export class CollectionsController {
   @UseGuards(AccessGuard)
   async getCollection(@Req() request: Request) {
     const collectionId = idSchema.parse(request.params.collectionId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const collection =
       await this.collectionsService.findAccessibleCollectionById({
         collectionId,

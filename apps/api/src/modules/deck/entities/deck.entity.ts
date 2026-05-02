@@ -30,23 +30,30 @@ import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
 import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
 import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
 import { Session } from '@/modules/session/entities/session.entity';
+import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity.ts';
 
 @Entity('deck')
 export class Deck {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 
+  @OneToMany(() => FlashcardProgress, (fp) => fp.deck, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  progresses?: FlashcardProgress[];
+
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (u) => u.decks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: User;
 
   @RelationId((d: Deck) => d.user)
   userId!: number;
 
-  @OneToMany(() => Session, s => s.deck, { onDelete: 'CASCADE' })
+  @OneToMany(() => Session, (s) => s.deck, { onDelete: 'CASCADE' })
   sessions?: Session[];
 
   @OneToMany(() => CollectionDeck, (cd) => cd.deck, { onDelete: 'CASCADE' })

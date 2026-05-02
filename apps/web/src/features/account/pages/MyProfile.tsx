@@ -1,142 +1,154 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PixisAvatar } from "@/components/ui/PixisAvatar";
+import { useProfileDetails } from "../hooks/useProfileDetails";
+import streakFire from "/streak-fire.gif";
+import { useDeckHistory } from "@/features/deck/hooks/useDeckHistory";
+import { DeckDisplay } from "@/features/deck/components/DeckDisplay";
+import clsx from "clsx";
 
 const MyProfile = () => {
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-100 h-[60px] px-8 flex items-center justify-between">
-        <PixisAvatar />
-        <div className="text-sm text-stone-500 font-medium">My Profile</div>
-        <a
-          href="/"
-          className="text-[13.5px] text-stone-500 hover:text-stone-900 transition-colors"
-        >
-          ← Home
-        </a>
-      </nav>
+  const { data: user } = useProfileDetails();
+  const { data: decks } = useDeckHistory(user.id);
 
-      <div className="lg:px-8 max-w-7xl mx-auto pt-12 pb-20">
+  return (
+    <div className="page-container">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-12 pb-24">
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row gap-10 items-start mb-16">
-          {/* Avatar & Basic Info */}
-          <div className="flex-shrink-0 flex flex-col items-center md:items-start">
-            <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-stone-800 to-black flex items-center justify-center text-white text-6xl shadow-inner">
-              👤
+        <div className="flex flex-col lg:flex-row gap-12 items-center lg:items-start mb-20">
+          {/* Avatar & Name Section */}
+          <div className="flex-shrink-0 flex flex-col items-center gap-2">
+            <div className="relative">
+              <Avatar className="size-60">
+                <AvatarImage src={user.avatarPublicUrl ?? undefined} />
+                <AvatarFallback className="text-[700%]">
+                  {user.username.substring(0, 2)}
+                </AvatarFallback>
+              </Avatar>
             </div>
-            <div className="mt-6 text-center md:text-left">
-              <h1 className="text-3xl font-semibold text-stone-900">
-                Alex Rivera
+
+            <div className="mt-8 text-center lg:text-left">
+              <h1 className="text-4xl font-semibold tracking-tight text-white">
+                {user.nickname || user.username}
               </h1>
-              <p className="text-stone-500">@alexrivera</p>
+              <p className="text-zinc-500 mt-1 text-lg">@{user.username}</p>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button className="px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 transition-colors rounded-2xl text-sm font-medium">
+                Edit Profile
+              </button>
+              <button className="px-6 py-2.5 border border-zinc-700 hover:border-zinc-600 transition-colors rounded-2xl text-sm font-medium">
+                Share Profile
+              </button>
             </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-6 w-full">
-            {/* Streak */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-6">
-              <p className="text-[13px] font-semibold tracking-widest uppercase text-stone-400 mb-2">
-                CURRENT STREAK
-              </p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-normal text-stone-900 tabular-nums">
-                  14
+          <div className="flex-1 w-full grid grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-amber-500/30 transition-colors group">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-xs font-semibold tracking-[2px] uppercase text-zinc-500">
+                  STREAK
+                </p>
+                <img src={streakFire} className="size-10" />
+              </div>
+              <div className="flex items-baseline gap-3">
+                <span className="text-6xl font-semibold text-white tabular-nums tracking-tighter">
+                  {user.streak.currentStreak}
                 </span>
-                <span className="text-2xl text-amber-500">🔥</span>
+                <span className="text-2xl text-amber-500 font-medium">
+                  day(s)
+                </span>
               </div>
-              <p className="text-sm text-stone-500 mt-1">days in a row</p>
             </div>
 
-            {/* Points */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-6">
-              <p className="text-[13px] font-semibold tracking-widest uppercase text-stone-400 mb-2">
-                TOTAL POINTS
+            <div className="bg-zinc-900 translate-y-2 border border-zinc-800 rounded-3xl p-8 hover:border-emerald-500/30 transition-colors">
+              <p className="text-xs font-semibold tracking-[2px] uppercase text-zinc-500 mb-6">
+                POINTS
               </p>
-              <div className="text-5xl font-normal text-stone-900 tabular-nums">
-                10,750
+              <div className="text-6xl font-semibold text-white tabular-nums tracking-tighter">
+                {user.point.currentPoints}
               </div>
-              <p className="text-sm text-emerald-600 mt-1">+240 this week</p>
+              <p className="mt-3 text-emerald-400 text-sm flex items-center gap-1">
+                <span className="inline-block w-2 h-2 bg-emerald-400 rounded-full" />
+                +240 this week
+              </p>
             </div>
 
-            {/* Leaderboard Rank */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-6">
-              <p className="text-[13px] font-semibold tracking-widest uppercase text-stone-400 mb-2">
+            <div className="bg-zinc-900 translate-y-4 border border-zinc-800 rounded-3xl p-8 hover:border-amber-500/30 transition-colors">
+              <p className="text-xs font-semibold tracking-[2px] uppercase text-zinc-500 mb-6">
                 GLOBAL RANK
               </p>
-              <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-normal text-amber-500">#3</span>
-                <span className="text-stone-400 text-sm">of 12,459</span>
+              <div className="flex items-baseline gap-4">
+                <span className="text-6xl font-semibold text-amber-400 tracking-tighter">
+                  #3
+                </span>
+                <div className="text-zinc-500 text-sm leading-tight">
+                  of 12,459
+                  <br />
+                  <span className="text-amber-400/80">Top 0.02%</span>
+                </div>
               </div>
-              <p className="text-sm text-stone-500 mt-1">Top 0.02%</p>
             </div>
 
-            {/* Joined */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-6 col-span-2 md:col-span-1">
-              <p className="text-[13px] font-semibold tracking-widest uppercase text-stone-400 mb-2">
-                JOINED
+            <div className="bg-zinc-900  border  border-zinc-800 rounded-3xl p-8 col-span-2 lg:col-span-1">
+              <p className="text-xs font-semibold tracking-[2px] uppercase text-zinc-500 mb-6">
+                MEMBER SINCE
               </p>
-              <div className="text-3xl font-medium text-stone-900">
-                March 12, 2025
+              <div className="text-3xl font-medium text-zinc-100">
+                {new Date(user.createdAt).toDateString()}
               </div>
             </div>
 
-            {/* Decks Answered */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-6">
-              <p className="text-[13px] font-semibold tracking-widest uppercase text-stone-400 mb-1">
+            <div className="bg-zinc-900 translate-y-2  border border-zinc-800 rounded-3xl p-8">
+              <p className="text-xs font-semibold tracking-[2px] uppercase text-zinc-500 mb-4">
                 DECKS STUDIED
               </p>
-              <div className="text-4xl font-semibold text-stone-900">87</div>
-              <p className="text-xs text-stone-500">Total decks completed</p>
+              <div className="text-5xl font-semibold text-white">87</div>
+              <p className="text-zinc-500 text-sm mt-1">completed</p>
             </div>
 
-            {/* Flashcards Answered */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-6">
-              <p className="text-[13px] font-semibold tracking-widest uppercase text-stone-400 mb-1">
+            <div className="bg-zinc-900 border translate-y-4  border-zinc-800 rounded-3xl p-8">
+              <p className="text-xs font-semibold tracking-[2px] uppercase text-zinc-500 mb-4">
                 FLASHCARDS ANSWERED
               </p>
-              <div className="text-4xl font-semibold text-stone-900">2,348</div>
-              <p className="text-xs text-stone-500">Across all sessions</p>
+              <div className="text-5xl font-semibold text-white">2,348</div>
+              <p className="text-zinc-500 text-sm mt-1">across all sessions</p>
             </div>
 
-            {/* Overall Accuracy */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-6 md:col-span-2 lg:col-span-1">
-              <p className="text-[13px] font-semibold tracking-widest uppercase text-stone-400 mb-2">
+            <div className="bg-zinc-900  border border-zinc-800 rounded-3xl p-8 lg:col-span-2 xl:col-span-1">
+              <p className="text-xs font-semibold tracking-[2px] uppercase text-zinc-500 mb-6">
                 OVERALL ACCURACY
               </p>
-              <div className="flex items-baseline gap-4">
-                <span className="text-5xl font-normal text-emerald-600">
+              <div className="flex items-baseline gap-3">
+                <span className="text-6xl font-semibold text-emerald-400">
                   89.4
                 </span>
-                <span className="text-2xl text-emerald-600">%</span>
+                <span className="text-4xl text-emerald-500/70">%</span>
               </div>
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-zinc-500 mt-2">
                 Win rate on all flashcards
               </p>
             </div>
           </div>
         </div>
 
-        {/* Recent Activity Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-semibold text-stone-900">
-            Recent Activity
-          </h2>
-          <span className="text-sm text-stone-400">
-            Last 3 flashcards answered
-          </span>
-        </div>
-
-        {/* Space for Last 3 Flashcards */}
-        <div className="border border-dashed border-stone-200 rounded-3xl p-12 text-center min-h-[320px] flex items-center justify-center">
-          <div className="max-w-xs">
-            <p className="text-stone-400 text-sm mb-2">📇</p>
-            <p className="font-medium text-stone-600">
-              Last 3 flashcards answered
-            </p>
-            <p className="text-xs text-stone-400 mt-1">
-              This section will display your most recent flashcard activity
-            </p>
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-white">
+              Recent Activity
+            </h2>
+            <span className="text-sm text-zinc-500">Last 3 decks answered</span>
           </div>
+          <main className="grid gap-6  grid-cols-2 lg:grid-cols-3  ">
+            {decks.map((d, i) => (
+              <div
+                key={d.id}
+                className={clsx(`translate-y-${2 * i} opacity-${100 - 35 * i}`)}
+              >
+                <DeckDisplay.Default deck={d} />
+              </div>
+            ))}
+          </main>
         </div>
       </div>
     </div>

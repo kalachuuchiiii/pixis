@@ -1,9 +1,11 @@
 import { lazy } from "react";
 import { useRoutes, type RouteObject } from "react-router-dom";
 import AppErrorBoundary from "./AppErrorBoundary";
+import DeckFlashcards from "@/features/deck/pages/DeckFlashcards";
+import DeckLeaderboards from "@/features/leaderboards/pages/DeckLeaderboards";
+import DeckSessionHistory from "@/features/session/pages/DeckSessionHistory";
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
-
 const Layout = lazy(() => import("@/features/auth/components/Layout"));
 const SignIn = lazy(() => import("@/features/auth/pages/SignIn"));
 const SignUp = lazy(() => import("@/features/auth/pages/SignUp"));
@@ -24,14 +26,13 @@ const MyCollections = lazy(
 );
 
 const ArchivedDecks = lazy(() => import("@/features/deck/pages/ArchivedDecks"));
-const DeckDetails = lazy(() => import("@/features/deck/pages/DeckDetails"));
+const DeckDetails = lazy(
+  () => import("@/features/deck/components/layout/DeckDetails")
+);
 const MyDecks = lazy(() => import("@/features/deck/pages/MyDecks"));
 const PublicDecks = lazy(() => import("@/features/deck/pages/PublicDecks"));
 
 const Exam = lazy(() => import("@/features/exam/pages/Exam"));
-const FlashcardList = lazy(
-  () => import("@/features/flashcard/pages/FlashcardList")
-);
 
 const MySavedCollections = lazy(
   () => import("@/features/user-saved-collection/pages/MySavedCollections")
@@ -98,12 +99,21 @@ const routes: RouteObject[] = [
         element: wrap(<MyDecks />),
       },
       {
-        path: "/app/decks/:deckId",
         element: wrap(<DeckDetails />),
-      },
-      {
-        path: "/app/decks/:deckId/manage/flashcards",
-        element: wrap(<FlashcardList />),
+        children: [
+          {
+            path: "/app/decks/:deckId/flashcards",
+            element: wrap(<DeckFlashcards />),
+          },
+          {
+            path: "/app/decks/:deckId/leaderboards",
+            element: wrap(<DeckLeaderboards />),
+          },
+          {
+            path: "/app/decks/:deckId/history",
+            element: wrap(<DeckSessionHistory />),
+          },
+        ],
       },
       {
         path: "/app/archived/decks",

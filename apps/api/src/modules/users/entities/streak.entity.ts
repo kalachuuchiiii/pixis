@@ -6,7 +6,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { type Streak as StreakType } from '@pixis/schemas';
 
 @Entity('streak')
 export class Streak {

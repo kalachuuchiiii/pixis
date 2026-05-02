@@ -1,4 +1,3 @@
-
 import type { VisibilityOption } from "@/data/visibility";
 import type { Visibility } from "@pixis/constants";
 import clsx from "clsx";
@@ -22,21 +21,21 @@ export const VisibilityOptionButton = ({
       className={clsx(
         "flex flex-col items-start gap-2 px-4 py-3.5 rounded-xl border text-left transition-all",
         active
-          ? "border-stone-900 bg-stone-900 text-white"
-          : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:bg-stone-50"
+          ? "border-zinc-900 bg-zinc-900 text-white"
+          : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
       )}
     >
-      <span className={active ? "text-white" : "text-stone-400"}>
+      <span className={active ? "text-white" : "text-zinc-400"}>
         {option.icon}
       </span>
       <div>
         <p
-          className={`text-[13px] font-semibold leading-tight ${active ? "text-white" : "text-stone-800"}`}
+          className={`text-[13px] font-semibold leading-tight ${active ? "text-white" : "text-zinc-800"}`}
         >
           {option.label}
         </p>
         <p
-          className={`text-[11.5px] mt-0.5 leading-snug ${active ? "text-stone-300" : "text-stone-400"}`}
+          className={`text-[11.5px] mt-0.5 leading-snug ${active ? "text-zinc-300" : "text-zinc-400"}`}
         >
           {option.desc}
         </p>

@@ -12,21 +12,24 @@ export const useExam = () => {
 
   const [flashcardIds, setFlashcardIds] = useState<number[]>([]);
   const [currentFlashcardIdx, setCurrentFlashcardIdx] = useState<number>(0);
+
   const [examAnswers, setExamAnswers] = useImmer<ExamAnswers>([]);
-  const { onNext, onPrevious } = useIndex(
-    flashcardIds.length - 1,
-    setCurrentFlashcardIdx
-  );
+
+  const { onNext, onPrevious } = useIndex({
+    ceilIndex: flashcardIds.length - 1,
+    set: setCurrentFlashcardIdx,
+    currentIdx: currentFlashcardIdx,
+  });
 
   const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session", sessionId],
     queryFn: async () => {
       const res = await api.get<{ session: Session }>(`/session/${sessionId}`);
       const session = res.data.session;
-      const flashcardIds = session.deck.flashcardIds ?? [];
+      const flashcardIds = session.deck?.flashcardIds ?? [];
 
-      if(session.deck.flashcardIds?.length === 0){
-        return nav(`/app/decks/${session.deck.id}`)
+      if (flashcardIds?.length === 0) {
+        return nav(`/app/decks/${session.deck?.id}`);
       }
 
       setFlashcardIds(flashcardIds);
@@ -40,10 +43,10 @@ export const useExam = () => {
 
   const { mutate: processExamAnswers, isPending: isProcessingExamAnswers } =
     useMutation({
-      mutationFn: async () => {
+      mutationFn: async (answers: ExamAnswers) => {
         const res = await api.post(`/flashcard-progress`, {
-          examAnswers,
-          sessionId
+          examAnswers: answers,
+          sessionId,
         });
         return res.data;
       },
@@ -59,12 +62,13 @@ export const useExam = () => {
       const res = await api.get<{ flashcard: Flashcard }>(
         `/flashcards/${flashcardIds[currentFlashcardIdx]}`
       );
-      if(!res.data.flashcard){
-       return nav(-1)
+      if (!res.data.flashcard) {
+        return nav(-1);
       }
       return res.data.flashcard;
     },
     throwOnError: true,
+    staleTime: Infinity,
     enabled: !!session && flashcardIds.length > 0,
   });
 
@@ -72,19 +76,15 @@ export const useExam = () => {
     (a) => a.flashcardId === (flashcard?.id ?? 0)
   );
 
-  const setAnswer = async (answer: string) => {
-    let newExamAnswers: ExamAnswers = [];
-
-    setExamAnswers((prev) => {
-      newExamAnswers = prev.map((a) =>
-        a.flashcardId !== flashcard?.id ? a : { ...a, answer }
-      );
-      return newExamAnswers
-    });
-
+  const setAnswer = (answer: string) => {
+    const updatedAnswers = examAnswers.map((a) =>
+      a.flashcardId !== flashcard?.id ? a : { ...a, answer }
+    );
+    setExamAnswers(updatedAnswers);
     const { hasNext } = onNext();
-    if (!hasNext && newExamAnswers.every((a) => !!a.answer.trim())) {
-      await processExamAnswers();
+
+    if (!hasNext && updatedAnswers.every((a) => !!a.answer.trim())) {
+      processExamAnswers(updatedAnswers);
     }
   };
 

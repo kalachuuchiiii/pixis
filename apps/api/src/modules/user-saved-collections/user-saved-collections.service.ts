@@ -8,13 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Collection } from '../collections/entities/collection.entity';
 import { Equal, Not, Repository } from 'typeorm';
 import type { Request } from 'express';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { UserSavedCollection } from './entities/user-saved-collection.entity';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
-import { collectionPaginationConfig } from '@/config/pagination.config';
-import { getNextPage } from '@/common/utils/pagination.util';
+import { collectionPaginationConfig } from '@/config/paginationConfigs';
+import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
 
-type CollectionIDWithUser = { collectionId: number; user: AuthPayload };
+type CollectionIDWithUser = { collectionId: number; user: AuthUser };
 
 @Injectable()
 export class UserSavedCollectionsService {
@@ -70,33 +70,40 @@ export class UserSavedCollectionsService {
     return result;
   }
 
-   findAccessibleSavedCollection({ user = undefined }:{user?: AuthPayload } = {}){
+  findAccessibleSavedCollection({ user }: { user?: AuthUser } = {}) {
     return this.collectionRepo
       .createQueryBuilder('collection')
       .where(
         '(collection.user.id = :userId OR collection.visibility != :visibility)',
         { userId: user?.id, visibility: 'private' },
-      ).leftJoin('collection.userSavedCollections', 'usc')
+      )
+      .leftJoin('collection.userSavedCollections', 'usc')
       .where('usc.user.id = :userId', { userId: user?.id })
       .leftJoinAndSelect('collection.user', 'user')
-      .loadRelationCountAndMap('collection.userSavedCollectionCount', 'collection.userSavedCollections')
-      .loadRelationCountAndMap('collection.deckCount', 'collection.collectionDecks')
-
+      .loadRelationCountAndMap(
+        'collection.userSavedCollectionCount',
+        'collection.userSavedCollections',
+      )
+      .loadRelationCountAndMap(
+        'collection.deckCount',
+        'collection.collectionDecks',
+      );
   }
 
   async getSavedCollections({
     user,
     query,
   }: {
-    user: AuthPayload;
+    user: AuthUser;
     query: PaginateQuery;
   }) {
-    const qb = this.findAccessibleSavedCollection({ user }).select(['collection', 'user.nickname', 'user.username', 'user.avatarPublicUrl']);
-    const { data, links, meta: { totalItems } } = await paginate(query, qb, collectionPaginationConfig)
-    return {
-       data,
-       nextPage: getNextPage(links),
-       totalItems
-    }
+    const qb = this.findAccessibleSavedCollection({ user }).select([
+      'collection',
+      'user.nickname',
+      'user.username',
+      'user.avatarPublicUrl',
+    ]);
+    const result = await paginate(query, qb, collectionPaginationConfig);
+    return getPaginationData(result);
   }
 }

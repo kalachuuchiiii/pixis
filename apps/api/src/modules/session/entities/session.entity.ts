@@ -13,7 +13,7 @@ import { IsBoolean, IsOptional, IsEnum } from 'class-validator';
 import { Deck } from '@/modules/deck/entities/deck.entity';
 import { User } from '@/modules/users/entities/user.entity';
 import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
-import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcardProgress.entity';
+import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity.ts';
 import { EXAM_MODE_ENUM, type ExamMode } from '@pixis/constants';
 
 @Entity('session')
@@ -31,16 +31,16 @@ export class Session {
   @OneToMany(() => FlashcardProgress, (p) => p.session, { onDelete: 'CASCADE' })
   progresses?: FlashcardProgress[];
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt!: Date;
-
   @Column({
     nullable: true,
     type: 'enum',
     enum: EXAM_MODE_ENUM,
     default: 'NORMAL',
   })
-  mode!: ExamMode
+  mode!: ExamMode;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date;
 
   @Column({ type: 'timestamp', nullable: true, name: 'cancelled_at' })
   cancelledAt!: Date | null;

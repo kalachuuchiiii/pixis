@@ -9,5 +9,29 @@
 			") {}"
 		],
 		"description": "Inject TypeORM repository with matching entity"
+	},
+	"controller request parameter": {
+		"scope": "typescript",
+		"prefix": "rp",
+		"body": "@Req() request: Request",
+		"description": "add controller request parameter"
+	},
+	"controller pagination parameter": {
+		"scope": "typescript",
+		"prefix": "qp",
+		"body": "@Paginate() query: PaginateQuery",
+		"description": "add controller pagination parameter"
+	},
+	"Authenticated User": {
+		"scope": "typescript",
+		"prefix": "au",
+		"body": "const user = authUserSchema.parse(request.user);",
+		"description": "Quick User Info Access"
+	},
+	"Resource ID parameter": {
+		"scope": "typescript",
+		"prefix": "rid",
+		"body": "const $1 = idSchema.parse(request.params.$1);",
+		"description": "Quick Resource ID Access"
 	}
 }

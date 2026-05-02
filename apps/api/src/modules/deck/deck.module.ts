@@ -4,11 +4,12 @@ import { DeckController } from './deck.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Deck } from './entities/deck.entity';
 import { UserSavedDeck } from '../user-saved-deck/entities/user-saved-deck.entity';
+import { SessionModule } from '../session/session.module';
 
 @Module({
   controllers: [DeckController],
   providers: [DeckService],
-  imports: [TypeOrmModule.forFeature([Deck, UserSavedDeck])],
-  exports: [DeckService]
+  imports: [TypeOrmModule.forFeature([Deck, UserSavedDeck]), SessionModule],
+  exports: [DeckService],
 })
 export class DeckModule {}
