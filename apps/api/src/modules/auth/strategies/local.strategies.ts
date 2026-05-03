@@ -23,24 +23,21 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   async validate(username: string, password: string) {
     const user = await this.usersService.findByUsername(username, {
-      relations: ['credential'],
+      relations: ['credential', 'point', 'streak'],
       select: {
         username: true,
         id: true,
-        pointId: true,
-        streakId: true,
+        point: { id: true },
+        streak: { id: true },
       },
     });
-    if (!user)
+
+    if (!user || !user.credential)
       throw new BadRequestException({
         message: 'Invalid Credentials',
         code: 'INVALID_CREDENTIALS',
       });
-    if (!user.credential)
-      throw new BadRequestException({
-        message: 'Invalid Credentials',
-        code: 'INVALID_CREDENTIALS',
-      });
+
     const isPasswordCorrect = await user.credential.comparePassword(password);
     if (!isPasswordCorrect) {
       throw new BadRequestException({

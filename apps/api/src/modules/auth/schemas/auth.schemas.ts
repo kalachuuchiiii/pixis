@@ -3,8 +3,8 @@ import z from 'zod';
 
 export const authUserSchema = z.object({
   username: usernameSchema,
-  pointId: idSchema,
-  streakId: idSchema,
+  point: z.object({ id: idSchema }),
+  streak: z.object({ id: idSchema }),
   id: idSchema,
 });
 

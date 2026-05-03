@@ -140,15 +140,21 @@ export class CollectionsService {
     query: PaginateQuery;
     user?: AuthUser;
   }) {
-    const qb = withCollectionStats(
-      this.collectionRepo
-        .createQueryBuilder('collection')
-        .where(
-          '(collection.user.id = :userId OR collection.visibility != :visibility)',
-          { userId: user?.id, visibility: 'private' },
-        )
-        .leftJoinAndSelect('collection.user', 'user'),
-    ).select([
+    const baseQb = this.collectionRepo
+      .createQueryBuilder('collection')
+      .leftJoinAndSelect('collection.user', 'user');
+
+    if (user) {
+      baseQb.where('(collection.user.id = :userId)', {
+        userId: user?.id,
+      });
+    } else {
+      baseQb.where('(collection.visibility != :visibility)', {
+        visibility: 'private',
+      });
+    }
+
+    const qb = withCollectionStats(baseQb).select([
       'collection',
       'user.username',
       'user.nickname',
