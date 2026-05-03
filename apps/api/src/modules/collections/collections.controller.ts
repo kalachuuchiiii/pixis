@@ -31,7 +31,7 @@ export class CollectionsController {
     @Paginate() query: PaginateQuery,
   ) {
     const { data, nextPage, totalItems } =
-      await this.collectionsService.getPublicCollections({ query });
+      await this.collectionsService.findAccessibleCollections({ query });
     const cleanCollections = z.array(collectionSchema).parse(data);
     return {
       collections: cleanCollections,
@@ -48,7 +48,7 @@ export class CollectionsController {
   ) {
     const user = authUserSchema.parse(request.user);
     const { data, nextPage, totalItems } =
-      await this.collectionsService.getMyCollections({ query, user });
+      await this.collectionsService.findAccessibleCollections({ query, user });
     const cleanCollections = z.array(collectionSchema).parse(data);
     return {
       collections: cleanCollections,

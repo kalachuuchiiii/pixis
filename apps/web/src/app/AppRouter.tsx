@@ -1,9 +1,10 @@
 import { lazy } from "react";
-import { useRoutes, type RouteObject } from "react-router-dom";
+import { Outlet, useRoutes, type RouteObject } from "react-router-dom";
 import AppErrorBoundary from "./AppErrorBoundary";
 import DeckFlashcards from "@/features/deck/pages/DeckFlashcards";
 import DeckLeaderboards from "@/features/leaderboards/pages/DeckLeaderboards";
 import DeckSessionHistory from "@/features/session/pages/DeckSessionHistory";
+import ExploreCollections from "@/features/collection/pages/ExploreCollections";
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const Layout = lazy(() => import("@/features/auth/components/Layout"));
@@ -75,69 +76,83 @@ const routes: RouteObject[] = [
     element: <AppLayout />,
     children: [
       {
-        path: "/app",
-        element: wrap(<Assistant />),
-      },
-      {
-        path: "/app/saved-collections",
-        element: wrap(<MySavedCollections />),
-      },
-      {
-        path: "/app/saved-decks",
-        element: wrap(<MySavedDecks />),
-      },
-      {
-        path: "/app/collections",
-        element: wrap(<MyCollections />),
-      },
-      {
-        path: "/app/collections/:collectionId",
-        element: wrap(<CollectionDetails />),
-      },
-      {
-        path: "/app/decks",
-        element: wrap(<MyDecks />),
-      },
-      {
-        element: wrap(<DeckDetails />),
+        element: wrap(<Outlet />),
         children: [
           {
-            path: "/app/decks/:deckId/flashcards",
-            element: wrap(<DeckFlashcards />),
+            path: "/app",
+            element: <Assistant />,
           },
           {
-            path: "/app/decks/:deckId/leaderboards",
-            element: wrap(<DeckLeaderboards />),
+            path: "/app/saved-collections",
+            element: <MySavedCollections />,
           },
           {
-            path: "/app/decks/:deckId/history",
-            element: wrap(<DeckSessionHistory />),
+            path: "/app/saved-decks",
+            element: <MySavedDecks />,
+          },
+          {
+            path: "/app/collections",
+            element: <MyCollections />,
+          },
+          {
+            path: "/app/collections/:collectionId",
+            element: <CollectionDetails />,
+          },
+          {
+            path: "/app/decks",
+            element: <MyDecks />,
+          },
+          {
+            element: <DeckDetails />,
+            children: [
+              {
+                element: wrap(<Outlet />),
+                children: [
+                  {
+                    path: "/app/decks/:deckId/flashcards",
+                    element: <DeckFlashcards />,
+                  },
+                  {
+                    path: "/app/decks/:deckId/leaderboards",
+                    element: <DeckLeaderboards />,
+                  },
+                  {
+                    path: "/app/decks/:deckId/history",
+                    element: <DeckSessionHistory />,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: "/app/archived/decks",
+            element: <ArchivedDecks />,
+          },
+          {
+            path: "/app/activity",
+            element: <MyActivity />,
+          },
+          {
+            path: "/app/leaderboard",
+            element: <Leaderboard />,
+          },
+          {
+            path: "/app/explore/decks",
+            element: <PublicDecks />,
+          },
+          {
+            path: "/app/explore/collections",
+            element: <ExploreCollections />,
+          },
+          {
+            path: "/app/profile",
+            element: <MyProfile />,
+          },
+          {
+            path: "/app/settings",
+            element: <Settings />,
           },
         ],
-      },
-      {
-        path: "/app/archived/decks",
-        element: wrap(<ArchivedDecks />),
-      },
-      {
-        path: "/app/activity",
-        element: wrap(<MyActivity />),
-      },
-      {
-        path: "/app/leaderboard",
-        element: wrap(<Leaderboard />),
-      },
-      {
-        path: "/app/explore",
-        element: wrap(<PublicDecks />),
-      },
-      {
-        path: "/app/profile",
-        element: wrap(<MyProfile />),
-      },
-      {
-        path: "/app/settings",
-        element: wrap(<Settings />),
       },
     ],
   },

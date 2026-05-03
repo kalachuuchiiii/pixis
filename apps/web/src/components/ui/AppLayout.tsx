@@ -101,18 +101,25 @@ const NOTIFICATIONS = [
 
 const NAV_PRIMARY = [
   { label: "Home", to: "/app", icon: Home },
-  { label: "My Decks", to: "/app/decks", icon: Layers },
   {
     label: "My Collections",
     to: "/app/collections",
     icon: LibraryBig,
   },
+  { label: "My Decks", to: "/app/decks", icon: Layers },
+
   { label: "Activity", to: "/app/activity", icon: BarChart2 },
 ];
 
 const NAV_SOCIAL = [
+  {
+    label: "Explore Collections",
+    to: "/app/explore/collections",
+    icon: BookOpen,
+  },
+  { label: "Explore Decks", to: "/app/explore/decks", icon: BookOpen },
+
   { label: "Leaderboard", to: "/app/leaderboard", icon: Trophy },
-  { label: "Public Decks", to: "/app/explore", icon: BookOpen },
 ];
 
 const NAV_SYSTEM = [
@@ -193,17 +200,6 @@ const AppSidebar = () => {
 
       <SidebarContent className="px-3 py-3 flex flex-col gap-1">
         {/* Primary — core study actions */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase dark:text-zinc-200 text-zinc-300 px-3 mb-1">
-            Study
-          </SidebarGroupLabel>
-          <SidebarMenu>
-            {NAV_PRIMARY.map((item) => (
-              <NavItem key={item.to} item={item} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-
         {/* Social — community & competition */}
         <SidebarGroup className="mt-3">
           <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase text-zinc-300 px-3 mb-1">
@@ -211,6 +207,16 @@ const AppSidebar = () => {
           </SidebarGroupLabel>
           <SidebarMenu>
             {NAV_SOCIAL.map((item) => (
+              <NavItem key={item.to} item={item} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase dark:text-zinc-200 text-zinc-300 px-3 mb-1">
+            Study
+          </SidebarGroupLabel>
+          <SidebarMenu>
+            {NAV_PRIMARY.map((item) => (
               <NavItem key={item.to} item={item} />
             ))}
           </SidebarMenu>
