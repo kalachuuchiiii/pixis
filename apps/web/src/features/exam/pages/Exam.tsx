@@ -14,6 +14,8 @@ import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useExam } from "../hooks/useExam";
 import { Spinner } from "@/components/ui/spinner";
+import { OpenEndedAnswerInput } from "../components/OpenEndedAnswerInput";
+import { CloseEndedAnswerChoices } from "../components/CloseEndedAnswerChoices";
 
 const Exam = () => {
   const {
@@ -29,8 +31,6 @@ const Exam = () => {
     isSessionLoading,
     isProcessingExamAnswers,
   } = useExam();
-
-  console.log(currentFlashcardIdx);
 
   if (isProcessingExamAnswers) {
     return (
@@ -119,20 +119,16 @@ const Exam = () => {
               </h2>
               <div>
                 {flashcard?.type === "close_ended" ? (
-                  <main className="grid grid-cols-2 gap-1">
-                    {flashcard.choices.map((c) => (
-                      <Button
-                        onClick={() => setAnswer(c)}
-                        variant={answer?.answer === c ? "default" : "outline"}
-                      >
-                        {c}
-                      </Button>
-                    ))}
-                  </main>
+                  <CloseEndedAnswerChoices
+                    answer={answer}
+                    setAnswer={setAnswer}
+                    flashcard={flashcard}
+                  />
                 ) : (
-                  <div>
-                    <Textarea />
-                  </div>
+                  <OpenEndedAnswerInput
+                    currentFlashcardIdx={currentFlashcardIdx}
+                    setAnswer={setAnswer}
+                  />
                 )}
               </div>
             </div>

@@ -14,6 +14,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Calendar, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { clsx } from "clsx";
+import { hexToRgb } from "react-beautiful-color";
 
 type DeckDisplay = DeckWithAuthor | DeckWithAuthorAndFlashcardPreview | Deck;
 
@@ -75,14 +76,29 @@ const Card = ({ children }: { children: ReactNode }) => {
 const Header = () => {
   const { deck } = useDeck();
 
+  const rgb = deck.color ? hexToRgb(deck.color) : null;
+  const brighten = (value: number, factor = 0.3) =>
+    Math.round(value + (255 - value) * factor);
+
+  const topicStyle = rgb
+    ? {
+        backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.20)`, // soft tint
+        color: `rgb(${brighten(rgb.r)}, ${brighten(rgb.g)}, ${brighten(rgb.b)})`,
+      }
+    : {};
+
   return (
     <div className="flex items-center justify-between mb-5">
       <div className="flex items-center gap-2">
         {deck.topic && (
-          <span className="text-[10px] font-semibold uppercase tracking-widest px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 rounded-full">
+          <span
+            style={topicStyle}
+            className="text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full"
+          >
             {deck.topic}
           </span>
         )}
+
         <span className="text-[10px] font-medium uppercase text-zinc-400 dark:text-zinc-500">
           {deck.visibility || "Private"}
         </span>
@@ -90,7 +106,6 @@ const Header = () => {
     </div>
   );
 };
-
 // --------------------
 // Title & Stats
 // --------------------

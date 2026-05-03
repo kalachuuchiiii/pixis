@@ -45,6 +45,15 @@ export class Session {
   @Column({ type: 'timestamp', nullable: true, name: 'cancelled_at' })
   cancelledAt!: Date | null;
 
+  @Column({ type: 'timestamp', nullable: true, name: 'abandoned_at' })
+  abandonedAt!: Date | null;
+
+  @Column({ name: 'total_points_gained', default: 0 })
+  totalPointsGained!: number;
+
+  @Column({ name: 'accuracy', default: 0 })
+  accuracy!: number;
+
   @Column({ nullable: true, type: 'timestamp', name: 'finished_at' })
   finishedAt!: Date | null;
 

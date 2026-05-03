@@ -11,7 +11,13 @@ import { User } from '../users/entities/user.entity';
 import { Point } from '../users/entities/point.entity';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { flashcardProgressValuesSchema } from './schemas/flashcard-progress.schemas.js';
-import z from 'zod';
+import z, { date } from 'zod';
+import { Streak } from '../users/entities/streak.entity.js';
+
+type StreakDetail = {
+  increment: boolean;
+  reset: boolean;
+};
 
 @Injectable()
 export class FlashcardProgressService {
@@ -33,23 +39,40 @@ export class FlashcardProgressService {
     sessionId: number;
     user: AuthUser;
   }) {
+    let correctCount = 0;
+    let mistakeCount = 0;
+    let totalPointsGained = 0;
+
     const values = flashcards.map((f) => {
       const answer = examAnswers.find((a) => a.flashcardId === f.id)
         ?.answer as string;
+      const isAnswerCorrect =
+        f.type === 'open_ended' && f.isAnswerCaseSensitive
+          ? f.answer === answer
+          : f.answer.trim().toLowerCase() === answer.trim().toLowerCase();
+
+      if (isAnswerCorrect) {
+        correctCount++;
+        totalPointsGained += POINT_PER_CORRECT;
+      } else {
+        mistakeCount++;
+        totalPointsGained += POINT_PER_MISTAKE;
+      }
 
       return {
         flashcard: { id: f.id },
         session: { id: sessionId },
         user: { id: user.id },
         deck: { id: f.deckId },
-        isAnswerCorrect:
-          f.type === 'open_ended' && f.isAnswerCaseSensitive
-            ? f.answer === answer
-            : f.answer.trim().toLowerCase() === answer.trim().toLowerCase(),
+        isAnswerCorrect,
       };
     });
     const cleanValues = z.array(flashcardProgressValuesSchema).parse(values);
-    return cleanValues as DeepPartial<FlashcardProgress>[];
+    return {
+      data: cleanValues,
+      correctCount,
+      totalPointsGained,
+    };
   }
 
   async createProgresses({
@@ -68,26 +91,24 @@ export class FlashcardProgressService {
         user,
       });
 
-    const flashcardsValues = this.createFlashcardsValues({
-      flashcards,
-      examAnswers,
-      sessionId,
-      user,
-    });
-    const values = this.flashcardProgressRepo.create(flashcardsValues);
+    const { data, correctCount, totalPointsGained } =
+      this.createFlashcardsValues({
+        flashcards,
+        examAnswers,
+        sessionId,
+        user,
+      });
+
+    const values = this.flashcardProgressRepo.create(data);
+
     return await this.dataSource.manager.transaction(async (m) => {
-      const progresses = await m.save(FlashcardProgress, values);
-      const totalPoints = progresses.reduce((acc, prev) => {
-        if (prev.isAnswerCorrect) {
-          return acc + POINT_PER_CORRECT;
-        }
-        return acc + POINT_PER_MISTAKE;
-      }, 0);
+      await m.save(FlashcardProgress, values);
 
       const session = await m.update(
         Session,
         { id: sessionId, user: { id: user.id } },
         {
+          totalPointsGained,
           cancelledAt: isFullMatch ? null : new Date(),
           finishedAt: isFullMatch ? new Date() : null,
         },
@@ -97,12 +118,26 @@ export class FlashcardProgressService {
         Point,
         { id: user.point.id },
         'currentPoints',
-        totalPoints,
+        totalPointsGained,
       );
+
+      const streak = (await m.findOne(Streak, {
+        where: { id: user.streak.id },
+      })) as Streak;
+
+      const streakDetails = this.getStreakDetails(streak);
+      const { streakData, isTransformed } = this.keepOrTransformStreakObject(
+        streak,
+        streakDetails,
+      );
+
+      if (isTransformed) {
+        await m.save(streakData);
+      }
 
       if (point.affected === 0) {
         throw new NotFoundException({
-          message: `User not found`,
+          message: `Point not found`,
           code: 'USER_NOT_FOUND',
         });
       }
@@ -115,10 +150,72 @@ export class FlashcardProgressService {
       }
 
       return {
-        session,
-        point,
-        progresses,
+        isStreakIncremented: streakDetails.increment,
+        totalFlashcards: flashcards.length,
+        totalPointsGained,
+        correctCount,
       };
     });
+  }
+
+  keepOrTransformStreakObject(streak: Streak, streakDetail: StreakDetail) {
+    //increment _ reset
+    //no increment and no reset
+
+    if (!streakDetail.increment && !streakDetail.reset) {
+      return { streakData: streak, isTransformed: false };
+    }
+
+    //reset
+    if (streakDetail.reset) {
+      streak.highestStreak = Math.max(
+        streak.currentStreak,
+        streak.highestStreak,
+      );
+      streak.currentStreak = 0;
+      streak.lastActionTimestamp = new Date();
+      return { streakData: streak, isTransformed: true };
+    }
+    //increment
+    streak.currentStreak += 1;
+    streak.highestStreak = Math.max(streak.currentStreak, streak.highestStreak);
+    streak.lastActionTimestamp = new Date();
+    return { streakData: streak, isTransformed: true };
+  }
+
+  getStreakDetails(streak: Streak): StreakDetail {
+    const { lastActionTimestamp } = streak;
+    const now = new Date();
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+    if (lastActionTimestamp > startOfToday && now < endOfToday) {
+      //if the user has answered today, return increment, reset : false (means the streak has alr been incremented)
+      return {
+        increment: false,
+        reset: false,
+      };
+    }
+
+    if (
+      startOfToday.getTime() - lastActionTimestamp.getTime() >
+      24 * 60 * 60 * 1000
+    ) {
+      //if the user was inactive yesterday or more, reset = true
+      return {
+        increment: false,
+        reset: true,
+      };
+    }
+
+    //if the the user answered yesterday, but not now, return increment;
+    return {
+      increment: true,
+      reset: false,
+    };
   }
 }
