@@ -1,4 +1,3 @@
-import { useAppDispatch } from "@/hooks/useReduxHook";
 import api from "@/lib/api";
 import {
   getErrorMessage,
@@ -6,11 +5,9 @@ import {
 } from "@/utils/message-extractor.utils";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { resetProfile } from "../slice/profileSlice";
 import { useNavigate } from "react-router-dom";
 
 export const useSecurityManager = () => {
-  const dispatch = useAppDispatch();
   const nav = useNavigate();
 
   const { mutate: deleteAccount, isPending: isDeletingAccount } = useMutation({
@@ -24,7 +21,6 @@ export const useSecurityManager = () => {
       return await promise;
     },
     onSuccess: () => {
-      dispatch(resetProfile());
       nav("/");
     },
   });

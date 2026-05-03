@@ -30,7 +30,7 @@ const Exam = () => {
     isProcessingExamAnswers,
   } = useExam();
 
-  console.log(currentFlashcardIdx)
+  console.log(currentFlashcardIdx);
 
   if (isProcessingExamAnswers) {
     return (
@@ -87,7 +87,7 @@ const Exam = () => {
           {/* Progress Indicator */}
           <div className="flex items-center gap-3">
             <div className="text-sm font-medium text-muted-foreground">
-              {currentFlashcardIdx + 1} / {session?.deck.flashcardIds?.length}
+              {currentFlashcardIdx + 1} / {session?.deck?.flashcardIds?.length}
             </div>
             <div className="w-64 h-1.5 bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden">
               <div

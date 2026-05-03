@@ -3,10 +3,10 @@ import { Controller, useForm } from "react-hook-form";
 import { updateUserFormSchema, type UpdateUserForm } from "@pixis/schemas";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useProfile } from "../hooks/useProfile";
 import { Field, FieldError, FieldTitle } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useProfileDetails } from "../hooks/useProfileDetails";
+import { useProfile } from "../hooks/useProfile";
 
 export const NameManager = () => {
   const { data: user } = useProfileDetails();
