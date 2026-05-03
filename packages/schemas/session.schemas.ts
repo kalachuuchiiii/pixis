@@ -8,14 +8,17 @@ export const examModeSchema = z.enum(EXAM_MODE_ENUM);
 export const sessionSchema = z.object({
   deckId: idSchema,
   mode: examModeSchema,
-  userId: idSchema,
+  createdAt: timestampSchema,
   id: idSchema,
   cancelledAt: timestampSchema.nullable().optional(),
   finishedAt: timestampSchema.nullable().optional(),
-  deck: z.object({
-    id: idSchema,
-    flashcardIds: z.array(idSchema).nullable().optional(),
-  }),
+  deck: z
+    .object({
+      id: idSchema,
+      flashcardIds: z.array(idSchema).nullable().optional(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export type Session = z.infer<typeof sessionSchema>;

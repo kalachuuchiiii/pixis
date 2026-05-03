@@ -74,7 +74,7 @@ const MyDecks = () => {
         beside={
           <div className="flex items-center h-12  justify-end w-full gap-1">
             <DeckFilter deckFilter={deckFilter} />
-             <Tooltip>
+            <Tooltip>
               <TooltipTrigger>
                 <Link to={`/app/saved-decks`}>
                   <Button variant={"outline"} className="my-btn h-full">
@@ -108,11 +108,12 @@ const MyDecks = () => {
                   className={`px-10 py-5 border-l-20 border-l-[${color}] rounded-xl`}
                 >
                   <DeckForm
-                    
                     deckForm={deckForm}
                     header={
                       <header className="mb-4">
-                        <h1 className="heading text-4xl dark:text-stone-100">Create Deck</h1>
+                        <h1 className="heading text-4xl dark:text-zinc-100">
+                          Create Deck
+                        </h1>
                         <p className="description text-sm">
                           Fill in the details below, then start adding
                           flashcards.
@@ -180,10 +181,9 @@ const MyDecks = () => {
           )}
         </div>
       </div>
-      <div className="h-2 w-full" ref={ref} /> 
+      <div className="h-2 w-full" ref={ref} />
     </div>
   );
 };
-
 
 export default MyDecks;

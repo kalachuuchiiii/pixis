@@ -23,7 +23,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useMyFlashcard } from "../hooks/useMyFlashcard";
+import { useFlashcard } from "../hooks/useFlashcard";
 import { isEqual } from "lodash";
 
 export const UpdateFlashcardDialog = ({
@@ -37,7 +37,7 @@ export const UpdateFlashcardDialog = ({
     flashcardFormHandler;
   const { type } =
     flashcardFormValues;
-  const { updateFlashcard, isUpdatingFlashcard } = useMyFlashcard();
+  const { updateFlashcard, isUpdatingFlashcard } = useFlashcard();
 
   return (
     <Dialog>

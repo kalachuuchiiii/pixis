@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Pencil } from "lucide-react";
 import { CollectionForm } from "./CollectionForm";
-import { useMyCollection } from "../hooks/useMyCollection";
+import { useCollection } from "../hooks/useCollection";
 import type { UseFormReturn } from "react-hook-form";
 import type { Collection } from "@pixis/schemas";
 import { memo } from "react";
@@ -34,7 +34,7 @@ export const UpdateCollectionDialog =
     collectionForm: CF;
     collection: Collection;
   }) => {
-    const { updateCollection, isUpdatingCollection } = useMyCollection();
+    const { updateCollection, isUpdatingCollection } = useCollection();
     const { watch } = collectionForm;
     const color = watch("color");
 

@@ -3,15 +3,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import type { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import env from '@/config/env';
-import type { AuthPayload } from '../dtos/auth.dtos';
-import { authPayloadSchema } from '@pixis/schemas';
+import { authUserSchema } from '../schemas/auth.schemas';
 
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => request?.cookies?.['refreshToken'] ?? null 
+        (request: Request) => request?.cookies?.['refreshToken'] ?? null,
       ]),
       secretOrKey: env.REFRESH_TOKEN_SECRET,
       passReqToCallback: true,
@@ -19,7 +18,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     });
   }
 
-  async validate(_req: Request, payload: any ) {
-    return authPayloadSchema.parse(payload);
+  async validate(_req: Request, payload: any) {
+    return authUserSchema.parse(payload);
   }
 }

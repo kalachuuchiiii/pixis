@@ -11,22 +11,47 @@ import {
 import { DeckService } from './deck.service';
 import type { Request } from 'express';
 import {
-  authPayloadSchema,
   deckSchema,
   deckWithAuthorAndFlashcardPreviewSchema,
   deckWithAuthorSchema,
   idSchema,
   rawDeckFormSchema,
+  sessionSchema,
 } from '@pixis/schemas';
 import { AccessGuard } from '../auth/guards/access.guard';
 import z from 'zod';
 
 import { Deck } from './entities/deck.entity';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
+import { SessionService } from '../session/session.service';
+import { authUserSchema } from '../auth/schemas/auth.schemas';
 
 @Controller('decks')
 export class DeckController {
-  constructor(public service: DeckService) {}
+  constructor(
+    public service: DeckService,
+    private sessionService: SessionService,
+  ) {}
+
+  @Get('/:deckId/sessions')
+  @UseGuards(AccessGuard)
+  async findDeckSessions(
+    @Req() request: Request,
+    @Paginate() query: PaginateQuery,
+  ) {
+    const deckId = idSchema.parse(request.params.deckId);
+    const user = authUserSchema.parse(request.user);
+    const result = await this.sessionService.findAccessibleSessionsByDeckId({
+      deckId,
+      user,
+      query,
+    });
+    const sessions = z.array(sessionSchema).parse(result.data);
+    return {
+      ...result,
+      sessions,
+    };
+  }
 
   @Get('/archived')
   @UseGuards(AccessGuard)
@@ -34,7 +59,7 @@ export class DeckController {
     @Req() request: Request,
     @Paginate() query: PaginateQuery,
   ) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const { data, nextPage } = await this.service.getSoftDeletedDecks({
       query,
       user,
@@ -49,7 +74,9 @@ export class DeckController {
   @Get('/explore')
   @UseGuards(AccessGuard)
   async getPublicDecks(@Paginate() query: PaginateQuery) {
-    const { data, nextPage } = await this.service.getDecks({ query });
+    const { data, nextPage } = await this.service.findAccessibleDecks({
+      query,
+    });
 
     const cleanDecks = z
       .array(deckWithAuthorAndFlashcardPreviewSchema)
@@ -64,7 +91,7 @@ export class DeckController {
   @UseGuards(AccessGuard)
   async createDeck(@Req() request: Request) {
     const deckForm = rawDeckFormSchema.parse(request.body);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     await this.service.createDeck({ deckForm, user });
     return {
       message: 'Deck created successfully!',
@@ -74,8 +101,11 @@ export class DeckController {
   @Get('/')
   @UseGuards(AccessGuard)
   async getMyDecks(@Req() request: Request, @Paginate() query: PaginateQuery) {
-    const user = authPayloadSchema.parse(request.user);
-    const { data, nextPage } = await this.service.getMyDecks({ query, user });
+    const user = authUserSchema.parse(request.user);
+    const { data, nextPage } = await this.service.findAccessibleDecks({
+      query,
+      user,
+    });
     const cleanData = z
       .array(deckSchema)
       .max(query.limit ?? 10)
@@ -91,13 +121,12 @@ export class DeckController {
   @UseGuards(AccessGuard)
   async getDeck(@Req() request: Request) {
     const deckId = idSchema.parse(request.params.deckId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deck = await this.service.findAccessibleDeck({
       deckId,
-      user });
-   console.log(deck);
+      user,
+    });
     const cleanDeck = deckSchema.parse(deck);
- console.log(cleanDeck);
     return {
       deck: cleanDeck,
     };
@@ -107,7 +136,7 @@ export class DeckController {
   @UseGuards(AccessGuard)
   async updateMyDeck(@Req() request: Request) {
     const deckForm = rawDeckFormSchema.parse(request.body);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deckId = idSchema.parse(request.params.deckId);
     await this.service.updateDeck({ deckForm, user, deckId });
     return {
@@ -118,7 +147,7 @@ export class DeckController {
   @Delete('/:deckId')
   @UseGuards(AccessGuard)
   async softDeleteMyDeck(@Req() request: Request) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deckId = idSchema.parse(request.params.deckId);
     await this.service.softDeleteDeck({ user, deckId });
     return {
@@ -129,7 +158,7 @@ export class DeckController {
   @Delete('/:deckId/permanent')
   @UseGuards(AccessGuard)
   async deleteMyDeck(@Req() request: Request) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deckId = idSchema.parse(request.params.deckId);
     await this.service.deleteDeck({ user, deckId });
     return {
@@ -140,7 +169,7 @@ export class DeckController {
   @Delete('/permanent/bulk')
   @UseGuards(AccessGuard)
   async deleteMyDecks(@Req() request: Request) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deckIds = z.array(idSchema).parse(request.body.deckIds);
     await this.service.deleteDecks({ user, deckIds });
     return {
@@ -151,7 +180,7 @@ export class DeckController {
   @Patch('/:deckId/restore')
   @UseGuards(AccessGuard)
   async restoreMyDeck(@Req() request: Request) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deckId = idSchema.parse(request.params.deckId);
     await this.service.restoreDeck({ user, deckId });
     return {
@@ -162,7 +191,7 @@ export class DeckController {
   @Patch('/restore/bulk')
   @UseGuards(AccessGuard)
   async restoreSelectedDecks(@Req() request: Request) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deckIds = z.array(idSchema).parse(request.body.deckIds);
     await this.service.restoreDecks({ user, deckIds });
     return {

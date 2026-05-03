@@ -2,14 +2,14 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionDeck } from './entities/collection-deck.entity';
 import { DataSource, Equal, Not, Repository } from 'typeorm';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { CollectionsService } from '../collections/collections.service';
 import { DeckService } from '../deck/deck.service';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
-import { getNextPage } from '@/common/utils/pagination.util';
+import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
 import { User } from '../users/entities/user.entity';
 import { Deck } from '../deck/entities/deck.entity';
-import { deckPaginationConfig } from '@/config/pagination.config';
+import { deckPaginationConfig } from '@/config/paginationConfigs';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 @Injectable()
 export class CollectionDeckService {
@@ -28,18 +28,18 @@ export class CollectionDeckService {
     collectionId,
   }: {
     deckId: number;
-    user: AuthPayload;
+    user: AuthUser;
     collectionId: number;
   }) {
-    const isCollectionDeckExisting= await this.collectionDeckRepo.exists({
-        where: {
-          collection: { id: collectionId, user: { id: user.id } },
-          deck: [
-            { id: deckId, visibility: Not(Equal('private')) },
-            { id: deckId, user: { id: user.id } },
-          ],
-        },
-      })
+    const isCollectionDeckExisting = await this.collectionDeckRepo.exists({
+      where: {
+        collection: { id: collectionId, user: { id: user.id } },
+        deck: [
+          { id: deckId, visibility: Not(Equal('private')) },
+          { id: deckId, user: { id: user.id } },
+        ],
+      },
+    });
 
     if (isCollectionDeckExisting) {
       throw new ConflictException({
@@ -64,7 +64,7 @@ export class CollectionDeckService {
   }: {
     query: PaginateQuery;
     collectionId: number;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const qb = this.deckRepo
       .createQueryBuilder('deck')
@@ -85,17 +85,8 @@ export class CollectionDeckService {
         'deck.userSavedDecks',
       );
 
-    const {
-      data,
-      links,
-      meta: { totalItems },
-    } = await paginate(query, qb, deckPaginationConfig);
+    const result = await paginate(query, qb, deckPaginationConfig);
 
-    console.log(data);
-    return {
-      data,
-      nextPage: getNextPage(links, query.page),
-      totalItems,
-    };
+    return getPaginationData(result);
   }
 }

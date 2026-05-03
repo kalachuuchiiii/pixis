@@ -27,12 +27,12 @@ const SignIn = () => {
       {/* Header */}
       <div>
         <h2
-          className="text-[26px] font-normal text-stone-900 dark:text-white mb-1"
+          className="text-[26px] font-normal text-zinc-900 dark:text-white mb-1"
           style={{ fontFamily: "'DM Serif Display', serif" }}
         >
           Welcome back
         </h2>
-        <p className="text-sm text-stone-500 dark:text-stone-400">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Sign in to continue learning.
         </p>
       </div>
@@ -48,7 +48,7 @@ const SignIn = () => {
               <Input
                 {...field}
                 placeholder="Your username"
-                className="dark:bg-stone-900 dark:border-stone-700"
+                className="dark:bg-zinc-900 dark:border-zinc-700"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -65,7 +65,7 @@ const SignIn = () => {
                 {...field}
                 type="password"
                 placeholder="••••••••"
-                className="dark:bg-stone-900 dark:border-stone-700"
+                className="dark:bg-zinc-900 dark:border-zinc-700"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -82,11 +82,11 @@ const SignIn = () => {
       </form>
 
       {/* Footer Link */}
-      <p className="text-center text-sm text-stone-500 dark:text-stone-400">
+      <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
         Don't have an account?{" "}
         <NavLink
           to="/sign-up"
-          className="text-stone-900 dark:text-white font-medium hover:underline transition-all"
+          className="text-zinc-900 dark:text-white font-medium hover:underline transition-all"
         >
           Create one
         </NavLink>

@@ -1,19 +1,18 @@
 import { useParams } from "react-router-dom";
 import { useFlashcardFilter } from "./useFlashcardFilter";
-import { useEffect, useMemo, useRef } from "react";
+import {  useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { Flashcard } from "@pixis/schemas";
 import api from "@/lib/api";
-import { useInView } from "react-intersection-observer";
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 
-export const useFlashcardList = () => {
+export const useDeckFlashcards = () => {
   const { deckId } = useParams();
-  const flashcardFilterHandlers = useFlashcardFilter();
-  const { query } = flashcardFilterHandlers;
-  const createFlashcardTriggerRef = useRef<HTMLButtonElement>(null);
+  const flashcardFilter = useFlashcardFilter();
+  const { query } = flashcardFilter;
+  const createDeckFlashcardTriggerRef = useRef<HTMLButtonElement>(null);
   
-  const infiniteFlashcardQuery =
+  const infiniteDeckFlashcardsQuery =
     useInfiniteQuery({
       queryKey: ["flashcards", String(deckId), query],
       queryFn: async ({ pageParam = 1 }) => {
@@ -28,10 +27,11 @@ export const useFlashcardList = () => {
       initialPageParam: 1,
       staleTime: 5 * 60 * 1000,
       getNextPageParam: (lastPage) => lastPage.nextPage,
+      enabled: !!deckId
     });
 
-    const { data, refetch, isFetching, isLoading, isPending, hasNextPage } = infiniteFlashcardQuery;
-    const { ref } = useInViewRefetch(infiniteFlashcardQuery);
+    const { data } = infiniteDeckFlashcardsQuery;
+    const { ref } = useInViewRefetch(infiniteDeckFlashcardsQuery);
 
   const flashcards = data?.pages.flatMap((d) => d.flashcards ?? []) ?? [];
   const totalFlashcards = data?.pages[0].totalFlashcards ?? 0;
@@ -39,10 +39,9 @@ export const useFlashcardList = () => {
   return {
     flashcards,
     totalFlashcards,
-    hasNextPage,
-    flashcardFilterHandlers,
+    flashcardFilter,
     ref,
-    infiniteFlashcardQuery,
-    createFlashcardTriggerRef,
+    ...infiniteDeckFlashcardsQuery,
+    createDeckFlashcardTriggerRef,
   };
 };

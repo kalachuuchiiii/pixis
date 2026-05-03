@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/sheet";
 import { CollectionCard } from "@/features/collection/components/CollectionCard";
 import { CollectionFilter } from "@/features/collection/components/CollectionFilter";
-import { useMyCollections } from "@/features/collection/hooks/useMyCollections";
-import {  Plus } from "lucide-react";
+import { useCollections } from "@/features/collection/hooks/useCollections";
+import { Plus } from "lucide-react";
 import { useCollectionDeck } from "@/features/collection-deck/hooks/useCollectionDeck";
 
 export const AddToCollectionDialog = ({
@@ -17,7 +17,7 @@ export const AddToCollectionDialog = ({
 }: {
   deckId: number | string;
 }) => {
-  const { collectionFilterHandlers, collections, ref } = useMyCollections();
+  const { collectionFilterHandlers, collections, ref } = useCollections();
   const { addDeckToCollection, isAddingDeckToCollection } = useCollectionDeck();
   return (
     <Sheet>
@@ -29,19 +29,18 @@ export const AddToCollectionDialog = ({
       <SheetContent className="px=">
         <SheetHeader>
           <div className="my-4 mb-10">
-             <h1 className="heading text-4xl ">Add to collection</h1>
-          <p className="description">
-            Which collection you want this deck to add?
-          </p>
+            <h1 className="heading text-4xl ">Add to collection</h1>
+            <p className="description">
+              Which collection you want this deck to add?
+            </p>
           </div>
-            <header>
+          <header>
             <CollectionFilter collectionFilter={collectionFilterHandlers} />
           </header>
         </SheetHeader>
-        
+
         <div className="p-2 space-y-10">
-        
-          <main className="overflow-y-scroll rounded-xl border-1 p-2 dark:bg-stone-900 h-[65vh] flex items- flex-col gap-1">
+          <main className="overflow-y-scroll rounded-xl border-1 p-2 dark:bg-zinc-900 h-[65vh] flex items- flex-col gap-1">
             {collections.map((c) => (
               <CollectionCard.Root collection={c}>
                 <CollectionCard.Header />

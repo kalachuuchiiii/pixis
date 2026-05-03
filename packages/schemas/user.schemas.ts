@@ -5,9 +5,9 @@ import {
   USERNAME_MAX,
   USERNAME_MIN,
 } from "@pixis/constants";
+import { timestampSchema } from "./timestamp.schemas";
 
-export const idSchema = z
-  .coerce
+export const idSchema = z.coerce
   .number("ID must be a number")
   .int("ID must be an integer")
   .positive("ID must be a positive number");
@@ -53,7 +53,7 @@ export const lastNicknameUpdateSchema = z.coerce
   })
   .transform((d) => d.toISOString());
 
-export const rawUserSchema = z.object({
+export const plainUserSchema = z.object({
   id: idSchema,
   username: usernameSchema,
   nickname: nicknameSchema,
@@ -61,11 +61,12 @@ export const rawUserSchema = z.object({
   lastUsernameUpdate: lastUsernameUpdateSchema,
   isPrivate: z.boolean(),
   lastNicknameUpdate: lastNicknameUpdateSchema,
+  createdAt: timestampSchema,
 });
 
 export const pointSchema = z.object({
   id: idSchema,
-  user: rawUserSchema.optional().nullable(),
+  user: plainUserSchema.optional().nullable(),
   currentPoints: z
     .int("Current points must be an integer")
     .nonnegative("Current points cannot be negative"),
@@ -85,9 +86,16 @@ export const lastActionTimestampSchema = z.coerce
   )
   .transform((d) => d.toISOString());
 
+export const userStatsSchema = z.object({
+  decksStudiedCount: z.coerce.number().nonnegative(),
+  points: z.coerce.number().nonnegative(),
+  accuracy: z.coerce.number().nonnegative().nullable(),
+  rank: z.coerce.number().nonnegative().positive(),
+});
+
 export const streakSchema = z.object({
   id: idSchema,
-  user: rawUserSchema.optional().nullable(),
+  user: plainUserSchema.optional().nullable(),
   currentStreak: z
     .int("Current streak must be an integer")
     .nonnegative("Current streak cannot be negative"),
@@ -97,10 +105,10 @@ export const streakSchema = z.object({
   totalStreak: z
     .int("Total streak must be an integer")
     .nonnegative("Total streak cannot be negative"),
-  lastActionTimestamp: lastActionTimestampSchema
+  lastActionTimestamp: lastActionTimestampSchema,
 });
 
-export const userSchema = rawUserSchema.extend({
+export const userSchema = plainUserSchema.extend({
   point: pointSchema,
   streak: streakSchema,
 });
@@ -113,10 +121,8 @@ export const updateUserFormSchema = z.object({
 export const userBadgeSchema = z.object({
   username: usernameSchema,
   nickname: nicknameSchema,
-  avatarPublicUrl: avatarPublicUrlSchema
-})
-
-// ================== TYPES ==================
+  avatarPublicUrl: avatarPublicUrlSchema,
+});
 
 export type Id = z.infer<typeof idSchema>;
 export type Username = z.infer<typeof usernameSchema>;
@@ -124,7 +130,7 @@ export type Nickname = z.infer<typeof nicknameSchema>;
 export type AvatarPublicUrl = z.infer<typeof avatarPublicUrlSchema>;
 export type UserBadge = z.infer<typeof userBadgeSchema>;
 
-export type RawUser = z.infer<typeof rawUserSchema>;
+export type PlainUser = z.infer<typeof plainUserSchema>;
 export type Point = z.infer<typeof pointSchema>;
 export type Streak = z.infer<typeof streakSchema>;
 export type User = z.infer<typeof userSchema>;

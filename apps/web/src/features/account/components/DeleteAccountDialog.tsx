@@ -21,8 +21,7 @@ const getSchema = () =>
     .max(50)
     .refine(
       (d) =>
-        d ===
-        `Delete my account: ${store.getState().profile.user.username}`,
+        d === `Delete my account: ${store.getState().profile.user.username}`,
       {
         message: "Confirmation text does not match",
       }
@@ -41,7 +40,7 @@ export const DeleteAccountDialog = () => {
   return (
     <div className="pt-8 border-t border-red-100">
       <p className="font-medium text-red-600 mb-1">Delete Account</p>
-      <p className="text-sm text-stone-500 mb-5">
+      <p className="text-sm text-zinc-500 mb-5">
         Permanently delete your account and all data. This action cannot be
         undone.
       </p>
@@ -55,13 +54,11 @@ export const DeleteAccountDialog = () => {
 
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Type to confirm deletion
-            </AlertDialogTitle>
+            <AlertDialogTitle>Type to confirm deletion</AlertDialogTitle>
           </AlertDialogHeader>
 
           <div className="space-y-3">
-            <p className="text-sm text-stone-500">
+            <p className="text-sm text-zinc-500">
               Type:
               <span className="font-medium text-red-600 ml-1">
                 {requiredText}

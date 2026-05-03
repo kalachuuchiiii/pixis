@@ -53,10 +53,10 @@ const PublicDecksPage = () => {
         {/* Deck Display Section - Placeholder */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-[17px] font-semibold text-stone-800">
+            <h2 className="text-[17px] font-semibold text-zinc-800">
               Public Decks
             </h2>
-            <div className="text-[13px] text-stone-400">
+            <div className="text-[13px] text-zinc-400">
               1,284 decks • 42 added this week
             </div>
           </div>
@@ -69,7 +69,7 @@ const PublicDecksPage = () => {
       </main>
       <div className="my-20">
         {isPending || isFetching ? (
-          <Spinner  />
+          <Spinner />
         ) : !hasNextPage && decks.length > 0 ? (
           <EmptyResource
             title="No more decks"

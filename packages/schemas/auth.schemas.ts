@@ -1,11 +1,15 @@
 import z from "zod";
-import { usernameSchema } from "./user.schemas";
+import { idSchema, usernameSchema } from "./user.schemas";
 import { PASSWORD_MAX, PASSWORD_MIN } from "@pixis/constants";
 
 export const passwordSchema = z
   .string()
-  .min(PASSWORD_MIN, { message: `Password must be at least ${PASSWORD_MIN} characters long` })
-  .max(PASSWORD_MAX, { message: `Password must not exceed ${PASSWORD_MAX} characters` })
+  .min(PASSWORD_MIN, {
+    message: `Password must be at least ${PASSWORD_MIN} characters long`,
+  })
+  .max(PASSWORD_MAX, {
+    message: `Password must not exceed ${PASSWORD_MAX} characters`,
+  })
   .regex(/^\S+$/, { message: "Password must not contain spaces" })
   .trim()
   .transform((val) => val.toLowerCase());
@@ -31,15 +35,10 @@ export const signInFormSchema = z.object({
   password: passwordSchema,
 });
 
-export const authPayloadSchema = z.object({
-  username: usernameSchema,
-  id: z.number()
-})
-
 export const updatePasswordFormSchema = z.object({
   oldPassword: passwordSchema,
-  newPassword: passwordSchema
-})
+  newPassword: passwordSchema,
+});
 
 export type UpdatePasswordForm = z.infer<typeof updatePasswordFormSchema>;
 export type SignUpForm = z.infer<typeof signUpFormSchema>;

@@ -13,12 +13,11 @@ import {
 } from "@/components/ui/dialog";
 import { Bookmark, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAppSelector } from "@/hooks/useReduxHook";
 import { useForm } from "react-hook-form";
 import { CollectionForm } from "../components/CollectionForm";
-import { useMyCollection } from "../hooks/useMyCollection";
+import { useCollection } from "../hooks/useCollection";
 import { CollectionCard } from "../components/CollectionCard";
-import { useMyCollections } from "../hooks/useMyCollections";
+import { useCollections } from "../hooks/useCollections";
 import { Link } from "react-router-dom";
 import {
   Tooltip,
@@ -27,9 +26,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "@/components/ui/EmptyResource";
+import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
+import clsx from "clsx";
 
 const MyCollections = () => {
-  const { user } = useAppSelector((state) => state.profile);
+  const { data: user } = useProfileDetails();
   const collectionForm = useForm<CF>({
     defaultValues: {
       visibility: "private",
@@ -38,7 +39,7 @@ const MyCollections = () => {
     },
   });
   const collectionValues = collectionForm.watch();
-  const { createCollection, isCreatingCollection } = useMyCollection();
+  const { createCollection, isCreatingCollection } = useCollection();
 
   const collectionTriggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -47,7 +48,8 @@ const MyCollections = () => {
     infiniteCollectionQuery: { hasNextPage, isPending, isFetching },
     collections,
     ref,
-  } = useMyCollections();
+  } = useCollections();
+
   const hasNoMoreData = !hasNextPage && collections.length > 0;
   const hasNoData = !hasNextPage && collections.length === 0;
   const isLoading = isPending || isFetching;
@@ -118,8 +120,8 @@ const MyCollections = () => {
           </div>
         }
       />
-      <main className="grid grid-cols-2 gap-1">
-        {collections.map((c) => (
+      <main className="grid grid-cols-3 gap-4">
+        {collections.map((c, i) => (
           <Link to={`/app/collections/${c.id}`}>
             <CollectionCard.Default collection={c} />
           </Link>
@@ -138,7 +140,11 @@ const MyCollections = () => {
             <EmptyResource
               title="No collections"
               description="No collections yet"
-              content={<Button onClick={() => collectionTriggerRef.current?.click()}>Create</Button>}
+              content={
+                <Button onClick={() => collectionTriggerRef.current?.click()}>
+                  Create
+                </Button>
+              }
             />
           )
         )}

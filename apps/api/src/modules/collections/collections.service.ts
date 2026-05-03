@@ -13,22 +13,23 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 import type { CollectionForm } from '@pixis/schemas';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import {
   FilterOperator,
   paginate,
   type PaginateConfig,
   type PaginateQuery,
 } from 'nestjs-paginate';
-import { getNextPage } from '@/common/utils/pagination.util';
+import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
 import { SORTABLE_COLLECTION_FIELDS } from '@pixis/constants';
 import { CollectionDeck } from '../collection-deck/entities/collection-deck.entity';
 import { options } from 'axios';
-import { collectionPaginationConfig } from '@/config/pagination.config';
+import { collectionPaginationConfig } from '@/config/paginationConfigs';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
+import { withCollectionStats } from './query/withCollectionStats';
 
 type CollectionIdWithUser = {
   collectionId: number;
-  user: AuthPayload;
+  user: AuthUser;
 };
 
 @Injectable()
@@ -42,7 +43,7 @@ export class CollectionsService {
     user,
   }: {
     collectionForm: CollectionForm;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const newCollection = this.collectionRepo.create({
       ...collectionForm,
@@ -59,7 +60,7 @@ export class CollectionsService {
   }: {
     collectionForm: CollectionForm;
     collectionId: number;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
     const result = await this.collectionRepo.update(
       { id: collectionId, user: { id: user.id } },
@@ -88,24 +89,6 @@ export class CollectionsService {
     return result;
   }
 
-  async getPublicCollections({ query }: { query: PaginateQuery }) {
-    const qb = this.findAccessibleCollectionsQuery({});
-
-    const { data, links, meta } = await paginate(query, qb, {
-      ...collectionPaginationConfig,
-      filterableColumns: {
-        ...collectionPaginationConfig.filterableColumns,
-        visibility: [],
-      },
-    });
-
-    return {
-      data,
-      nextPage: getNextPage(links),
-      totalItems: meta.totalItems,
-    };
-  }
-
   async findAccessibleCollectionById({
     collectionId,
     user,
@@ -113,39 +96,33 @@ export class CollectionsService {
   }: {
     collectionId: number;
     throwErrorOnNotFound?: boolean;
-    user: AuthPayload;
+    user: AuthUser;
   }) {
-    const qb = this.collectionRepo
-      .createQueryBuilder('collection')
-      .where('collection.id = :collectionId', { collectionId })
-      .andWhere(
-        '(collection.user.id = :userId OR collection.visibility != :visibility)',
-        { visibility: 'private', userId: user.id },
-      )
-      .leftJoinAndSelect('collection.user', 'user')
-      .leftJoinAndMapOne(
-        'collection.userSavedCollection',
-        'collection.userSavedCollections',
-        'usc',
-        'usc.user.id = :userId',
-        { userId: user.id },
-      ).loadRelationCountAndMap(
-        'collection.deckCount',
-        'collection.collectionDecks'
-      ).loadRelationCountAndMap(
-        'collection.userSavedCollectionCount',
-        'collection.userSavedCollections'
-      )
-      .select([
-        'collection',
-        'usc.id',
-        'user.username',
-        'user.nickname',
-        'user.avatarPublicUrl',
-      ]);
+    const qb = withCollectionStats(
+      this.collectionRepo
+        .createQueryBuilder('collection')
+        .where('collection.id = :collectionId', { collectionId })
+        .andWhere(
+          '(collection.user.id = :userId OR collection.visibility != :visibility)',
+          { visibility: 'private', userId: user.id },
+        )
+        .leftJoinAndMapOne(
+          'collection.userSavedCollection',
+          'collection.userSavedCollections',
+          'usc',
+          'usc.user.id = :userId',
+          { userId: user.id },
+        )
+        .leftJoinAndSelect('collection.user', 'user'),
+    ).select([
+      'collection',
+      'usc.id',
+      'user.username',
+      'user.nickname',
+      'user.avatarPublicUrl',
+    ]);
 
     const result = await qb.getOne();
-    console.log(result);
     if (!result && throwErrorOnNotFound) {
       throw new NotFoundException({
         message: 'Collection not found',
@@ -156,49 +133,41 @@ export class CollectionsService {
     return result;
   }
 
-  findAccessibleCollectionsQuery({ user = undefined }: { user?: AuthPayload }) {
-    return this.collectionRepo
-      .createQueryBuilder('collection')
-      .where(
-        '(collection.user.id = :userId OR collection.visibility != :visibility)',
-        { userId: user?.id, visibility: 'private' },
-      )
-      .leftJoinAndSelect('collection.user', 'user')
-      .loadRelationCountAndMap(
-        'collection.deckCount',
-        'collection.collectionDecks',
-      )
-      .loadRelationCountAndMap(
-        'collection.userSavedCollectionCount',
-        'collection.userSavedCollections'
-      )
-      .select([
-        'collection',
-        'user.username',
-        'user.nickname',
-        'user.avatarPublicUrl',
-      ]);
-  }
-
-  async getMyCollections({
+  async findAccessibleCollections({
     query,
     user,
   }: {
     query: PaginateQuery;
-    user: AuthPayload;
+    user?: AuthUser;
   }) {
-    const qb = this.findAccessibleCollectionsQuery({ user }).andWhere('collection.user.id = :userId', { userId: user.id });
+    const qb = withCollectionStats(
+      this.collectionRepo
+        .createQueryBuilder('collection')
+        .where(
+          '(collection.user.id = :userId OR collection.visibility != :visibility)',
+          { userId: user?.id, visibility: 'private' },
+        )
+        .leftJoinAndSelect('collection.user', 'user'),
+    ).select([
+      'collection',
+      'user.username',
+      'user.nickname',
+      'user.avatarPublicUrl',
+    ]);
 
-    const { data, links, meta } = await paginate(
+    const result = await paginate(
       query,
       qb,
-      collectionPaginationConfig,
+      user
+        ? collectionPaginationConfig
+        : {
+            ...collectionPaginationConfig,
+            filterableColumns: {
+              ...collectionPaginationConfig.filterableColumns,
+              visibility: [],
+            },
+          },
     );
-
-    return {
-      data,
-      nextPage: getNextPage(links),
-      totalItems: meta.totalItems,
-    };
+    return getPaginationData(result);
   }
 }

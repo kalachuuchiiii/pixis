@@ -1,17 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { DeckService } from '../deck/deck.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserSavedDeck } from './entities/user-saved-deck.entity';
 import { Equal, Not, Repository } from 'typeorm';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { Deck } from '../deck/entities/deck.entity';
-import { getNextPage } from '@/common/utils/pagination.util';
-import { deckPaginationConfig } from '@/config/pagination.config';
+import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
+import { deckPaginationConfig } from '@/config/paginationConfigs';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 interface DeckIdWithUser {
   deckId: number;
-  user: AuthPayload;
+  user: AuthUser;
 }
 
 @Injectable()
@@ -64,7 +64,7 @@ export class UserSavedDeckService {
     });
   }
 
-   findAccessibleSavedDecks({ user }: { user?: AuthPayload } = {}) {
+  findAccessibleSavedDecks({ user }: { user?: AuthUser } = {}) {
     return this.deckRepo
       .createQueryBuilder('deck')
       .leftJoin('deck.userSavedDecks', 'usds')
@@ -85,15 +85,12 @@ export class UserSavedDeckService {
     user,
     query,
   }: {
-    user: AuthPayload;
+    user: AuthUser;
     query: PaginateQuery;
   }) {
     const qb = this.findAccessibleSavedDecks({ user });
-    const { data, links } = await paginate(query, qb, deckPaginationConfig);
+    const result = await paginate(query, qb, deckPaginationConfig);
 
-    return {
-      data,
-      nextPage: getNextPage(links, query.page),
-    };
+    return getPaginationData(result);
   }
 }

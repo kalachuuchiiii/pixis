@@ -9,12 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import type { SignInDTO, SignUpDTO } from './dtos/auth.dtos';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalGuard } from './guards/local.guard';
 import { RefreshGuard } from './guards/refresh.guard';
 import {
-  authPayloadSchema,
   signUpFormSchema,
   updatePasswordFormSchema,
   updateUserFormSchema,
@@ -23,6 +21,7 @@ import ms from 'ms';
 import env from '@/config/env';
 import { AccessGuard } from './guards/access.guard';
 import type { Request, Response } from 'express';
+import { authUserSchema } from './schemas/auth.schemas';
 
 @Controller('auth')
 export class AuthController {
@@ -41,9 +40,8 @@ export class AuthController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const authPayload = authPayloadSchema.parse(request.user);
-    const { refreshToken, payload } =
-      await this.authService.signIn(authPayload);
+    const user = authUserSchema.parse(request.user);
+    const { refreshToken, payload } = await this.authService.signIn(user);
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
@@ -60,15 +58,8 @@ export class AuthController {
   @Post('/refresh')
   @UseGuards(RefreshGuard)
   async refresh(@Req() request: Request) {
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     return this.authService.refresh(user);
-  }
-
-  @Get('/me')
-  @UseGuards(AccessGuard)
-  async getMe(@Req() request: Request) {
-    const user = authPayloadSchema.parse(request.user);
-    return await this.authService.getMe(user);
   }
 
   @Post('/signout')
@@ -81,22 +72,20 @@ export class AuthController {
     });
 
     return {
-      message: 'Signed out successfully!'
-    }
+      message: 'Signed out successfully!',
+    };
   }
 
   @Patch('/me/password')
   @UseGuards(AccessGuard)
-  async updatePassword(@Req() request: Request){
-    const user = authPayloadSchema.parse(request.user);
+  async updatePassword(@Req() request: Request) {
+    const user = authUserSchema.parse(request.user);
     const form = updatePasswordFormSchema.parse(request.body);
     const result = await this.authService.updatePassword(user, form);
 
     return {
       message: 'Successfully updated your password!',
-      code: 'SUCCESSFULLY_UPDATED_PASSWORD'
-    }
-
+      code: 'SUCCESSFULLY_UPDATED_PASSWORD',
+    };
   }
-
 }

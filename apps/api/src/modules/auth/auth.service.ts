@@ -10,16 +10,12 @@ import { JwtService } from '@nestjs/jwt';
 import { Credential } from './entities/credential.entity';
 import { User } from '../users/entities/user.entity';
 import { DataSource, Repository, type FindOneOptions } from 'typeorm';
-import { type AuthPayload } from './dtos/auth.dtos';
 import env from '@/config/env';
 import { Point } from '../users/entities/point.entity';
 import { Streak } from '../users/entities/streak.entity';
-import {
-  authPayloadSchema,
-  type SignUpForm,
-  type UpdatePasswordForm,
-} from '@pixis/schemas';
+import { type SignUpForm, type UpdatePasswordForm } from '@pixis/schemas';
 import { hashPassword } from '@/common/utils/hash.util';
+import type { AuthUser } from './schemas/auth.schemas';
 
 @Injectable()
 export class AuthService {
@@ -52,7 +48,7 @@ export class AuthService {
         user: { id: user.id },
         password,
       });
-      const point = manager.create(Point, { user: { id: user.id }});
+      const point = manager.create(Point, { user: { id: user.id } });
       const streak = manager.create(Streak, { user: { id: user.id } });
 
       await manager.save(Credential, credential);
@@ -68,7 +64,7 @@ export class AuthService {
     });
   }
 
-  async signIn(payload: AuthPayload) {
+  async signIn(payload: AuthUser) {
     const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: env.REFRESH_TOKEN_TTL,
       secret: env.REFRESH_TOKEN_SECRET,
@@ -80,7 +76,7 @@ export class AuthService {
     };
   }
 
-  async refresh(authPayload: AuthPayload) {
+  async refresh(authPayload: AuthUser) {
     const accessToken = await this.jwtService.signAsync(authPayload, {
       expiresIn: env.ACCESS_TOKEN_TTL,
       secret: env.ACCESS_TOKEN_SECRET,
@@ -90,24 +86,10 @@ export class AuthService {
     };
   }
 
-  async getMe(authPayload: AuthPayload) {
-    const user = await this.findUserByUsername(authPayload.username, {
-      relations: ['point', 'streak'],
-    });
-    if (!user) {
-      throw new UnauthorizedException({
-        message: 'User not found.',
-        code: 'USER_NOT_FOUND',
-      });
-    }
-
-    return user;
-  }
-
-  async updatePassword(user: AuthPayload, form: UpdatePasswordForm) {
+  async updatePassword(user: AuthUser, form: UpdatePasswordForm) {
     const myUser = await this.userRepo.findOne({
       where: { id: user.id },
-      relations: ['credential']
+      relations: ['credential'],
     });
 
     if (!myUser || !myUser.credential) {

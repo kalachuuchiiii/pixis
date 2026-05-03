@@ -37,12 +37,12 @@ const SignUp = () => {
       {/* Header */}
       <div>
         <h2
-          className="text-[26px] font-normal text-stone-900 dark:text-white mb-1"
+          className="text-[26px] font-normal text-zinc-900 dark:text-white mb-1"
           style={{ fontFamily: "'DM Serif Display', serif" }}
         >
           Create an account
         </h2>
-        <p className="text-sm text-stone-500 dark:text-stone-400">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Start building your flashcard library today.
         </p>
       </div>
@@ -58,7 +58,7 @@ const SignUp = () => {
               <Input
                 {...field}
                 placeholder="e.g. jane_doe"
-                className="dark:bg-stone-900 dark:border-stone-700"
+                className="dark:bg-zinc-900 dark:border-zinc-700"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -75,7 +75,7 @@ const SignUp = () => {
                 {...field}
                 type="password"
                 placeholder="••••••••"
-                className="dark:bg-stone-900 dark:border-stone-700"
+                className="dark:bg-zinc-900 dark:border-zinc-700"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -92,7 +92,7 @@ const SignUp = () => {
                 {...field}
                 type="password"
                 placeholder="••••••••"
-                className="dark:bg-stone-900 dark:border-stone-700"
+                className="dark:bg-zinc-900 dark:border-zinc-700"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -107,17 +107,17 @@ const SignUp = () => {
             <Field>
               <div className="flex items-start gap-3">
                 <Checkbox
-                  className="size-4 mt-0.5 dark:bg-stone-900"
+                  className="size-4 mt-0.5 dark:bg-zinc-900"
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 />
-                <div className="text-[13px] text-stone-500 dark:text-stone-400 leading-relaxed">
+                <div className="text-[13px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
                   I agree to Pixis's{" "}
                   <Dialog>
                     <DialogTrigger asChild>
                       <button
                         type="button"
-                        className="text-stone-900 dark:text-white underline hover:text-stone-700 dark:hover:text-stone-300 font-medium transition-colors"
+                        className="text-zinc-900 dark:text-white underline hover:text-zinc-700 dark:hover:text-zinc-300 font-medium transition-colors"
                       >
                         Privacy Policy
                       </button>
@@ -126,7 +126,7 @@ const SignUp = () => {
                       <DialogHeader>
                         <DialogTitle>Privacy Policy</DialogTitle>
                       </DialogHeader>
-                      <p className="text-sm text-stone-500 dark:text-stone-400">
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">
                         Your data is safe. (shortened version for demo)
                       </p>
                     </DialogContent>
@@ -150,11 +150,11 @@ const SignUp = () => {
       </form>
 
       {/* Footer Link */}
-      <p className="text-center text-sm text-stone-500 dark:text-stone-400">
+      <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
         Already have an account?{" "}
         <NavLink
           to="/sign-in"
-          className="text-stone-900 dark:text-white font-medium hover:underline transition-all"
+          className="text-zinc-900 dark:text-white font-medium hover:underline transition-all"
         >
           Sign in
         </NavLink>

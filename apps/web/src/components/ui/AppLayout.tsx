@@ -44,9 +44,10 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/app/store";
 import { useEffect } from "react";
 import { getMe } from "@/features/account/slice/profileSlice";
-import { useAppSelector } from "@/hooks/useReduxHook";
+
 import AppErrorBoundary from "@/app/AppErrorBoundary";
 import { Pixis, PixisAvatar } from "./PixisAvatar";
+import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
 // ── Hardcoded user data ────────────────────────────────────────────────────
 
@@ -100,18 +101,25 @@ const NOTIFICATIONS = [
 
 const NAV_PRIMARY = [
   { label: "Home", to: "/app", icon: Home },
-  { label: "My Decks", to: "/app/decks", icon: Layers },
   {
     label: "My Collections",
     to: "/app/collections",
     icon: LibraryBig,
   },
+  { label: "My Decks", to: "/app/decks", icon: Layers },
+
   { label: "Activity", to: "/app/activity", icon: BarChart2 },
 ];
 
 const NAV_SOCIAL = [
+  {
+    label: "Explore Collections",
+    to: "/app/explore/collections",
+    icon: BookOpen,
+  },
+  { label: "Explore Decks", to: "/app/explore/decks", icon: BookOpen },
+
   { label: "Leaderboard", to: "/app/leaderboard", icon: Trophy },
-  { label: "Public Decks", to: "/app/explore", icon: BookOpen },
 ];
 
 const NAV_SYSTEM = [
@@ -157,8 +165,8 @@ const NavItem = ({
             `flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-colors w-full
              ${
                a
-                 ? "bg-stone-900  text-white"
-                 : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-400 hover:bg-stone-100"
+                 ? "bg-zinc-900  text-white"
+                 : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-400 hover:bg-zinc-100"
              }`
           }
           style={{ fontFamily: "'DM Sans', sans-serif" }}
@@ -176,37 +184,25 @@ const NavItem = ({
 
 // ── App Sidebar ────────────────────────────────────────────────────────────
 const AppSidebar = () => {
-  const { user } = useAppSelector((state) => state.profile);
-
+  const { data: user } = useProfileDetails();
   return (
     <Sidebar
-      className="border-r dark:border-stone-800 border-stone-100"
+      className="border-r dark:border-zinc-800 border-zinc-100"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Header — brand */}
-      <SidebarHeader className="px-4 py-5 border-b dark:border-stone-800 border-stone-100">
+      <SidebarHeader className="px-4 py-5 border-b dark:border-zinc-800 border-zinc-100">
         <div className="flex items-center gap-2.5">
           <PixisAvatar />
-          <Pixis/>
+          <Pixis />
         </div>
       </SidebarHeader>
 
       <SidebarContent className="px-3 py-3 flex flex-col gap-1">
         {/* Primary — core study actions */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase dark:text-stone-200 text-stone-300 px-3 mb-1">
-            Study
-          </SidebarGroupLabel>
-          <SidebarMenu>
-            {NAV_PRIMARY.map((item) => (
-              <NavItem key={item.to} item={item} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-
         {/* Social — community & competition */}
         <SidebarGroup className="mt-3">
-          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase text-stone-300 px-3 mb-1">
+          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase text-zinc-300 px-3 mb-1">
             Community
           </SidebarGroupLabel>
           <SidebarMenu>
@@ -215,10 +211,20 @@ const AppSidebar = () => {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase dark:text-zinc-200 text-zinc-300 px-3 mb-1">
+            Study
+          </SidebarGroupLabel>
+          <SidebarMenu>
+            {NAV_PRIMARY.map((item) => (
+              <NavItem key={item.to} item={item} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
 
       {/* Footer — account / system (least frequent, bottom) */}
-      <SidebarFooter className="px-3 py-3 dark:border-stone-800 border-t border-stone-100">
+      <SidebarFooter className="px-3 py-3 dark:border-zinc-800 border-t border-zinc-100">
         <SidebarMenu>
           {NAV_SYSTEM.map((item) => (
             <NavItem key={item.to} item={item} />
@@ -226,10 +232,7 @@ const AppSidebar = () => {
         </SidebarMenu>
 
         {/* Mini user card in footer */}
-        <UserBadge className="flex items-center gap-3 p-2" user={user}>
-          <UserBadge.Avatar />
-          <UserBadge.Info />
-        </UserBadge>
+        <UserBadge.Default user={user} />
       </SidebarFooter>
     </Sidebar>
   );
@@ -242,7 +245,7 @@ const NotificationDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="relative w-9 h-9 rounded-lg flex items-center justify-center text-stone-500 hover:text-stone-800 hover:bg-stone-100 transition-colors outline-none"
+          className="relative w-9 h-9 rounded-lg flex items-center justify-center text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors outline-none"
           aria-label="Notifications"
         >
           <Bell size={17} strokeWidth={1.8} />
@@ -255,15 +258,15 @@ const NotificationDropdown = () => {
       <DropdownMenuContent
         align="end"
         sideOffset={8}
-        className="w-[320px] p-0 rounded-2xl border border-stone-200 shadow-lg overflow-hidden"
+        className="w-[320px] p-0 rounded-2xl border border-zinc-200 shadow-lg overflow-hidden"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
-        <DropdownMenuLabel className="px-4 py-3.5 border-b border-stone-100 flex items-center justify-between">
-          <span className="text-[13px] font-semibold text-stone-900">
+        <DropdownMenuLabel className="px-4 py-3.5 border-b border-zinc-100 flex items-center justify-between">
+          <span className="text-[13px] font-semibold text-zinc-900">
             Notifications
           </span>
           {unreadCount > 0 && (
-            <span className="text-[11px] font-semibold text-stone-400">
+            <span className="text-[11px] font-semibold text-zinc-400">
               {unreadCount} new
             </span>
           )}
@@ -272,7 +275,7 @@ const NotificationDropdown = () => {
         <div className="max-h-[340px] overflow-y-auto">
           {NOTIFICATIONS.map((n, i) => (
             <div key={n.id}>
-              <DropdownMenuItem className="px-4 py-3 cursor-pointer focus:bg-stone-50 rounded-none gap-3">
+              <DropdownMenuItem className="px-4 py-3 cursor-pointer focus:bg-zinc-50 rounded-none gap-3">
                 <div
                   className={`w-7 h-7 rounded-lg ${n.bg} flex items-center justify-center flex-shrink-0`}
                 >
@@ -280,28 +283,28 @@ const NotificationDropdown = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[12.5px] font-semibold text-stone-800 leading-tight">
+                    <p className="text-[12.5px] font-semibold text-zinc-800 leading-tight">
                       {n.title}
                     </p>
                     {n.unread && (
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                     )}
                   </div>
-                  <p className="text-[12px] text-stone-400 leading-snug mt-0.5 truncate">
+                  <p className="text-[12px] text-zinc-400 leading-snug mt-0.5 truncate">
                     {n.desc}
                   </p>
-                  <p className="text-[11px] text-stone-300 mt-1">{n.time}</p>
+                  <p className="text-[11px] text-zinc-300 mt-1">{n.time}</p>
                 </div>
               </DropdownMenuItem>
               {i < NOTIFICATIONS.length - 1 && (
-                <DropdownMenuSeparator className="my-0 bg-stone-50" />
+                <DropdownMenuSeparator className="my-0 bg-zinc-50" />
               )}
             </div>
           ))}
         </div>
 
-        <div className="border-t border-stone-100 px-4 py-2.5">
-          <button className="text-[12px] font-medium text-stone-400 hover:text-stone-700 transition-colors w-full text-center">
+        <div className="border-t border-zinc-100 px-4 py-2.5">
+          <button className="text-[12px] font-medium text-zinc-400 hover:text-zinc-700 transition-colors w-full text-center">
             Mark all as read
           </button>
         </div>
@@ -312,16 +315,16 @@ const NotificationDropdown = () => {
 
 // ── Top Navbar ─────────────────────────────────────────────────────────────
 const Topbar = () => {
-  const { user } = useAppSelector((state) => state.profile);
+  const { data: user } = useProfileDetails();
 
   return (
     <header
-      className="h-[60px] border-b border-stone-100 dark:border-stone-800 s backdrop-blur-md flex items-center justify-between px-5 gap-4 sticky top-0 z-40"
+      className="h-[60px] border-b border-zinc-100 dark:border-zinc-800 s backdrop-blur-md flex items-center justify-between px-5 gap-4 sticky top-0 z-40"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Left: hamburger trigger (mobile / collapse) */}
       <div className="flex items-center gap-3">
-        <SidebarTrigger className="w-8 h-8 rounded-lg text-stone-500 hover:text-stone-800 hover:bg-stone-100 transition-colors flex items-center justify-center" />
+        <SidebarTrigger className="w-8 h-8 rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors flex items-center justify-center" />
       </div>
 
       {/* Right: stats + notifications + user */}
@@ -338,17 +341,17 @@ const Topbar = () => {
         </div>
 
         {/* Points */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-100">
+        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-50 border border-zinc-100">
           <Zap
             size={13}
-            className="text-stone-500"
+            className="text-zinc-500"
             strokeWidth={2}
             fill="currentColor"
           />
-          <span className="text-[13px] font-semibold text-stone-700">
+          <span className="text-[13px] font-semibold text-zinc-700">
             {user.point.currentPoints}
           </span>
-          <span className="text-[11px] text-stone-400 hidden md:inline">
+          <span className="text-[11px] text-zinc-400 hidden md:inline">
             pts
           </span>
         </div>
@@ -357,10 +360,7 @@ const Topbar = () => {
         <NotificationDropdown />
 
         {/* User pill */}
-        <UserBadge className="flex items-center gap-3 " user={user}>
-          <UserBadge.Avatar />
-          <UserBadge.Info />
-        </UserBadge>
+        <UserBadge.Default user={user} />
       </motion.div>
     </header>
   );
@@ -368,15 +368,10 @@ const Topbar = () => {
 
 // ── App Layout ─────────────────────────────────────────────────────────────
 const AppLayout = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { isFetching } = useAppSelector((state) => state.profile);
-
-  useEffect(() => {
-    dispatch(getMe());
-  }, []);
+  const { isPending } = useProfileDetails();
 
   return (
-    <SidebarProvider  defaultOpen={true}>
+    <SidebarProvider defaultOpen={true}>
       <div
         className="flex min-h-screen  w-full"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
@@ -390,7 +385,7 @@ const AppLayout = () => {
           {/* Page content */}
           <AppErrorBoundary>
             <main className="flex-1  max-w-7xl w-full p-6">
-              {!isFetching && <Outlet />}
+              {!isPending && <Outlet />}
             </main>
           </AppErrorBoundary>
         </div>

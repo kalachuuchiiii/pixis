@@ -1,106 +1,158 @@
-import AppLayout from "@/components/ui/AppLayout";
-import MyProfile from "@/features/account/pages/MyProfile";
-import Settings from "@/features/account/pages/Settings";
-import Leaderboard from "@/features/activity/pages/Leaderboard";
-import MyActivity from "@/features/activity/pages/MyActivity";
-import Assistant from "@/features/assistant/pages/Assistant";
-import Layout from "@/features/auth/components/Layout";
-import SignIn from "@/features/auth/pages/SignIn";
-import SignUp from "@/features/auth/pages/SignUp";
-import CollectionDetails from "@/features/collection/pages/CollectionDetails";
-import MyCollections from "@/features/collection/pages/MyCollections";
-import ArchivedDecks from "@/features/deck/pages/ArchivedDecks";
-import DeckDetails from "@/features/deck/pages/DeckDetails";
-import MyDecks from "@/features/deck/pages/MyDecks";
-import PublicDecks from "@/features/deck/pages/PublicDecks";
-import Exam from "@/features/exam/pages/Exam";
-import FlashcardList from "@/features/flashcard/pages/FlashcardList";
-import MySavedCollections from "@/features/user-saved-collection/pages/MySavedCollections";
-import MySavedDecks from "@/features/user-saved-deck/pages/MySavedDecks";
-import LandingPage from "@/pages/LandingPage";
-import { useRoutes, type RouteObject } from "react-router-dom";
+import { lazy } from "react";
+import { Outlet, useRoutes, type RouteObject } from "react-router-dom";
+import AppErrorBoundary from "./AppErrorBoundary";
+import DeckFlashcards from "@/features/deck/pages/DeckFlashcards";
+import DeckLeaderboards from "@/features/leaderboards/pages/DeckLeaderboards";
+import DeckSessionHistory from "@/features/session/pages/DeckSessionHistory";
+import ExploreCollections from "@/features/collection/pages/ExploreCollections";
+
+const LandingPage = lazy(() => import("@/pages/LandingPage"));
+const Layout = lazy(() => import("@/features/auth/components/Layout"));
+const SignIn = lazy(() => import("@/features/auth/pages/SignIn"));
+const SignUp = lazy(() => import("@/features/auth/pages/SignUp"));
+
+const AppLayout = lazy(() => import("@/components/ui/AppLayout"));
+
+const MyProfile = lazy(() => import("@/features/account/pages/MyProfile"));
+const Settings = lazy(() => import("@/features/account/pages/Settings"));
+const Leaderboard = lazy(() => import("@/features/activity/pages/Leaderboard"));
+const MyActivity = lazy(() => import("@/features/activity/pages/MyActivity"));
+const Assistant = lazy(() => import("@/features/assistant/pages/Assistant"));
+
+const CollectionDetails = lazy(
+  () => import("@/features/collection/pages/CollectionDetails")
+);
+const MyCollections = lazy(
+  () => import("@/features/collection/pages/MyCollections")
+);
+
+const ArchivedDecks = lazy(() => import("@/features/deck/pages/ArchivedDecks"));
+const DeckDetails = lazy(
+  () => import("@/features/deck/components/layout/DeckDetails")
+);
+const MyDecks = lazy(() => import("@/features/deck/pages/MyDecks"));
+const PublicDecks = lazy(() => import("@/features/deck/pages/PublicDecks"));
+
+const Exam = lazy(() => import("@/features/exam/pages/Exam"));
+
+const MySavedCollections = lazy(
+  () => import("@/features/user-saved-collection/pages/MySavedCollections")
+);
+
+const MySavedDecks = lazy(
+  () => import("@/features/user-saved-deck/pages/MySavedDecks")
+);
+
+const wrap = (element: React.ReactNode) => (
+  <AppErrorBoundary>{element}</AppErrorBoundary>
+);
 
 const routes: RouteObject[] = [
   {
-    element: <LandingPage />,
     path: "/",
+    element: <LandingPage />,
   },
+
   {
     element: <Layout />,
     children: [
       {
-        element: <SignIn />,
         path: "/sign-in",
+        element: wrap(<SignIn />),
       },
       {
-        element: <SignUp />,
         path: "/sign-up",
+        element: wrap(<SignUp />),
       },
     ],
   },
-   {
-        element: <Exam />,
-        path: "/app/exam/:mode/:sessionId",
-      },
+
+  {
+    path: "/app/exam/:mode/:sessionId",
+    element: wrap(<Exam />),
+  },
+
   {
     element: <AppLayout />,
     children: [
-     
       {
-        element: <MySavedCollections />,
-        path: `/app/saved-collections`,
-      },
-      {
-        element: <MySavedDecks />,
-        path: `/app/saved-decks`,
-      },
-      {
-        element: <CollectionDetails />,
-        path: `/app/collections/:collectionId`,
-      },
-      {
-        element: <MyCollections />,
-        path: "/app/collections",
-      },
-      {
-        element: <DeckDetails />,
-        path: "/app/decks/:deckId",
-      },
-      {
-        element: <ArchivedDecks />,
-        path: "/app/archived/decks",
-      },
-      {
-        element: <Assistant />,
-        path: "/app",
-      },
-      {
-        element: <MyDecks />,
-        path: "/app/decks",
-      },
-      {
-        element: <MyActivity />,
-        path: "/app/activity",
-      },
-      {
-        element: <Leaderboard />,
-        path: "/app/leaderboard",
-      },
-      {
-        element: <PublicDecks />,
-        path: "/app/explore",
-      },
-      {
-        element: <MyProfile />,
-        path: "/app/profile",
-      },
-      {
-        element: <Settings />,
-        path: "/app/settings",
-      },
-      {
-        element: <FlashcardList />,
-        path: "/app/decks/:deckId/manage/flashcards",
+        element: wrap(<Outlet />),
+        children: [
+          {
+            path: "/app",
+            element: <Assistant />,
+          },
+          {
+            path: "/app/saved-collections",
+            element: <MySavedCollections />,
+          },
+          {
+            path: "/app/saved-decks",
+            element: <MySavedDecks />,
+          },
+          {
+            path: "/app/collections",
+            element: <MyCollections />,
+          },
+          {
+            path: "/app/collections/:collectionId",
+            element: <CollectionDetails />,
+          },
+          {
+            path: "/app/decks",
+            element: <MyDecks />,
+          },
+          {
+            element: <DeckDetails />,
+            children: [
+              {
+                element: wrap(<Outlet />),
+                children: [
+                  {
+                    path: "/app/decks/:deckId/flashcards",
+                    element: <DeckFlashcards />,
+                  },
+                  {
+                    path: "/app/decks/:deckId/leaderboards",
+                    element: <DeckLeaderboards />,
+                  },
+                  {
+                    path: "/app/decks/:deckId/history",
+                    element: <DeckSessionHistory />,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: "/app/archived/decks",
+            element: <ArchivedDecks />,
+          },
+          {
+            path: "/app/activity",
+            element: <MyActivity />,
+          },
+          {
+            path: "/app/leaderboard",
+            element: <Leaderboard />,
+          },
+          {
+            path: "/app/explore/decks",
+            element: <PublicDecks />,
+          },
+          {
+            path: "/app/explore/collections",
+            element: <ExploreCollections />,
+          },
+          {
+            path: "/app/profile",
+            element: <MyProfile />,
+          },
+          {
+            path: "/app/settings",
+            element: <Settings />,
+          },
+        ],
       },
     ],
   },

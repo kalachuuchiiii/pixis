@@ -4,7 +4,7 @@ import api from "@/lib/api";
 import type { Collection } from "@pixis/schemas";
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 
-export const useMyCollections = () => {
+export const useCollections = () => {
   const collectionFilterHandlers = useCollectionFilter();
   const { query } = collectionFilterHandlers;
 

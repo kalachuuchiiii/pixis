@@ -10,7 +10,7 @@ import { getErrorMessage } from "react-error-boundary";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-export const useMyCollection = () => {
+export const useCollection = () => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   // CREATE

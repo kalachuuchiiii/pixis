@@ -9,30 +9,22 @@ import {
 } from '@nestjs/common';
 import { FlashcardService } from './flashcard.service';
 import type { Request } from 'express';
-import {
-  authPayloadSchema,
-  flashcardFormSchema,
-  flashcardSchema,
-  idSchema,
-} from '@pixis/schemas';
+import { flashcardFormSchema, flashcardSchema, idSchema } from '@pixis/schemas';
 import { AccessGuard } from '../auth/guards/access.guard';
 
 import z from 'zod';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
+import { authUserSchema } from '../auth/schemas/auth.schemas';
 
 @Controller('flashcards')
 export class FlashcardController {
   constructor(private readonly flashcardService: FlashcardService) {}
 
-
-
-
-
   @Post('/decks/:deckId')
   @UseGuards(AccessGuard)
   async createFlashcard(@Req() request: Request) {
     const flashcardForm = flashcardFormSchema.parse(request.body);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const deckId = idSchema.parse(request.params.deckId);
 
     const flashcard = await this.flashcardService.createFlashcard({
@@ -54,12 +46,12 @@ export class FlashcardController {
     @Paginate() query: PaginateQuery,
   ) {
     const deckId = idSchema.parse(request.params.deckId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const { data, nextPage, totalItems } =
-      await this.flashcardService.findAccessibleFlashcards({
+      await this.flashcardService.findAccessibleDeckFlashcards({
         deckId,
         query,
-        user
+        user,
       });
 
     const flashcards = z.array(flashcardSchema).parse(data);
@@ -75,13 +67,13 @@ export class FlashcardController {
   @UseGuards(AccessGuard)
   async getMyFlashcard(@Req() request: Request) {
     const flashcardId = idSchema.parse(request.params.flashcardId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
 
     const flashcard = await this.flashcardService.findAccessibleFlashcardById({
       flashcardId,
       user,
     });
-
+    console.log(flashcard);
     const cleanFlashcard = flashcardSchema.parse(flashcard);
     return {
       flashcard: cleanFlashcard,
@@ -92,7 +84,7 @@ export class FlashcardController {
   @UseGuards(AccessGuard)
   async updateMyFlashcard(@Req() request: Request) {
     const flashcardId = idSchema.parse(request.params.flashcardId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     const flashcardForm = flashcardFormSchema.parse(request.body);
     await this.flashcardService.updateFlashcard({
       user,
@@ -109,7 +101,7 @@ export class FlashcardController {
   @UseGuards(AccessGuard)
   async softDeleteMyFlashcard(@Req() request: Request) {
     const flashcardId = idSchema.parse(request.params.flashcardId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     await this.flashcardService.softDeleteFlashcard({ flashcardId, user });
 
     return {
@@ -121,7 +113,7 @@ export class FlashcardController {
   @UseGuards(AccessGuard)
   async deleteMyFlashcard(@Req() request: Request) {
     const flashcardId = idSchema.parse(request.params.flashcardId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     await this.flashcardService.deleteFlashcard({ flashcardId, user });
 
     return {
@@ -133,7 +125,7 @@ export class FlashcardController {
   @UseGuards(AccessGuard)
   async restoreMyFlashcard(@Req() request: Request) {
     const flashcardId = idSchema.parse(request.params.flashcardId);
-    const user = authPayloadSchema.parse(request.user);
+    const user = authUserSchema.parse(request.user);
     await this.flashcardService.restoreFlashcard({ flashcardId, user });
 
     return {

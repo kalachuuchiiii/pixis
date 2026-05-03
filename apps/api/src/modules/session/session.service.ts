@@ -1,14 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ExamMode } from '@pixis/constants';
-import type { AuthPayload } from '../auth/dtos/auth.dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
 import { Equal, IsNull, Not, Repository } from 'typeorm';
+import { paginate, type PaginateQuery } from 'nestjs-paginate';
+import { sessionPaginationConfig } from '@/config/paginationConfigs';
+import { getPaginationData } from '@/common/utils/pagination.util';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 export interface SessionProps {
   deckId: number;
   mode: ExamMode;
-  user: AuthPayload;
+  user: AuthUser;
 }
 
 @Injectable()
@@ -33,7 +36,7 @@ export class SessionService {
     throwErrorOnNotFound = true,
   }: {
     sessionId: number;
-    user: AuthPayload;
+    user: AuthUser;
     throwErrorOnNotFound?: boolean;
   }) {
     const session = await this.sessionRepo
@@ -48,10 +51,12 @@ export class SessionService {
         '(deck.visibility != :visibility OR deck.user.id = :userId)',
         { visibility: 'private', userId: user.id },
       )
+      .leftJoin('deck.flashcards', 'flashcards')
+      .groupBy('session.id')
+      .addGroupBy('deck.id')
+      .having('COUNT(flashcards) > 0')
       .select(['session', 'deck.id'])
       .getOne();
-
-    console.log(session);
 
     if (!session && throwErrorOnNotFound) {
       throw new NotFoundException({
@@ -60,5 +65,25 @@ export class SessionService {
       });
     }
     return session;
+  }
+
+  async findAccessibleSessionsByDeckId({
+    user,
+    deckId,
+    query,
+  }: {
+    user: AuthUser;
+    deckId: number;
+    query: PaginateQuery;
+  }) {
+    const qb = this.sessionRepo
+      .createQueryBuilder('session')
+      .where('session.user.id = :userId AND session.deck.id = :deckId', {
+        userId: user.id,
+        deckId,
+      })
+      .orderBy('session.createdAt', 'DESC');
+    const result = await paginate(query, qb, sessionPaginationConfig);
+    return getPaginationData(result);
   }
 }
