@@ -95,7 +95,7 @@ export class FlashcardProgressService {
 
       const point = await m.increment(
         Point,
-        { id: user.pointId },
+        { id: user.point.id },
         'currentPoints',
         totalPoints,
       );
