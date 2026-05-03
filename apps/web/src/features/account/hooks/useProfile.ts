@@ -1,4 +1,3 @@
-import { useAppDispatch } from "@/hooks/useReduxHook";
 import api from "@/lib/api";
 import {
   getErrorMessage,
@@ -8,7 +7,6 @@ import { type UpdateUserForm, type User } from "@pixis/schemas";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import { toast } from "sonner";
-import { updateUserState } from "../slice/profileSlice";
 import { useProfileDetails } from "./useProfileDetails";
 
 type UpdateUserResponse = Pick<

@@ -37,14 +37,7 @@ import {
   Gift,
   LibraryBig,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/api";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/app/store";
-import { useEffect } from "react";
-import { getMe } from "@/features/account/slice/profileSlice";
-
 import AppErrorBoundary from "@/app/AppErrorBoundary";
 import { Pixis, PixisAvatar } from "./PixisAvatar";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";

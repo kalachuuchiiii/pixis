@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useSecurityManager } from "../hooks/useSecurityManager";
 import * as z from "zod";
-import store from "@/app/store";
 
 import {
   AlertDialog,
@@ -13,29 +12,22 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-
-const getSchema = () =>
-  z
-    .string()
-    .min(1)
-    .max(50)
-    .refine(
-      (d) =>
-        d === `Delete my account: ${store.getState().profile.user.username}`,
-      {
-        message: "Confirmation text does not match",
-      }
-    );
+import { useProfileDetails } from "../hooks/useProfileDetails";
 
 export const DeleteAccountDialog = () => {
+  const { data: user } = useProfileDetails();
   const [confirmationInput, setConfirmationInput] = useState("");
   const { deleteAccount, isDeletingAccount } = useSecurityManager();
 
-  const schema = getSchema();
+  const schema = z
+    .string()
+    .min(1)
+    .max(50)
+    .refine((d) => d === `Delete my account: ${user.username}`, {
+      message: "Confirmation text does not match",
+    });
   const isValid = schema.safeParse(confirmationInput).success;
-
-  const username = store.getState().profile.user.username;
-  const requiredText = `Delete my account: ${username}`;
+  const requiredText = `Delete my account: ${user.username}`;
 
   return (
     <div className="pt-8 border-t border-red-100">
