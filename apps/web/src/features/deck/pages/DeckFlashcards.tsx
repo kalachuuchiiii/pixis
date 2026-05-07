@@ -5,7 +5,7 @@ import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
 import { Spinner } from "@/components/ui/spinner";
 import { FlashcardCreator } from "@/features/flashcard/components/FlashcardCreator";
 import { FlashcardFilter } from "@/features/flashcard/components/FlashcardFilter";
-import { FlashcardPreviewCard } from "@/features/flashcard/components/ui/FlashcardPreviewCard";
+import { FlashcardCard } from "@/features/flashcard/components/ui/FlashcardCard";
 import { useDeckFlashcards } from "@/features/flashcard/hooks/useDeckFlashcards";
 import { Plus } from "lucide-react";
 import { useDeckDetails } from "../hooks/useDeckDetails";
@@ -57,7 +57,7 @@ const DeckFlashcards = () => {
 
         <main className="grid grid-cols-3  mt-10 gap-4 ">
           {flashcards.map((f) => (
-            <FlashcardPreviewCard color={deck.color} flashcard={f} key={f.id} />
+            <FlashcardCard color={deck.color} flashcard={f} key={f.id} />
           ))}
         </main>
         <footer className="mt-20">

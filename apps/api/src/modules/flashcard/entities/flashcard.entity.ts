@@ -19,7 +19,9 @@ export class Flashcard {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Deck, (d) => d.flashcards, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Deck, (d) => d.flashcards, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'deck_id' })
   deck?: Deck;
 

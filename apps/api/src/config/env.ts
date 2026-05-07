@@ -29,6 +29,7 @@ const env = {
   ACCESS_TOKEN_TTL: getEnvVariable('ACCESS_TOKEN_TTL') as StringValue,
   REFRESH_TOKEN_SECRET: getEnvVariable('REFRESH_TOKEN_SECRET') as string,
   REFRESH_TOKEN_TTL: getEnvVariable('REFRESH_TOKEN_TTL') as StringValue,
+  GROQ_API_KEY: getEnvVariable('GROQ_API_KEY') as string,
 };
 
 export default env;

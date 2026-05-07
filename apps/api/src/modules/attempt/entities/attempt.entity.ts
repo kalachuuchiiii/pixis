@@ -1,5 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { IsBoolean, IsOptional, IsNumber, Min } from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
 import { Deck } from '@/modules/deck/entities/deck.entity';
 import { Session } from '@/modules/session/entities/session.entity';
 import { User } from '@/modules/users/entities/user.entity';
@@ -11,16 +17,13 @@ export class Attempt {
   id!: number;
 
   @Column({ nullable: true, name: 'time_taken_seconds' })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
   timeTakenSeconds!: number;
 
   @ManyToOne(() => Deck)
   @JoinColumn({ name: 'deck_id' })
   deck!: Deck;
 
-  @Column({ name: 'deck_id'})
+  @Column({ name: 'deck_id' })
   deckId!: number;
 
   @ManyToOne(() => Session, { onDelete: 'CASCADE' })
@@ -34,21 +37,19 @@ export class Attempt {
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  @Column({ name: 'user_id'})
+  @Column({ name: 'user_id' })
   userId!: number;
 
   @ManyToOne(() => Flashcard)
   @JoinColumn({ name: 'flashcard_id' })
   flashcard!: Flashcard;
 
-  @Column({ name: 'flashcard_id'})
+  @Column({ name: 'flashcard_id' })
   flashcardId!: number;
 
   @Column({ nullable: true })
   answer!: string;
 
   @Column({ nullable: true, name: 'is_correct' })
-  @IsOptional()
-  @IsBoolean()
   isCorrect!: boolean;
 }

@@ -1,6 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, type DeepPartial, IsNull } from 'typeorm';
+import {
+  Repository,
+  DataSource,
+  type DeepPartial,
+  IsNull,
+  Equal,
+} from 'typeorm';
 import { FlashcardProgress } from './entities/flashcard-progress.entity.ts';
 import { userBadgeSchema, type ExamAnswers } from '@pixis/schemas';
 import { Flashcard } from '../flashcard/entities/flashcard.entity';
@@ -24,6 +30,8 @@ export class FlashcardProgressService {
   constructor(
     @InjectRepository(FlashcardProgress)
     private readonly flashcardProgressRepo: Repository<FlashcardProgress>,
+    @InjectRepository(Session)
+    private readonly sessionRepo: Repository<Session>,
     private readonly flashcardService: FlashcardService,
     private readonly dataSource: DataSource,
   ) {}
@@ -67,11 +75,13 @@ export class FlashcardProgressService {
         isAnswerCorrect,
       };
     });
+    const accuracy = (correctCount / flashcards.length) * 100;
     const cleanValues = z.array(flashcardProgressValuesSchema).parse(values);
     return {
       data: cleanValues,
       correctCount,
       totalPointsGained,
+      accuracy,
     };
   }
 
@@ -84,14 +94,16 @@ export class FlashcardProgressService {
     user: AuthUser;
     sessionId: number;
   }) {
+    const isAbandoned = examAnswers.every((a) => !a.answer.trim());
+
     const flashcardIds = examAnswers.map(({ flashcardId }) => flashcardId);
-    const { flashcards, isFullMatch } =
+    const { flashcards } =
       await this.flashcardService.findAccessibleFlashcardsByIds({
         flashcardIds,
         user,
       });
 
-    const { data, correctCount, totalPointsGained } =
+    const { data, correctCount, totalPointsGained, accuracy } =
       this.createFlashcardsValues({
         flashcards,
         examAnswers,
@@ -109,38 +121,11 @@ export class FlashcardProgressService {
         { id: sessionId, user: { id: user.id } },
         {
           totalPointsGained,
-          cancelledAt: isFullMatch ? null : new Date(),
-          finishedAt: isFullMatch ? new Date() : null,
+          accuracy,
+          abandonedAt: !isAbandoned ? null : new Date(),
+          finishedAt: !isAbandoned ? new Date() : null,
         },
       );
-
-      const point = await m.increment(
-        Point,
-        { id: user.point.id },
-        'currentPoints',
-        totalPointsGained,
-      );
-
-      const streak = (await m.findOne(Streak, {
-        where: { id: user.streak.id },
-      })) as Streak;
-
-      const streakDetails = this.getStreakDetails(streak);
-      const { streakData, isTransformed } = this.keepOrTransformStreakObject(
-        streak,
-        streakDetails,
-      );
-
-      if (isTransformed) {
-        await m.save(streakData);
-      }
-
-      if (point.affected === 0) {
-        throw new NotFoundException({
-          message: `Point not found`,
-          code: 'USER_NOT_FOUND',
-        });
-      }
 
       if (session.affected === 0) {
         throw new NotFoundException({
@@ -149,11 +134,54 @@ export class FlashcardProgressService {
         });
       }
 
+      if (isAbandoned) {
+        const point = await m.increment(
+          Point,
+          { id: user.point.id },
+          'currentPoints',
+          totalPointsGained,
+        );
+
+        const streak = (await m.findOne(Streak, {
+          where: { id: user.streak.id },
+        })) as Streak;
+
+        const streakDetails = this.getStreakDetails(streak);
+        const { streakData, isTransformed } = this.keepOrTransformStreakObject(
+          streak,
+          streakDetails,
+        );
+
+        if (isTransformed) {
+          await m.save(streakData);
+        }
+
+        if (point.affected === 0) {
+          throw new NotFoundException({
+            message: `Point not found`,
+            code: 'USER_NOT_FOUND',
+          });
+        }
+
+        return {
+          isStreakIncremented: streakDetails.increment,
+          totalFlashcards: flashcards.length,
+          totalPointsGained,
+          correctCount: 0,
+          accuracy,
+          isAbandoned,
+          isFinished: !isAbandoned,
+        };
+      }
+
       return {
-        isStreakIncremented: streakDetails.increment,
+        isStreakIncremented: false,
         totalFlashcards: flashcards.length,
-        totalPointsGained,
+        totalPointsGained: 0,
         correctCount,
+        isAbandoned,
+        accuracy,
+        isFinished: !isAbandoned,
       };
     });
   }

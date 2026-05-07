@@ -11,12 +11,14 @@ import { deckPaginationConfig } from '@/config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { withDeckSavedInfo } from './query/withDeckSavedInfo';
 import { withDeckStats } from './query/withDeckStats';
+import { Flashcard } from '../flashcard/entities/flashcard.entity.js';
 type DeckIdWithUser = { deckId: number; user: AuthUser };
 
 @Injectable()
 export class DeckService {
   constructor(
     @InjectRepository(Deck) public deckRepo: Repository<Deck>,
+    @InjectRepository(Flashcard) public flashcardRepo: Repository<Deck>,
     public dataSource: DataSource,
   ) {}
 

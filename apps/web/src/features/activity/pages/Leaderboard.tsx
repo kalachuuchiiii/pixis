@@ -9,7 +9,8 @@ import { LeaderboardHeader } from "@/features/leaderboards/components/Leaderboar
 export interface LeaderboardEntry {
   rank: number;
   username: string;
-  points: number;
+  nickname: string;
+  currentPoints: number;
   decksStudiedCount: number;
   accuracy: number | null;
 }
@@ -154,7 +155,7 @@ const LeaderboardRow = ({ entry, isCurrentUser }: LeaderboardRowProps) => {
       {/* Points */}
       <div className="flex items-center justify-center gap-1">
         <span className="font-mono text-[16px] font-medium text-zinc-900 dark:text-zinc-100">
-          {entry.points.toLocaleString()}
+          {entry.currentPoints.toLocaleString()}
         </span>
         <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
           pts

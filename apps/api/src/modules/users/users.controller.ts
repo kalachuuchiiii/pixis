@@ -39,7 +39,7 @@ export class UsersController {
   @UseGuards(AccessGuard)
   async getProfile(@Req() request: Request) {
     const user = authUserSchema.parse(request.user);
-    const result = await this.usersService.getProfile(user);
+    const result = await this.usersService.getUserById(user.id);
     return {
       user: result,
     };

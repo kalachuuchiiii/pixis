@@ -6,14 +6,29 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
 export const useInViewRefetch = (
-  infiniteQuery: UseInfiniteQueryResult<InfiniteData<any, unknown>, Error>
+  infiniteQuery: UseInfiniteQueryResult<InfiniteData<any, unknown>, Error>,
+  options: { direction: "next" | "previous" } = { direction: "next" }
 ) => {
   const { ref, inView } = useInView();
-  const { hasNextPage, isPending, isFetching, fetchNextPage } = infiniteQuery;
+  const {
+    hasNextPage,
+    hasPreviousPage,
+    isPending,
+    isFetching,
+    fetchNextPage,
+    fetchPreviousPage,
+    data,
+  } = infiniteQuery;
 
   useEffect(() => {
-    if (!hasNextPage || isPending || isFetching || !ref || !inView) return;
-    fetchNextPage();
+    if (isPending || isFetching || !inView) return;
+    if (hasNextPage && options.direction === "next") {
+      fetchNextPage();
+      return;
+    } else if (hasPreviousPage && options.direction === "previous") {
+      fetchPreviousPage();
+      return;
+    }
   }, [inView]);
 
   return {

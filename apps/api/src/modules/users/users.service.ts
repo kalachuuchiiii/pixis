@@ -10,6 +10,7 @@ import type { UpdateUserForm } from '@pixis/schemas';
 import { withCooldown } from '@/common/utils/cooldown.util';
 import ms from 'ms';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
+import nestql from 'nestql';
 
 @Injectable()
 export class UsersService {
@@ -19,18 +20,33 @@ export class UsersService {
     return await this.userRepo.findOne({ where: { username }, ...options });
   }
 
-  async getProfile(user: AuthUser) {
-    const result = await this.userRepo.findOne({
-      where: { id: user.id },
-      relations: ['point', 'streak'],
-    });
+  async getUserById(userId: number) {
+    const qb = this.userRepo
+      .createQueryBuilder('user')
+      .where('user.id = :userId', { userId })
+      .leftJoinAndSelect('user.point', 'point')
+      .leftJoinAndSelect('user.streak', 'streak')
+      .leftJoin('user.sessions', 'session')
+      .addSelect('AVG(session.accuracy)', 'user_accuracy')
+      .groupBy('user.id')
+      .addGroupBy('point.id')
+      .addGroupBy('streak.id');
+
+    const result = await qb.getRawOne();
+
     if (!result) {
       throw new UnauthorizedException({
         message: 'User not found.',
         code: 'USER_NOT_FOUND',
       });
     }
-    return result;
+
+    const mappedResult = {
+      ...nestql(result, { prefix: 'user' }),
+      point: nestql(result, { prefix: 'point' }),
+      streak: nestql(result, { prefix: 'streak' }),
+    };
+    return mappedResult;
   }
 
   async updateUser({ form, user }: { form: UpdateUserForm; user: AuthUser }) {

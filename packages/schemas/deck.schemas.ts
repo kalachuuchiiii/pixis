@@ -10,7 +10,11 @@ import {
 import z from "zod";
 import { idSchema, userBadgeSchema } from "./user.schemas";
 import { timestampSchema } from "./timestamp.schemas";
-import { questionSchema, typeSchema } from "./flashcard.schemas";
+import {
+  flashcardFormSchema,
+  questionSchema,
+  typeSchema,
+} from "./flashcard.schemas";
 import { visibilitySchema } from "./common.schemas";
 
 export const titleSchema = z.string().min(TITLE_MIN).max(TITLE_MAX);
@@ -18,15 +22,17 @@ export const totalFlashcardsSchema = z
   .number()
   .min(TOTAL_FLASHCARDS_MIN)
   .max(TOTAL_FLASHCARDS_MAX);
-export const topicSchema = z.string().min(1).max(60);
+export const topicSchema = z.string().min(1).max(100);
+export const colorSchema = z
+  .string()
+  .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
 
 export const rawDeckFormSchema = z
   .object({
     title: titleSchema,
-
+    color: colorSchema,
     topic: topicSchema,
     visibility: visibilitySchema,
-    color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/),
   })
   .strip();
 
@@ -42,11 +48,15 @@ export const deckSchema = rawDeckFormSchema
     participantCount: z.number().positive().default(0).catch(0),
     userSavedDeckCount: z.number().positive().default(0).catch(0),
     deletedAt: timestampSchema.nullable().optional(),
-    savedByMe: z.object({
-      id: idSchema,
-    }).nullable().optional(),
+    savedByMe: z
+      .object({
+        id: idSchema,
+      })
+      .nullable()
+      .optional(),
   })
   .strip();
+
 export const flashcardPreviewSchema = z.object({
   type: typeSchema,
   question: questionSchema,

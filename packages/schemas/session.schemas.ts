@@ -12,6 +12,9 @@ export const sessionSchema = z.object({
   id: idSchema,
   cancelledAt: timestampSchema.nullable().optional(),
   finishedAt: timestampSchema.nullable().optional(),
+  abandonedAt: timestampSchema.nullable().optional(),
+  totalPointsGained: z.number().nonnegative(),
+  accuracy: z.number().nonnegative(),
   deck: z
     .object({
       id: idSchema,

@@ -6,43 +6,107 @@ export const ResultDetailsPopup = ({
 }: {
   resultDetails: ResultDetails;
 }) => {
-  const { totalPointsGained, isStreakIncremented, feedback } = resultDetails;
+  const {
+    totalPointsGained,
+    isStreakIncremented,
+    feedback,
+    totalFlashcards,
+    correctCount,
+    isAbandoned,
+    isFinished,
+    accuracy,
+  } = resultDetails;
 
   useEffect(() => {
-    const victorySfx = new Audio("/victory-sfx.mp3");
-    victorySfx.volume = 0.65;
-    victorySfx.play().catch(() => {});
-  }, []);
+    if (!isAbandoned && isFinished && totalPointsGained > 0) {
+      const victorySfx = new Audio("/victory-sfx.mp3");
+      victorySfx.volume = 0.65;
+      victorySfx.play().catch(() => {});
+    }
+  }, [isAbandoned, isFinished, totalPointsGained]);
+
+  const getResultIcon = () => {
+    if (isAbandoned) return "😔";
+    if (accuracy >= 90) return "🏆";
+    if (accuracy >= 70) return "🎉";
+    if (accuracy >= 50) return "👍";
+    return "📚";
+  };
+
+  const isSuccess = !isAbandoned && isFinished;
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 sm:p-6">
       <div className="flex flex-col md:flex-row gap-6">
+        {/* Left Side - Visual Header */}
         <header className="flex flex-col items-center justify-center md:w-5/12 text-center">
-          <span className="text-7xl sm:text-8xl drop-shadow-md">🏆</span>
+          <span className="text-7xl sm:text-8xl drop-shadow-md">
+            {getResultIcon()}
+          </span>
 
-          <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-white">
+          <h1 className="mt-3 text-2xl sm:text-3xl font-semibold tracking-tight text-white">
             {feedback}
           </h1>
+
+          {isAbandoned && (
+            <p className="mt-2 text-amber-400 text-sm font-medium">
+              Session abandoned
+            </p>
+          )}
         </header>
 
+        {/* Right Side - Stats */}
         <main className="flex flex-col gap-4 md:w-7/12">
+          {/* Points Card */}
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 sm:p-8 text-center">
             <div className="mb-2 text-xs sm:text-sm uppercase tracking-widest text-zinc-500">
-              Points Earned
+              {isSuccess ? "Points Earned" : "Points"}
             </div>
             <div className="text-3xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
-              +{totalPointsGained.toLocaleString()}
+              {isSuccess ? `+${totalPointsGained.toLocaleString()}` : "0"}
             </div>
           </div>
 
+          {/* Accuracy Stats */}
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 sm:p-8">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <div className="text-sm text-zinc-400">Correct</div>
+                <div className="text-2xl font-semibold text-white tabular-nums">
+                  {correctCount}{" "}
+                  <span className="text-zinc-500">/ {totalFlashcards}</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-4xl font-bold text-emerald-400 tabular-nums">
+                  {accuracy}%
+                </div>
+                <div className="text-xs uppercase tracking-widest text-zinc-500">
+                  Accuracy
+                </div>
+              </div>
+            </div>
+
+            {/* Simple progress bar */}
+            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-500 transition-all duration-700"
+                style={{ width: `${accuracy}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Streak */}
           {isStreakIncremented && (
             <div className="flex items-center justify-center gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 py-4 px-4">
               <div className="text-2xl">🔥</div>
               <div>
                 <div className="font-medium text-amber-400">
-                  Streak continued
+                  Streak continued!
                 </div>
-                <div className="text-sm text-zinc-400">Keep it going</div>
+                <div className="text-sm text-zinc-400">
+                  Great job keeping the momentum
+                </div>
               </div>
             </div>
           )}
@@ -50,7 +114,9 @@ export const ResultDetailsPopup = ({
       </div>
 
       <p className="mt-8 text-center text-xs sm:text-sm text-zinc-500">
-        Click anywhere to continue
+        {isAbandoned
+          ? "Better luck next time • Click anywhere to continue"
+          : "Well done! Click anywhere to continue"}
       </p>
     </div>
   );

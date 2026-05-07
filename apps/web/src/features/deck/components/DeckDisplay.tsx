@@ -15,6 +15,7 @@ import { Calendar, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { clsx } from "clsx";
 import { hexToRgb } from "react-beautiful-color";
+import type { Visibility } from "@pixis/constants";
 
 type DeckDisplay = DeckWithAuthor | DeckWithAuthorAndFlashcardPreview | Deck;
 
@@ -26,7 +27,7 @@ const DeckContext = createContext<DeckContextType | null>(null);
 
 const useDeck = () => {
   const ctx = useContext(DeckContext);
-  if (!ctx) throw new Error("useDeck must be used inside DeckDisplay");
+  if (!ctx) return { deck: null };
   return ctx;
 };
 
@@ -64,7 +65,7 @@ const Card = ({ children }: { children: ReactNode }) => {
       <div
         className={clsx(
           "relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 shadow-sm h-full flex flex-col justify-between overflow-hidden z-20 transition-all group-hover:shadow-xl ",
-          deck.color && `border-l-8 border-l-[${deck.color}]`
+          deck?.color && `border-l-8 border-l-[${deck.color}]`
         )}
       >
         {children}
@@ -72,17 +73,27 @@ const Card = ({ children }: { children: ReactNode }) => {
     </div>
   );
 };
+type HeaderProps = {
+  color?: string;
+  topic?: string;
+  visibility?: Visibility;
+};
 
-const Header = () => {
+const Header = ({ color, topic, visibility }: HeaderProps) => {
   const { deck } = useDeck();
 
-  const rgb = deck.color ? hexToRgb(deck.color) : null;
+  const finalColor = deck?.color ?? color;
+  const finalTopic = deck?.topic ?? topic;
+  const finalVisibility = deck?.visibility ?? visibility;
+
+  const rgb = finalColor ? hexToRgb(finalColor) : null;
+
   const brighten = (value: number, factor = 0.3) =>
     Math.round(value + (255 - value) * factor);
 
   const topicStyle = rgb
     ? {
-        backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.20)`, // soft tint
+        backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.20)`,
         color: `rgb(${brighten(rgb.r)}, ${brighten(rgb.g)}, ${brighten(rgb.b)})`,
       }
     : {};
@@ -90,17 +101,17 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between mb-5">
       <div className="flex items-center gap-2">
-        {deck.topic && (
+        {finalTopic && (
           <span
             style={topicStyle}
             className="text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full"
           >
-            {deck.topic}
+            {finalTopic}
           </span>
         )}
 
         <span className="text-[10px] font-medium uppercase text-zinc-400 dark:text-zinc-500">
-          {deck.visibility || "Private"}
+          {finalVisibility || "Private"}
         </span>
       </div>
     </div>
@@ -109,25 +120,41 @@ const Header = () => {
 // --------------------
 // Title & Stats
 // --------------------
-const Title = () => {
+type TitleProps = {
+  title?: string;
+  color?: string;
+  flashcardCount?: number;
+};
+
+const Title = ({ title, color, flashcardCount }: TitleProps) => {
   const { deck } = useDeck();
+
+  const finalTitle = deck?.title ?? title ?? "";
+  const finalColor = deck?.color ?? color ?? "#000000";
+  const finalFlashcardCount = deck?.flashcardCount ?? flashcardCount ?? 0;
 
   return (
     <div className="mb-6">
       <div className="flex items-start gap-4">
         <div
-          className={`size-5 translate-y-1 rounded bg-[${deck.color}] shadow-[0px_0px_8px] shadow-[${deck.color}]`}
-        />{" "}
-        <h3 className="text-2xl  max-h-12 h-12 font-semibold text-zinc-900 dark:text-white  tracking-tight">
-          {deck.title || <span className="opacity-40">Untitled Deck</span>}
+          className="size-5 translate-y-1 rounded shadow-[0px_0px_8px]"
+          style={{
+            backgroundColor: finalColor,
+            boxShadow: finalColor ? `0px 0px 8px ${finalColor}` : undefined,
+          }}
+        />
+
+        <h3 className="text-2xl max-h-12 h-full mb-4 font-semibold text-zinc-900 dark:text-white tracking-tight">
+          {finalTitle || <span className="opacity-40">Untitled Deck</span>}
         </h3>
       </div>
+
       <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
-        {deck.flashcardCount > 0 && (
-          <span>{deck.flashcardCount} flashcard(s)</span>
+        {finalFlashcardCount > 0 && (
+          <span>{finalFlashcardCount} flashcard(s)</span>
         )}
-        {deck.userSavedDeckCount > 0 && (
-          <span>{deck.userSavedDeckCount} saved</span>
+        {(deck?.userSavedDeckCount ?? 0) > 0 && (
+          <span>{deck?.userSavedDeckCount} saved</span>
         )}
       </div>
     </div>
@@ -137,19 +164,30 @@ const Title = () => {
 // --------------------
 // Footer
 // --------------------
-const Footer = () => {
+type FooterProps = {
+  createdAt?: string;
+  id?: number;
+};
+
+const Footer = ({ createdAt, id }: FooterProps) => {
   const { deck } = useDeck();
+
+  const finalCreatedAt = deck?.createdAt ?? createdAt;
+  const finalId = deck?.id ?? id;
 
   return (
     <div className="pt-5 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs">
       <div className="flex items-center gap-1.5 text-zinc-400 dark:text-zinc-500">
         <Calendar size={15} />
         <span>
-          {formatDistanceToNow(new Date(deck.createdAt), { addSuffix: true })}
+          {finalCreatedAt &&
+            formatDistanceToNow(new Date(finalCreatedAt), {
+              addSuffix: true,
+            })}
         </span>
       </div>
 
-      <Link to={`/app/decks/${deck.id}/flashcards`}>
+      <Link to={`/app/decks/${finalId}/flashcards`}>
         <Button variant="default" size="sm" className="gap-2">
           <Eye size={16} />
           View Deck
@@ -158,7 +196,6 @@ const Footer = () => {
     </div>
   );
 };
-
 // --------------------
 // Default Export
 // --------------------

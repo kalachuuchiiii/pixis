@@ -18,6 +18,7 @@ import { LeaderboardsService } from './modules/leaderboards/leaderboards.service
 import { LeaderboardsController } from './modules/leaderboards/leaderboards.controller';
 import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
+import { AssistantModule } from './modules/assistant/assistant.module';
 import env from './config/env';
 
 @Module({
@@ -47,6 +48,7 @@ import env from './config/env';
     FlashcardProgressModule,
     LeaderboardsModule,
     DashboardsModule,
+    AssistantModule,
   ],
   controllers: [AppController],
   providers: [AppService],

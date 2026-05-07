@@ -4,7 +4,7 @@ import { answerSchema } from "./flashcard.schemas";
 
 export const examAnswerSchema = z.object({
   flashcardId: idSchema,
-  answer: answerSchema,
+  answer: z.string(),
 });
 export const examAnswersSchema = z.array(examAnswerSchema);
 
@@ -14,26 +14,28 @@ export const resultDetailsSchema = z
     isStreakIncremented: z.boolean(),
     totalFlashcards: z.coerce.number().nonnegative(),
     correctCount: z.coerce.number().nonnegative(),
+    accuracy: z.coerce.number().nonnegative(),
+    isAbandoned: z.boolean(),
+    isFinished: z.boolean(),
   })
   .transform((d) => {
-    const correctPercentage =
-      (d.correctCount / (d.totalFlashcards ?? null)) * 100;
+    const { accuracy } = d;
     const feedback =
-      correctPercentage > 90
+      accuracy > 90
         ? "Outstanding"
-        : correctPercentage > 80
+        : accuracy > 80
           ? "Excellent"
-          : correctPercentage > 70
+          : accuracy > 70
             ? "Strong"
-            : correctPercentage > 60
+            : accuracy > 60
               ? "Good"
-              : correctPercentage > 50
+              : accuracy > 50
                 ? "Fair"
-                : correctPercentage > 40
+                : accuracy > 40
                   ? "Developing"
-                  : correctPercentage > 30
+                  : accuracy > 30
                     ? "Struggling"
-                    : correctPercentage > 20
+                    : accuracy > 20
                       ? "Very low"
                       : "Needs work";
 

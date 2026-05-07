@@ -48,7 +48,7 @@ export class FlashcardController {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authUserSchema.parse(request.user);
     const { data, nextPage, totalItems } =
-      await this.flashcardService.findAccessibleDeckFlashcards({
+      await this.flashcardService.findAccessibleFlashcardsByDeckId({
         deckId,
         query,
         user,
@@ -73,7 +73,6 @@ export class FlashcardController {
       flashcardId,
       user,
     });
-    console.log(flashcard);
     const cleanFlashcard = flashcardSchema.parse(flashcard);
     return {
       flashcard: cleanFlashcard,
@@ -97,39 +96,15 @@ export class FlashcardController {
     };
   }
 
-  @Delete('/:flashcardId')
-  @UseGuards(AccessGuard)
-  async softDeleteMyFlashcard(@Req() request: Request) {
-    const flashcardId = idSchema.parse(request.params.flashcardId);
-    const user = authUserSchema.parse(request.user);
-    await this.flashcardService.softDeleteFlashcard({ flashcardId, user });
-
-    return {
-      message: 'Flashcard removed!',
-    };
-  }
-
   @Delete('/:flashcardId/permanent')
   @UseGuards(AccessGuard)
   async deleteMyFlashcard(@Req() request: Request) {
     const flashcardId = idSchema.parse(request.params.flashcardId);
     const user = authUserSchema.parse(request.user);
-    await this.flashcardService.deleteFlashcard({ flashcardId, user });
+    await this.flashcardService.deleteFlashcardById({ flashcardId, user });
 
     return {
       message: 'Flashcard deleted!',
-    };
-  }
-
-  @Patch('/:flashcardId/restore')
-  @UseGuards(AccessGuard)
-  async restoreMyFlashcard(@Req() request: Request) {
-    const flashcardId = idSchema.parse(request.params.flashcardId);
-    const user = authUserSchema.parse(request.user);
-    await this.flashcardService.restoreFlashcard({ flashcardId, user });
-
-    return {
-      message: 'Flashcard restored!',
     };
   }
 }

@@ -2,7 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ExamMode } from '@pixis/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
-import { Equal, IsNull, Not, Repository } from 'typeorm';
+import {
+  Equal,
+  IsNull,
+  Not,
+  Repository,
+  type DeepPartial,
+  type FindOptionsWhere,
+  type ObjectId,
+} from 'typeorm';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { sessionPaginationConfig } from '@/config/paginationConfigs';
 import { getPaginationData } from '@/common/utils/pagination.util';

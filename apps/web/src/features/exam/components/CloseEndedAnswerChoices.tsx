@@ -10,7 +10,7 @@ export const CloseEndedAnswerChoices = ({
   flashcard: Flashcard & { type: "close_ended" };
 }) => {
   return (
-    <main className="grid grid-cols-2 gap-1">
+    <main className="grid grid-cols-2 gap-1 w-full">
       {flashcard.choices.map((c) => (
         <Button
           onClick={() => setAnswer(c)}

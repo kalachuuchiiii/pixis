@@ -14,10 +14,12 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useImmer } from "use-immer";
 import { ResultDetailsPopup } from "../components/ResultDetailsPopup";
+import { useTimer } from "./useTimer";
 
 export const useExam = () => {
   const { sessionId = "0" } = useParams();
   const { mode = "normal" } = useParams(); //or timed
+
   const nav = useNavigate();
 
   const queryClient = useQueryClient();
@@ -27,12 +29,6 @@ export const useExam = () => {
   const wrongAnswerSfx = new Audio("/wrong-answer-sfx.mp3");
 
   const [examAnswers, setExamAnswers] = useImmer<ExamAnswers>([]);
-
-  const { onNext, onPrevious } = useIndex({
-    ceilIndex: flashcardIds.length - 1,
-    set: setCurrentFlashcardIdx,
-    currentIdx: currentFlashcardIdx,
-  });
 
   const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session", sessionId],
@@ -57,6 +53,7 @@ export const useExam = () => {
   const { mutate: processExamAnswers, isPending: isProcessingExamAnswers } =
     useMutation({
       mutationFn: async (answers: ExamAnswers) => {
+        if (!isRunning) return;
         const res = await api.post<{ result: ResultDetails }>(
           `/flashcard-progress`,
           {
@@ -67,22 +64,34 @@ export const useExam = () => {
         return res.data;
       },
       throwOnError: true,
-      onSuccess: ({ result }) => {
+      onSuccess: (res) => {
+        if (!res?.result) return;
         nav(-1);
         queryClient.setQueryData(["profile-details"], (old: User) => ({
-          ...old,
+          ...(old ?? {}),
           point: {
-            ...old.point,
-            currentPoints: old.point.currentPoints + result.totalPointsGained,
+            ...(old.point ?? {}),
+            currentPoints:
+              old.point.currentPoints + res.result.totalPointsGained,
           },
         }));
         pop(() =>
           ResultDetailsPopup({
-            resultDetails: result,
+            resultDetails: res.result,
           })
         );
       },
     });
+
+  const timerHandlers = useTimer(() => processExamAnswers(examAnswers));
+  const { isRunning } = timerHandlers;
+
+  const { onNext, onPrevious } = useIndex({
+    ceilIndex: flashcardIds.length - 1,
+    set: setCurrentFlashcardIdx,
+    disabled: !isRunning,
+    currentIdx: currentFlashcardIdx,
+  });
 
   const { data: flashcard, isLoading: isFlashcardLoading } = useQuery({
     queryKey: ["flashcard", flashcardIds[currentFlashcardIdx]],
@@ -106,6 +115,7 @@ export const useExam = () => {
 
   const setAnswer = (answer: string) => {
     if (
+      !isRunning ||
       !answer.trim() ||
       examAnswers.find((a) => a.flashcardId === flashcard?.id)?.answer.trim()
     )
@@ -125,9 +135,9 @@ export const useExam = () => {
       wrongAnswerSfx.play();
     }
 
-    const { hasNext } = onNext();
+    const next = onNext();
 
-    if (!hasNext && updatedAnswers.every((a) => !!a.answer.trim())) {
+    if (!next?.hasNext && updatedAnswers.every((a) => !!a.answer.trim())) {
       processExamAnswers(updatedAnswers);
     }
   };
@@ -141,6 +151,8 @@ export const useExam = () => {
     answer,
     setAnswer,
     isSessionLoading,
+    mode,
+    timerHandlers,
     isFlashcardLoading,
     isProcessingExamAnswers,
     currentFlashcardIdx,

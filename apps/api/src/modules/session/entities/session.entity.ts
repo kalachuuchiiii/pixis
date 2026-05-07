@@ -9,7 +9,6 @@ import {
   RelationId,
   OneToMany,
 } from 'typeorm';
-import { IsBoolean, IsOptional, IsEnum } from 'class-validator';
 import { Deck } from '@/modules/deck/entities/deck.entity';
 import { User } from '@/modules/users/entities/user.entity';
 import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';

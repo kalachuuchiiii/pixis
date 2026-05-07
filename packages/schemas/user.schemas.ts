@@ -88,7 +88,7 @@ export const lastActionTimestampSchema = z.coerce
 
 export const userStatsSchema = z.object({
   decksStudiedCount: z.coerce.number().nonnegative(),
-  points: z.coerce.number().nonnegative(),
+  currentPoints: z.coerce.number().nonnegative(),
   accuracy: z.coerce.number().nonnegative().nullable(),
   rank: z.coerce.number().nonnegative().positive(),
 });

@@ -15,6 +15,7 @@ import {
   type PaginateQuery,
 } from 'nestjs-paginate';
 import type {
+  DeepPartial,
   FindManyOptions,
   FindOptionsSelect,
   FindOptionsSelectByString,
@@ -38,39 +39,6 @@ export class FlashcardService {
     private flashcardRepo: Repository<Flashcard>,
     public readonly deckService: DeckService,
   ) {}
-
-  addAnalytics(queryBuilder: SelectQueryBuilder<Flashcard>) {
-    queryBuilder
-      .select([
-        'flashcard.id',
-        'flashcard.question',
-        'flashcard.user.id',
-        'flashcard.deck.id',
-        'flashcard.answer',
-        'flashcard.type',
-        'flashcard.createdAt',
-        'flashcard.updatedAt',
-        'flashcard.choices',
-        'flashcard.isAnswerCaseSensitive',
-      ])
-      .addSelect('COALESCE(SUM(progress.repetitions), 0)', 'totalRepetitions')
-      .addSelect('COALESCE(SUM(progress.lapses), 0)', 'totalLapses')
-      .addSelect('COALESCE(AVG(progress.easeFactor), 0)', 'avgEaseFactor')
-      .addSelect(
-        'COALESCE(SUM(CASE WHEN progress.lastRating = 1 THEN 1 ELSE 0 END), 0)',
-        'hardRatingCount',
-      )
-      .addSelect(
-        'COALESCE(SUM(CASE WHEN progress.lastRating = 2 THEN 1 ELSE 0 END), 0)',
-        'goodRatingCount',
-      )
-      .addSelect(
-        'COALESCE(SUM(CASE WHEN progress.lastRating = 3 THEN 1 ELSE 0 END), 0)',
-        'easyRatingCount',
-      )
-      .groupBy('flashcard.id');
-    return queryBuilder;
-  }
 
   async createFlashcard({
     deckId,
@@ -139,35 +107,7 @@ export class FlashcardService {
     return result;
   }
 
-  async softDeleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
-    const result = await this.flashcardRepo.softDelete({
-      id: flashcardId,
-      user: { id: user.id },
-    });
-    if (result.affected === 0) {
-      throw new NotFoundException({
-        message: 'Flashcard not found',
-        code: 'FLASHCARD_NOT_FOUND',
-      });
-    }
-    return result;
-  }
-
-  async restoreFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
-    const result = await this.flashcardRepo.restore({
-      id: flashcardId,
-      user: { id: user.id },
-    });
-    if (result.affected === 0) {
-      throw new NotFoundException({
-        message: 'Flashcard not found',
-        code: 'FLASHCARD_NOT_FOUND',
-      });
-    }
-    return result;
-  }
-
-  async findAccessibleDeckFlashcards({
+  async findAccessibleFlashcardsByDeckId({
     deckId,
     query,
     user,
@@ -200,7 +140,7 @@ export class FlashcardService {
     return getPaginationData(result);
   }
 
-  async deleteFlashcard({ flashcardId, user }: FlashcardIdAndUser) {
+  async deleteFlashcardById({ flashcardId, user }: FlashcardIdAndUser) {
     const result = await this.flashcardRepo.delete({
       id: flashcardId,
       user: { id: user.id },

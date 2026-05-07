@@ -10,14 +10,7 @@ import {
   OneToMany,
   RelationId,
 } from 'typeorm';
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsBoolean,
-  MinLength,
-  MaxLength,
-} from 'class-validator';
+
 import { User } from '@/modules/users/entities/user.entity';
 import {
   DESCRIPTION_MAX,
@@ -59,7 +52,10 @@ export class Deck {
   @OneToMany(() => CollectionDeck, (cd) => cd.deck, { onDelete: 'CASCADE' })
   collectionDecks?: CollectionDeck[];
 
-  @OneToMany(() => Flashcard, (f) => f.deck, { onDelete: 'CASCADE' })
+  @OneToMany(() => Flashcard, (f) => f.deck, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   flashcards?: Flashcard[];
 
   @RelationId((d: Deck) => d.flashcards)

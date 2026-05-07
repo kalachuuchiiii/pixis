@@ -19,7 +19,7 @@ export const OpenEndedAnswerInput = ({
   };
 
   return (
-    <div>
+    <div className="w-full">
       <form
         onSubmit={onSubmit}
         id={`open-ended-answer-input.${currentFlashcardIdx}`}

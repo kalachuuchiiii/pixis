@@ -1,4 +1,3 @@
-import { isString } from 'class-validator';
 import { Credential } from '@/modules/auth/entities/credential.entity';
 import {
   Column,
@@ -20,11 +19,19 @@ import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashca
 import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
 import { UserSavedCollection } from '@/modules/user-saved-collections/entities/user-saved-collection.entity';
 import { Session } from '@/modules/session/entities/session.entity';
+import { Message } from '@/modules/assistant/entities/message.entity';
+import { Conversation } from '@/modules/assistant/entities/conversation.entity';
 
-@Entity()
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @OneToMany(() => Conversation, (c) => c.user, { onDelete: 'CASCADE' })
+  conversations?: Conversation[];
+
+  @OneToMany(() => Message, (m) => m.user, { onDelete: 'CASCADE' })
+  messages?: Message[];
 
   @Column({ unique: true, length: 26 })
   username!: string;

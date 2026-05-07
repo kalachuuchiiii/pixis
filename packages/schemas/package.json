@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@pixis/constants": "workspace:*",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "tsc": "^2.0.4",

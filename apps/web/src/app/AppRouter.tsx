@@ -79,7 +79,11 @@ const routes: RouteObject[] = [
         element: wrap(<Outlet />),
         children: [
           {
-            path: "/app",
+            path: "/app/chat/:conversationId",
+            element: <Assistant />,
+          },
+          {
+            path: "/app/chat/",
             element: <Assistant />,
           },
           {
