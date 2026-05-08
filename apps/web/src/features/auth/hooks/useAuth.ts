@@ -61,7 +61,7 @@ export const useAuth = () => {
       return await promise;
     },
     onSuccess: () => {
-      nav("/app");
+      nav("/app/chat");
     },
   });
 

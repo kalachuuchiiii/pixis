@@ -3,14 +3,18 @@ import { Clock, Trophy, XCircle } from "lucide-react";
 
 export const getStatusInfo = (session: Session) => {
   const isFinished = !!session.finishedAt;
-  const isCancelled = !!session.cancelledAt;
+  const isAbandoned = !!session.abandonedAt;
+  const finishedAtDate = new Date(session.finishedAt ?? new Date()).getTime();
+  const abandonedAtDate = new Date(session.abandonedAt ?? new Date()).getTime();
+  const createdAtDate = new Date(session.createdAt ?? new Date()).getTime();
 
-  if (isCancelled) {
+  if (isAbandoned) {
     return {
-      isCancelled,
+      isAbandoned,
       isFinished,
+      duration: abandonedAtDate - createdAtDate,
       info: {
-        label: "Cancelled",
+        label: "Incomplete",
         color: "text-red-500",
         bg: "bg-red-100 dark:bg-red-950",
         icon: XCircle,
@@ -18,8 +22,9 @@ export const getStatusInfo = (session: Session) => {
     };
   }
   return {
-    isCancelled,
+    isAbandoned,
     isFinished,
+    duration: finishedAtDate - createdAtDate,
     info: {
       label: "Completed",
       color: "text-emerald-500",

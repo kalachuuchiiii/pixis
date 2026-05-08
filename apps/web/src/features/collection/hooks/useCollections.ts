@@ -4,8 +4,8 @@ import api from "@/lib/api";
 import type { Collection } from "@pixis/schemas";
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 
-export const useCollections = () => {
-  const collectionFilterHandlers = useCollectionFilter();
+export const useCollections = (blacklistedFields?: ["visibility"]) => {
+  const collectionFilterHandlers = useCollectionFilter(blacklistedFields);
   const { query } = collectionFilterHandlers;
 
   const infiniteCollectionQuery = useInfiniteQuery({
@@ -31,6 +31,6 @@ export const useCollections = () => {
     collections,
     ref,
     infiniteCollectionQuery,
-    collectionFilterHandlers
+    collectionFilterHandlers,
   };
 };

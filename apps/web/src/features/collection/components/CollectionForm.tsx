@@ -19,23 +19,18 @@ export const CollectionForm = ({
   ...props
 }: {
   collectionFormHandlers: CollectionFormHandlers;
-  header: ReactNode,
-  footer: ReactNode
-} & ComponentProps<'main'> ) => {
+  header: ReactNode;
+  footer: ReactNode;
+} & ComponentProps<"main">) => {
   const { control, watch, setValue } = collectionFormHandlers;
   const values = watch();
   const { visibility, color } = values;
 
   return (
-
-      <main
-      
-       {...props}
-     
-      >
-        <>{header}</>
-        <main className="space-y-5">
-           <Controller
+    <main {...props}>
+      <>{header}</>
+      <main className="space-y-5">
+        <Controller
           name="name"
           control={control}
           render={({ field, fieldState }) => (
@@ -47,7 +42,7 @@ export const CollectionForm = ({
           )}
         />
 
-        <div className="flex items-start gap-6">
+        <div className="flex flex-col lg:flex-row items-start gap-6">
           <div>
             <FieldLabel>Color</FieldLabel>
             <ColorPicker
@@ -64,7 +59,6 @@ export const CollectionForm = ({
                 </ColorPicker.EyeDropper>
                 <div className="flex-1 flex flex-col ml-2 gap-3">
                   <ColorPicker.Hue className="h-4" />
-               
                 </div>
               </div>
             </ColorPicker>
@@ -75,7 +69,7 @@ export const CollectionForm = ({
             render={({ fieldState }) => (
               <Field>
                 <FieldLabel>Visibility</FieldLabel>
-                <div className="grid grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-2 gap-2.5">
                   {VISIBILITY_OPTIONS.map((opt) => (
                     <VisibilityOptionButton
                       key={opt.value}
@@ -92,8 +86,8 @@ export const CollectionForm = ({
             )}
           />
         </div>
-        </main>
-        <>{footer}</>
       </main>
+      <>{footer}</>
+    </main>
   );
 };

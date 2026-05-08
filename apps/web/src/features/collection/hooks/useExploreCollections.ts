@@ -4,8 +4,8 @@ import type { Collection } from "@pixis/schemas";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useCollectionFilter } from "./useCollectionFilter";
 
-export const useExploreCollections = () => {
-  const collectionFilter = useCollectionFilter();
+export const useExploreCollections = (blacklistedFields?: ["visibility"]) => {
+  const collectionFilter = useCollectionFilter(blacklistedFields);
   const { query } = collectionFilter;
   const infiniteQuery = useInfiniteQuery({
     queryKey: ["explore-collections", query],

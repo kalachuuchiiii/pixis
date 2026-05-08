@@ -1,7 +1,6 @@
 import type { Visibility } from "@pixis/constants";
 import { Globe, Lock, Link } from "lucide-react";
 
-
 export type VisibilityOption = {
   value: Visibility;
   label: string;
@@ -15,12 +14,6 @@ export const VISIBILITY_OPTIONS: VisibilityOption[] = [
     label: "Public",
     desc: "Anyone can find and open this resource",
     icon: <Globe size={14} strokeWidth={1.8} />,
-  },
-  {
-    value: "unlisted",
-    label: "Unlisted",
-    desc: "Only people with the link can access",
-    icon: <Link size={14} strokeWidth={1.8} />,
   },
   {
     value: "private",

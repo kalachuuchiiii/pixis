@@ -18,7 +18,7 @@ import { useFlashcardForm } from "../../hooks/useFlashcardForm";
 import clsx from "clsx";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
-export const FlashcardPreviewCard = ({
+export const FlashcardCard = ({
   flashcard,
   color,
 }: {

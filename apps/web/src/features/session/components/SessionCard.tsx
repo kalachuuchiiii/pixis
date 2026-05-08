@@ -2,15 +2,17 @@ import { Clock, Trophy, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import type { Session } from "@pixis/schemas";
 import { getStatusInfo } from "../utils/session.utils";
+import { formatMs } from "@/utils/formatMs";
+import { Separator } from "@/components/ui/separator";
 
 export const SessionCard = ({ session }: { session: Session }) => {
-  const { info, isFinished, isCancelled } = getStatusInfo(session);
+  const { info, isFinished, isAbandoned, duration } = getStatusInfo(session);
 
   return (
     <div className=" border border-zinc-200 dark:border-zinc-700 rounded-2xl p-5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between h-full">
         {/* Left Side */}
-        <div className="flex-1 space-y-4">
+        <div className=" flex flex-col   justify-between h-full space-y-4">
           <div className="flex items-center gap-3">
             <div
               className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 ${info.bg} ${info.color}`}
@@ -19,35 +21,29 @@ export const SessionCard = ({ session }: { session: Session }) => {
               {info.label}
             </div>
           </div>
+          <div className="space-x-2">
+            <span className="text-emerald-600 font-bold">
+              +{session.totalPointsGained.toFixed(2)}
+            </span>
 
-          <div className="mt-1 flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
-            <div>
-              Mode:{" "}
-              <span className="font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                {session.mode}
-              </span>
-            </div>
+            <span className="tracking-tight  text-zinc-900 dark:text-zinc-100">
+              {session.mode}
+            </span>
           </div>
         </div>
-
         {/* Right Side - Status & Time */}
-        <div className="text-right flex flex-col gap-4 ">
-          <div className="text-xs text-zinc-500 dark:text-zinc-400">
-            {format(new Date(session.createdAt), "MMM d, yyyy • h:mm a")}
+        <Separator orientation="vertical" />
+        <div className="text-right  justify-center  text-zinc-500 dark:text-zinc-400 h-full flex flex-col ">
+          <div className="text-xs h-full ">
+            <p>{format(new Date(session.createdAt), "MMM d, yyyy • h:mm a")}</p>
+            <p> Duration: {formatMs(duration)}</p>
           </div>
-          {isFinished && session.finishedAt && (
-            <div className="text-xs text-zinc-500 dark:text-zinc-400">
-              Finished
-              <br />
-              <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                {format(new Date(session.finishedAt), "h:mm a")}
-              </span>
-            </div>
-          )}
-
-          {isCancelled && session.cancelledAt && (
-            <div className="text-xs text-red-500">Cancelled</div>
-          )}
+          <p>
+            <span className="text-emerald-600 font-bold">
+              {session.accuracy.toFixed(2)}%
+            </span>{" "}
+            <span className="text-xs">Accuracy</span>
+          </p>
         </div>
       </div>
     </div>

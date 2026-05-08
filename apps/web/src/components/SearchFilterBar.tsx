@@ -1,4 +1,4 @@
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, Settings2 } from "lucide-react";
 import type { ComponentProps, JSX, ReactNode } from "react";
 import { SheetTrigger, Sheet } from "./ui/sheet";
 import {
@@ -10,13 +10,23 @@ import { Separator } from "./ui/separator";
 import type { DeckFilterHandler } from "@/features/deck/hooks/useDeckFilter";
 import type { CollectionFilterHandler } from "@/features/collection/hooks/useCollectionFilter";
 import type { FlashcardFilterHandler } from "@/features/flashcard/hooks/useFlashcardFilter";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 
 export const SearchFilterBar = ({
   actions,
   filter,
+  menus = [],
   ...props
 }: {
   actions: JSX.Element[] | JSX.Element;
+  menus?: JSX.Element[];
   filter: DeckFilterHandler | CollectionFilterHandler | FlashcardFilterHandler;
 } & ComponentProps<"input">) => {
   const { search, handleChangeSearch, updateQueryOnEnter, updateQuery } =
@@ -37,7 +47,7 @@ export const SearchFilterBar = ({
           onClick={updateQuery}
           disabled={!search.trim()}
           variant={"ghost"}
-          className="my-btn"
+          className="p-5 lg:p-6"
         >
           <Search className="size-5" />
         </InputGroupButton>
@@ -52,6 +62,28 @@ export const SearchFilterBar = ({
           )}
         </div>
       </InputGroup>
+      {menus.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button variant={"outline"} className="my-btn">
+              <Settings2 />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup className="w-full">
+              {menus?.length &&
+                menus.map((el) => (
+                  <DropdownMenuItem
+                    className="w-full"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    {el}
+                  </DropdownMenuItem>
+                ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 };

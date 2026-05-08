@@ -1,16 +1,14 @@
-
-
-
-export * from './auth.schemas';
-
-export * from './deck.schemas';
-export * from './flashcard.schemas';
-export * from './user.schemas';
-export * from './query.schemas';
-export * from './query.schemas.factory';
-export * from './collection.schemas';
-export * from  './exam.schemas';
-export * from './timestamp.schemas';
-export * from './common.schemas';
-export * from './session.schemas';
-export * from './leaderboard.schemas';
+export * from "./auth.schemas";
+export * from "./dashboard.schemas";
+export * from "./deck.schemas";
+export * from "./flashcard.schemas";
+export * from "./user.schemas";
+export * from "./query.schemas";
+export * from "./query.schemas.factory";
+export * from "./collection.schemas";
+export * from "./exam.schemas";
+export * from "./timestamp.schemas";
+export * from "./common.schemas";
+export * from "./session.schemas";
+export * from "./leaderboard.schemas";
+export * from "./assistant.schemas";

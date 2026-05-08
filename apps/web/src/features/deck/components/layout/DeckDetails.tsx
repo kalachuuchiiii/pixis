@@ -13,6 +13,7 @@ import { useDeckDetails } from "../../hooks/useDeckDetails";
 import clsx from "clsx";
 import { Separator } from "@/components/ui/separator";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
+import { UserBadge } from "@/features/account/components/ui/UserBadge";
 
 const DeckDetails = () => {
   const { deckId = 0 } = useParams();
@@ -26,12 +27,12 @@ const DeckDetails = () => {
   return (
     <>
       <div className={`page-container  space-y-12 animate-fade-in-right`}>
-        <header className="flex items-end justify-between">
+        <header className="flex lg:flex-row flex-col items-start lg:items-end w-full justify-between">
           <DeckDisplay deck={deck}>
             <DeckDisplay.Header />
             <DeckDisplay.Title />
           </DeckDisplay>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
               <AddToCollectionDialog deckId={deckId} />
               <SaveOrUnsaveDeckButton deck={deck} />
@@ -51,6 +52,11 @@ const DeckDetails = () => {
             )}
           </div>
         </header>
+        <div>
+          <Separator className="my-4" />
+          {deck.user && <UserBadge.Default user={deck.user} />}
+          <Separator className="my-4" />
+        </div>
         <div className="w-full flex items-center ">
           <NavLink
             to={`/app/decks/${deckId}/flashcards`}
@@ -86,7 +92,7 @@ const DeckDetails = () => {
             <History />
           </NavLink>
         </div>
-        <Separator />
+
         <div className="max-w-6xl lg:w-15/16 mx-auto">
           <Outlet />
         </div>

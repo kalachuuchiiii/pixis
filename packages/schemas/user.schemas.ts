@@ -73,9 +73,6 @@ export const pointSchema = z.object({
   highestPoints: z
     .int("Highest points must be an integer")
     .nonnegative("Highest points cannot be negative"),
-  totalPoints: z
-    .int("Total points must be an integer")
-    .nonnegative("Total points cannot be negative"),
 });
 
 export const lastActionTimestampSchema = z.coerce
@@ -87,10 +84,11 @@ export const lastActionTimestampSchema = z.coerce
   .transform((d) => d.toISOString());
 
 export const userStatsSchema = z.object({
-  decksStudiedCount: z.coerce.number().nonnegative(),
-  points: z.coerce.number().nonnegative(),
-  accuracy: z.coerce.number().nonnegative().nullable(),
+  deckStudiedCount: z.number().nonnegative(),
+
+  averageAccuracy: z.float64().nonnegative(),
   rank: z.coerce.number().nonnegative().positive(),
+  flashcardAnsweredCount: z.number().nonnegative(),
 });
 
 export const streakSchema = z.object({
@@ -124,6 +122,9 @@ export const userBadgeSchema = z.object({
   avatarPublicUrl: avatarPublicUrlSchema,
 });
 
+export const userWithStatsSchema = userSchema.and(userStatsSchema);
+
+export type UserWithStats = z.infer<typeof userWithStatsSchema>;
 export type Id = z.infer<typeof idSchema>;
 export type Username = z.infer<typeof usernameSchema>;
 export type Nickname = z.infer<typeof nicknameSchema>;

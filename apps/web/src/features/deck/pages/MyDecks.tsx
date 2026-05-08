@@ -7,10 +7,10 @@ import {
   type RawDeckForm,
 } from "@pixis/schemas";
 import { DeckFilter } from "@/features/deck/components/DeckFilter";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { DeckDisplay } from "../components/DeckDisplay";
-import { Archive, Bookmark, Plus } from "lucide-react";
+import { Archive, Astroid, Bookmark, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -73,82 +73,76 @@ const MyDecks = () => {
         description="Manage and continue studying your personal decksk"
         beside={
           <div className="flex items-center h-12  justify-end w-full gap-1">
-            <DeckFilter deckFilter={deckFilter} />
-            <Tooltip>
-              <TooltipTrigger>
-                <Link to={`/app/saved-decks`}>
-                  <Button variant={"outline"} className="my-btn h-full">
-                    <Bookmark className="text-yellow-500" />
+            <DeckFilter
+              deckFilter={deckFilter}
+              menus={[
+                <Link to={`/app/saved-decks`} className="w-full">
+                  <Button variant={"ghost"} className="my-btn w-full ">
+                    Saved decks
                   </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>Go to saved decks</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <Link to={`/app/archived/decks`}>
-                  <Button variant={"outline"} className="my-btn h-full">
-                    <Archive />
+                </Link>,
+                <Link to={`/app/archived/decks`} className="w-full">
+                  <Button variant={"ghost"} className="my-btn w-full">
+                    Archive
                   </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>Go to archived decks</TooltipContent>
-            </Tooltip>
-            <Dialog>
-              <DialogTrigger ref={createDeckButtonRef}>
-                <Button className="my-btn">
-                  Create <Plus />
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                className="p-0 h-[84vh] overflow-y-auto min-w-8/12"
-                onCloseAutoFocus={(e) => e.preventDefault()}
-              >
-                <div
-                  className={`px-10 py-5 border-l-20 border-l-[${color}] rounded-xl`}
-                >
-                  <DeckForm
-                    deckForm={deckForm}
-                    header={
-                      <header className="mb-4">
-                        <h1 className="heading text-4xl dark:text-zinc-100">
-                          Create Deck
-                        </h1>
-                        <p className="description text-sm">
-                          Fill in the details below, then start adding
-                          flashcards.
-                        </p>
-                      </header>
-                    }
-                    footer={
-                      <footer>
-                        <DialogClose>
-                          <Button variant={"outline"} className="my-btn">
-                            Cancel
-                          </Button>
-                        </DialogClose>
-                        <DialogClose>
-                          <Button
-                            disabled={isCreatingDeck}
-                            onClick={onSubmit}
-                            type="submit"
-                            className="w-full my-btn w-10/12"
-                          >
-                            Save
-                          </Button>
-                        </DialogClose>
-                      </footer>
-                    }
-                  />
-                  <footer className="mt-4 mb-2"></footer>
-                </div>
-              </DialogContent>
-            </Dialog>
+                </Link>,
+                <Dialog>
+                  <DialogTrigger ref={createDeckButtonRef}>
+                    <Button className="my-btn">
+                      <Plus /> Create
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    className="p-0 h-[84vh] overflow-y-auto min-w-8/12"
+                    onCloseAutoFocus={(e) => e.preventDefault()}
+                  >
+                    <div
+                      className={`px-10 py-5 border-l-20 border-l-[${color}] rounded-xl`}
+                    >
+                      <DeckForm
+                        deckForm={deckForm}
+                        header={
+                          <header className="mb-4">
+                            <h1 className="heading text-4xl dark:text-zinc-100">
+                              Create Deck
+                            </h1>
+                            <p className="description text-sm">
+                              Fill in the details below, then start adding
+                              flashcards.
+                            </p>
+                          </header>
+                        }
+                        footer={
+                          <footer>
+                            <DialogClose>
+                              <Button variant={"outline"} className="my-btn">
+                                Cancel
+                              </Button>
+                            </DialogClose>
+                            <DialogClose>
+                              <Button
+                                disabled={isCreatingDeck}
+                                onClick={onSubmit}
+                                type="submit"
+                                className="w-full my-btn w-10/12"
+                              >
+                                Save
+                              </Button>
+                            </DialogClose>
+                          </footer>
+                        }
+                      />
+                      <footer className="mt-4 mb-2"></footer>
+                    </div>
+                  </DialogContent>
+                </Dialog>,
+              ]}
+            />
           </div>
         }
       />
       <div>
-        <div className=" grid grid-cols-3 gap-6">
+        <div className=" grid grid-cols-1 lg:grid-cols-3 gap-6">
           {decks.map((d) => (
             <DeckDisplay.Default key={`${d.topic}.${d.id}`} deck={d} />
           ))}
@@ -161,9 +155,21 @@ const MyDecks = () => {
               title="No decks yet"
               description="No decks yet. Start by creating one"
               content={
-                <Button onClick={() => createDeckButtonRef.current?.click()}>
-                  Create
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={"outline"}
+                    className="my-btn"
+                    onClick={() => createDeckButtonRef.current?.click()}
+                  >
+                    Create manually
+                  </Button>
+                  <NavLink to={"/app/chat"}>
+                    <Button className="my-btn">
+                      {" "}
+                      <Astroid /> Create with Pixis
+                    </Button>
+                  </NavLink>
+                </div>
               }
             />
           ) : (

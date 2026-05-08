@@ -24,7 +24,7 @@ export class UserSavedDeckService {
   ) {}
 
   async createSavedDeck({ deckId, user }: DeckIdWithUser) {
-    await this.deckService.findAccessibleDeck({ deckId, user });
+    await this.deckService.findAccessibleDeckById({ deckId, user });
     const newSavedDeck = this.userSavedDeckRepo.create({
       deck: { id: deckId },
       user: { id: user.id },

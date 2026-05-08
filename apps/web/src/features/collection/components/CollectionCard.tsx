@@ -57,8 +57,8 @@ const Header = () => {
   const { collection } = useCollection();
 
   return (
-    <div className="flex items-center gap-2 px-[22px] pt-[22px] mb-[18px]">
-      <span className="text-[10px] font-bold uppercase tracking-[.1em] px-[10px] py-[3px] rounded-full bg-emerald-950 text-emerald-400 border border-emerald-900/60">
+    <div className="flex items-center gap-2 px-[22px] pt-[22px] ">
+      <span className="uppercase font-bold tracking-tighter opacity-50">
         Collection
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[.06em] text-zinc-600">

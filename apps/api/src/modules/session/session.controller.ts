@@ -26,8 +26,10 @@ export class SessionController {
   async getSession(@Req() request: Request) {
     const user = authUserSchema.parse(request.user);
     const sessionId = idSchema.parse(request.params.sessionId);
+    const mode = examModeSchema.parse(request.query.mode);
     const session = await this.sessionService.findAccessibleSessionById({
       sessionId,
+      mode,
       user,
     });
     return {

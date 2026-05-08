@@ -1,152 +1,218 @@
-import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, ArrowRight } from "lucide-react";
-import { ModeToggle } from "../components/ModeToggle";
-import { Pixis, PixisAvatar } from "@/components/ui/PixisAvatar";
-import type { Message, Mode } from "../types/assistant.types";
-import { MessageBubble } from "../components/MessageBubble";
-import { GenerateFlashcardAssistant } from "../components/GenerateFlashcardAssistant";
-import { GreetingCard } from "../components/GreetingCard";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { useProfileDetails } from "@/features/account/hooks/useProfileDetails.ts";
+import { useAssistantChat } from "../hooks/useAssistantChat";
+import { PromptInput } from "../components/PromptInput";
+import { AssistantChatBubble } from "../components/AssistantChatBubble";
+import { UserChatBubble } from "../components/UserChatBubble";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
+import { PixisAvatar } from "@/components/ui/PixisAvatar";
 
-const ChatAssistant = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [hasStarted, setHasStarted] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+export function DynamicBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  const handleSend = (text?: string) => {
-    const content = text ?? input.trim();
-    if (!content) return;
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) return;
 
-    const userMsg: Message = {
-      id: Date.now(),
-      role: "user",
-      content,
+    let particles: Array<{
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      opacity: number;
+      hue: number;
+    }> = [];
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
 
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
-    setHasStarted(true);
-  };
+    const isDark = () => document.documentElement.classList.contains("dark");
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
+    const createParticle = () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2.5 + 0.5,
+      speedX: Math.random() * 0.4 - 0.2,
+      speedY: Math.random() * 0.4 - 0.2,
+      opacity: Math.random() * 0.6 + 0.2,
+      hue: isDark() ? Math.random() * 60 + 260 : Math.random() * 40 + 260, // purple-cyan range
+    });
 
-  const canSend = input.trim().length > 0;
+    const initParticles = () => {
+      particles = [];
+      const count = Math.floor((canvas.width * canvas.height) / 9000);
+      for (let i = 0; i < count; i++) {
+        particles.push(createParticle());
+      }
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const dark = isDark();
+
+      particles.forEach((p, i) => {
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = `hsl(${p.hue}, 90%, ${dark ? "75%" : "65%"})`;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Soft glow
+        if (dark) {
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = `hsl(${p.hue}, 100%, 70%)`;
+          ctx.fill();
+        }
+
+        ctx.restore();
+
+        // Movement
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        // Wrap around edges
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        // Gentle pulsing
+        p.opacity = Math.sin(Date.now() / 800 + i) * 0.15 + 0.4;
+      });
+
+      requestAnimationFrame(animate);
+    };
+
+    resize();
+    initParticles();
+    animate();
+
+    const handleResize = () => {
+      resize();
+      initParticles();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Re-init on theme change
+    const observer = new MutationObserver(() => {
+      initParticles();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      observer.disconnect();
+    };
+  }, []);
 
   return (
-    <>
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-5">
-        {/* Greeting */}
-
-        {/* Quick-start suggestions — only before first message */}
-        {!hasStarted && (
-          <div className="ml-[40px]">
-            <p className="text-[12px] text-zinc-400 flex items-center gap-1.5">
-              <Sparkles size={12} />
-              Things you can ask Pixis
-            </p>
-            <div className="mt-2 flex flex-col gap-2">
-              {[
-                "Explain the difference between active and passive recall",
-                "What's the best way to study for a math exam?",
-                "Break down the water cycle for me",
-              ].map((q) => (
-                <button
-                  key={q}
-                  onClick={() => handleSend(q)}
-                  className="flex items-center gap-2 text-left  px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-white text-[12.5px] text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 transition-all group max-w-md"
-                >
-                  <span className="flex-1">{q}</span>
-                  <ArrowRight
-                    size={12}
-                    className="text-zinc-300 group-hover:text-zinc-500 flex-shrink-0 transition-colors"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <main className="max-h-[80vh] p-2 space-y-2">
-          <GreetingCard mode="chat" />
-          {/* Conversation messages */}
-          {messages.map((msg) => (
-            <MessageBubble key={msg.id} msg={msg} />
-          ))}
-        </main>
-        <div ref={bottomRef} />
-      </div>
-      <div className="flex-shrink-0  px-4 sm:px-8 py-4">
-        <div className="flex items-end gap-2    rounded-2xl px-4 py-3 focus-within:border-zinc-400  transition-colors">
-          <Textarea
-            rows={1}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask Pixis anything…"
-            className="flex-1 bg-transparent dark:text-white resize-none text-[13.5px] text-zinc-800 placeholder:text-zinc-400 outline-none leading-relaxed max-h-[140px] overflow-y-auto"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          />
-
-          <Button
-            type="button"
-            onClick={() => handleSend()}
-            disabled={!canSend}
-            size="icon"
-            className={`h-10 w-10 rounded-xl transition-all ${
-              canSend
-                ? "bg-zinc-900 hover:bg-zinc-950 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100 shadow-sm"
-                : "bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed"
-            }`}
-          >
-            <Send size={14} strokeWidth={2} />
-          </Button>
-        </div>
-
-        <p className="text-center text-[11px] text-zinc-300 mt-2.5">
-          Pixis may make mistakes. Verify important information.
-        </p>
-      </div>
-    </>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 -z-10 pointer-events-none bg-gradient-to-br from-background via-background to-purple-950/30 dark:to-violet-950/40"
+    />
   );
-};
+}
 
 const AssistantPage = () => {
-  const [mode, setMode] = useState<Mode>("generate");
+  const { data: user } = useProfileDetails();
+  const assistantChat = useAssistantChat();
+  const {
+    sendPrompt,
+    isSendingPrompt,
+    bottomRef,
+    prompt,
+    setPrompt,
+    messages,
+    previousRef,
+    nextRef,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    containerRef,
+    isLoading,
+  } = assistantChat;
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen  flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className="flex flex-col  h-[84.5vh]"
-      style={{ fontFamily: "'DM Sans', sans-serif" }}
-    >
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b dark:border-zinc-800 border-zinc-100  flex-shrink-0 flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center">
-            <PixisAvatar />
-          </div>
-          <div>
-            <Pixis />
-            <p className="text-[11px] text-zinc-400 leading-tight">
-              Your study companion
-            </p>
+    <div className="relative w-full max-w-7xl">
+      <DynamicBackground />
+      {messages.reverse().length > 0 ? (
+        <div>
+          <div
+            ref={containerRef}
+            className=" flex flex-col  flex-col-reverse h-[70vh] overflow-y-auto px-2 py-6 lg:px-2 lg:p-2"
+          >
+            <div ref={bottomRef} />
+            <div ref={nextRef} />
+            {isFetchingNextPage && (
+              <p className="py-8 text-center w-full opacity-75 font-medium">
+                Loading messages...
+              </p>
+            )}
+            {isSendingPrompt && (
+              <div className="flex items-center  gap-2 w-full">
+                <PixisAvatar />{" "}
+                <p className="font-medium opacity-75 animate-pulse">
+                  pixis is thinking...
+                </p>
+              </div>
+            )}
+            {messages.map(({ role, type, content, id }) =>
+              role === "assistant" ? (
+                <AssistantChatBubble
+                  message={{ role, content, type, id }}
+                  key={id}
+                />
+              ) : (
+                <UserChatBubble
+                  message={{ role, content, type, id }}
+                  key={id}
+                />
+              )
+            )}{" "}
+            {isFetchingPreviousPage && (
+              <p className="py-8 text-center w-full opacity-75 font-medium">
+                Loading messages...
+              </p>
+            )}
+            <div ref={previousRef} />
           </div>
         </div>
-        <ModeToggle mode={mode} onChange={setMode} />
-      </div>
-
-      {mode === "generate" ? <GenerateFlashcardAssistant /> : <ChatAssistant />}
+      ) : (
+        <div>
+          <div className="w-full relative">
+            {/* Header */}
+            <header className="text-center space-y-3 mt-40  ">
+              <h1 className="text-6xl font-bold tracking-tighter ">
+                Hello, {user.nickname || user.username}!
+              </h1>
+              <p className="text-xl text-muted-foreground font-light">
+                How can I help you today?
+              </p>
+            </header>
+          </div>
+        </div>
+      )}
+      <PromptInput {...assistantChat} />
     </div>
   );
 };

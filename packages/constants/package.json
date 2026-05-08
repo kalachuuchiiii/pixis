@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsup"
   },
-  "dependencies": {
+  "devDependencies": {
     "tsup": "^8.5.1"
   }
 }

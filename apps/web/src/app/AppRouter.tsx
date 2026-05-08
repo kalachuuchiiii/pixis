@@ -5,6 +5,7 @@ import DeckFlashcards from "@/features/deck/pages/DeckFlashcards";
 import DeckLeaderboards from "@/features/leaderboards/pages/DeckLeaderboards";
 import DeckSessionHistory from "@/features/session/pages/DeckSessionHistory";
 import ExploreCollections from "@/features/collection/pages/ExploreCollections";
+import { AssistantLayout } from "@/features/assistant/components/AssistantLayout";
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const Layout = lazy(() => import("@/features/auth/components/Layout"));
@@ -17,6 +18,7 @@ const MyProfile = lazy(() => import("@/features/account/pages/MyProfile"));
 const Settings = lazy(() => import("@/features/account/pages/Settings"));
 const Leaderboard = lazy(() => import("@/features/activity/pages/Leaderboard"));
 const MyActivity = lazy(() => import("@/features/activity/pages/MyActivity"));
+const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"));
 const Assistant = lazy(() => import("@/features/assistant/pages/Assistant"));
 
 const CollectionDetails = lazy(
@@ -71,6 +73,19 @@ const routes: RouteObject[] = [
     path: "/app/exam/:mode/:sessionId",
     element: wrap(<Exam />),
   },
+  {
+    element: <AssistantLayout />,
+    children: [
+      {
+        path: "/app/chat/:conversationId",
+        element: <Assistant />,
+      },
+      {
+        path: "/app/chat/",
+        element: <Assistant />,
+      },
+    ],
+  },
 
   {
     element: <AppLayout />,
@@ -78,10 +93,6 @@ const routes: RouteObject[] = [
       {
         element: wrap(<Outlet />),
         children: [
-          {
-            path: "/app",
-            element: <Assistant />,
-          },
           {
             path: "/app/saved-collections",
             element: <MySavedCollections />,
@@ -128,9 +139,10 @@ const routes: RouteObject[] = [
             path: "/app/archived/decks",
             element: <ArchivedDecks />,
           },
+
           {
-            path: "/app/activity",
-            element: <MyActivity />,
+            path: "/app/dashboard",
+            element: <Dashboard />,
           },
           {
             path: "/app/leaderboard",

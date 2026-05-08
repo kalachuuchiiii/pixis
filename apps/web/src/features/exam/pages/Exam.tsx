@@ -14,6 +14,9 @@ import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useExam } from "../hooks/useExam";
 import { Spinner } from "@/components/ui/spinner";
+import { OpenEndedAnswerInput } from "../components/OpenEndedAnswerInput";
+import { CloseEndedAnswerChoices } from "../components/CloseEndedAnswerChoices";
+import { Timer } from "../components/Timer";
 
 const Exam = () => {
   const {
@@ -27,10 +30,10 @@ const Exam = () => {
     setAnswer,
     isFlashcardLoading,
     isSessionLoading,
+    timerHandlers,
+    mode,
     isProcessingExamAnswers,
   } = useExam();
-
-  console.log(currentFlashcardIdx);
 
   if (isProcessingExamAnswers) {
     return (
@@ -105,10 +108,12 @@ const Exam = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl">
+      <div className="flex-1 flex items-center   gap-30 justify-center p-6">
+        {mode === "timed" && <Timer {...timerHandlers} />}
+        <div className=" max-w-2xl w-full">
           {/* Flashcard Area */}
-          <div className="bg-white dark:bg-zinc-900 border border-border rounded-3xl shadow-xl min-h-[420px] flex flex-col items-center justify-center p-12 relative">
+
+          <div className="bg-white dark:bg-zinc-900 w-full border border-border rounded-3xl shadow-xl min-h-[420px] flex flex-col items-center justify-center p-12 relative">
             <div className="text-center w-full">
               <div className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
                 QUESTION {currentFlashcardIdx + 1}
@@ -119,25 +124,20 @@ const Exam = () => {
               </h2>
               <div>
                 {flashcard?.type === "close_ended" ? (
-                  <main className="grid grid-cols-2 gap-1">
-                    {flashcard.choices.map((c) => (
-                      <Button
-                        onClick={() => setAnswer(c)}
-                        variant={answer?.answer === c ? "default" : "outline"}
-                      >
-                        {c}
-                      </Button>
-                    ))}
-                  </main>
+                  <CloseEndedAnswerChoices
+                    answer={answer}
+                    setAnswer={setAnswer}
+                    flashcard={flashcard}
+                  />
                 ) : (
-                  <div>
-                    <Textarea />
-                  </div>
+                  <OpenEndedAnswerInput
+                    currentFlashcardIdx={currentFlashcardIdx}
+                    setAnswer={setAnswer}
+                  />
                 )}
               </div>
             </div>
           </div>
-
           {/* Navigation Buttons */}
           <div className="flex justify-between items-center mt-8 px-4">
             <Button

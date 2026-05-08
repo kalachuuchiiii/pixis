@@ -10,6 +10,7 @@ import type { UpdateUserForm } from '@pixis/schemas';
 import { withCooldown } from '@/common/utils/cooldown.util';
 import ms from 'ms';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
+import nestql from 'nestql';
 
 @Injectable()
 export class UsersService {
@@ -19,18 +20,51 @@ export class UsersService {
     return await this.userRepo.findOne({ where: { username }, ...options });
   }
 
-  async getProfile(user: AuthUser) {
-    const result = await this.userRepo.findOne({
-      where: { id: user.id },
-      relations: ['point', 'streak'],
-    });
+  async getUserById(userId: number) {
+    const qb = this.userRepo
+      .createQueryBuilder('user')
+      .where('user.id = :userId', { userId })
+      .leftJoinAndSelect('user.point', 'point')
+      .leftJoinAndSelect('user.streak', 'streak')
+      .leftJoin('user.progresses', 'progress')
+      .leftJoin('progress.deck', 'deck')
+      .leftJoin('user.sessions', 'session')
+      .addSelect(
+        'COALESCE(AVG(session.accuracy)::float, 0)::float',
+        'user_average_accuracy',
+      )
+      .addSelect(
+        'COALESCE(COUNT(distinct deck.id)::int, 0)::int',
+        'user_deck_studied_count',
+      )
+      .addSelect(
+        'COALESCE(COUNT(distinct progress.id)::int, 0)::int',
+        'user_flashcard_answered_count',
+      )
+      .addSelect(
+        `DENSE_RANK() OVER (ORDER BY COALESCE(SUM(session.totalPointsGained)::int, 0) DESC, COALESCE(AVG(session.accuracy)::float, 0) DESC )::int`,
+        'user_rank',
+      )
+      .groupBy('user.id')
+      .addGroupBy('point.id')
+      .addGroupBy('streak.id');
+
+    const result = await qb.getRawOne();
+    console.log(result);
     if (!result) {
       throw new UnauthorizedException({
         message: 'User not found.',
         code: 'USER_NOT_FOUND',
       });
     }
-    return result;
+
+    const mappedResult = {
+      ...nestql(result, { prefix: 'user' }),
+      point: nestql(result, { prefix: 'point' }),
+      streak: nestql(result, { prefix: 'streak' }),
+    };
+    console.log(mappedResult);
+    return mappedResult;
   }
 
   async updateUser({ form, user }: { form: UpdateUserForm; user: AuthUser }) {

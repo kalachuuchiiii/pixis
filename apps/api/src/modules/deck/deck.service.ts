@@ -11,12 +11,15 @@ import { deckPaginationConfig } from '@/config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { withDeckSavedInfo } from './query/withDeckSavedInfo';
 import { withDeckStats } from './query/withDeckStats';
+import { Flashcard } from '../flashcard/entities/flashcard.entity.js';
+import nestql from 'nestql';
 type DeckIdWithUser = { deckId: number; user: AuthUser };
 
 @Injectable()
 export class DeckService {
   constructor(
     @InjectRepository(Deck) public deckRepo: Repository<Deck>,
+    @InjectRepository(Flashcard) public flashcardRepo: Repository<Deck>,
     public dataSource: DataSource,
   ) {}
 
@@ -80,6 +83,7 @@ export class DeckService {
 
     const result = await paginate(query, qbWithCount, {
       ...deckPaginationConfig,
+
       filterableColumns: {
         ...deckPaginationConfig.filterableColumns,
         visibility: user
@@ -124,7 +128,7 @@ export class DeckService {
     return result;
   }
 
-  async findAccessibleDeck({
+  async findAccessibleDeckById({
     deckId,
     user,
     throwOnNotFound = false,
@@ -135,28 +139,47 @@ export class DeckService {
   }) {
     const qb = this.deckRepo
       .createQueryBuilder('deck')
-      .leftJoin('deck.user', 'user')
+      .leftJoinAndSelect('deck.user', 'user')
+      .leftJoin('deck.flashcards', 'flashcard')
       .where('deck.id = :deckId', { deckId })
       .withDeleted()
       .andWhere('(deck.visibility != :visibility OR user.id = :userId)', {
         visibility: 'private',
         userId: user.id,
       });
-    ({ deckId, user });
 
     const finalQb = withDeckSavedInfo({
       qb: withDeckStats(qb),
       userId: user.id,
-    });
+    })
+      .leftJoin('deck.sessions', 'session')
+      .leftJoin('session.user', 'suser')
+      .select([
+        'deck',
+        'user.username',
+        'user.nickname',
+        'user.avatarPublicUrl',
+      ])
+      .addSelect('AVG(session.accuracy)::float', 'deck_average_accuracy')
+      .addSelect('COUNT(DISTINCT suser.id)::int', 'deck_participants_count')
+      .addSelect('COUNT(DISTINCT flashcard.id)::int', 'deck_flashcard_count')
+      .groupBy('deck.id')
+      .addGroupBy('usd.id')
+      .addGroupBy('user.id');
 
-    const deck = await finalQb.getOne();
+    const deck = await finalQb.getRawOne();
+    const nestedDeck = {
+      ...nestql(deck, { prefix: 'deck' }),
+      user: nestql(deck, { prefix: 'user' }),
+    };
+
     if (!deck && throwOnNotFound) {
       throw new NotFoundException({
         message: 'Deck not found',
         code: 'DECK_NOT_FOUND',
       });
     }
-    return deck;
+    return nestedDeck;
   }
 
   async softDeleteDeck({ deckId, user }: DeckIdWithUser) {

@@ -7,7 +7,7 @@
 
 
 .my-btn {
-  @apply px-6 py-5 h-12 rounded-xl
+  @apply lg:px-6 p-4 lg:h-8 lg:py-5 lg:h-12 rounded-lg lg:rounded-xl
 }
 
 @keyframes fade-in-down {
@@ -159,10 +159,6 @@ h1, h2, h3, h4 {
   
 }
 
-  @import "tailwindcss";
-
-
-
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -199,7 +195,7 @@ h1, h2, h3, h4 {
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
+    --background: oklch(0.14 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
     --card-foreground: oklch(0.985 0 0);

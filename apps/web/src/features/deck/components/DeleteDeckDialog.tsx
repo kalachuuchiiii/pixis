@@ -14,6 +14,11 @@ import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import { useDeck } from "../hooks/useDeck";
 import { useArchive } from "../hooks/useArchive";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const DeleteDeckDialog = ({ deckId }: { deckId: number }) => {
   const { deleteDeck, isDeletingDeck } = useArchive();
@@ -21,9 +26,14 @@ export const DeleteDeckDialog = ({ deckId }: { deckId: number }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={"destructive"} className="my-btn">
-          <Trash />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant={"destructive"} className="my-btn">
+              <Trash />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Delete permanently</TooltipContent>
+        </Tooltip>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

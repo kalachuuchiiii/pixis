@@ -15,10 +15,10 @@ export const SignOutDialog = () => {
   const { signOut, isSigningOut } = useAuth();
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-8 border-t border-zinc-100">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
       <div>
-        <p className="font-medium text-zinc-900">Sign Out</p>
-        <p className="text-sm text-zinc-500">Log out from this device</p>
+        <p className="font-medium dark:text-neutral-100 ">Sign Out</p>
+        <p className="text-sm dark:text-stone-500 ">Log out from this device</p>
       </div>
       <AlertDialog>
         <AlertDialogTrigger asChild>

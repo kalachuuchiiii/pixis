@@ -2,7 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ExamMode } from '@pixis/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
-import { Equal, IsNull, Not, Repository } from 'typeorm';
+import {
+  Equal,
+  IsNull,
+  Not,
+  Repository,
+  type DeepPartial,
+  type FindOptionsWhere,
+  type ObjectId,
+} from 'typeorm';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { sessionPaginationConfig } from '@/config/paginationConfigs';
 import { getPaginationData } from '@/common/utils/pagination.util';
@@ -27,24 +35,33 @@ export class SessionService {
       user: { id: user.id },
       mode,
     });
+
     return await this.sessionRepo.save(newSession);
   }
 
   async findAccessibleSessionById({
     sessionId,
     user,
+    mode,
     throwErrorOnNotFound = true,
   }: {
     sessionId: number;
     user: AuthUser;
+    mode: ExamMode;
     throwErrorOnNotFound?: boolean;
   }) {
     const session = await this.sessionRepo
       .createQueryBuilder('session')
-      .where('session.user.id = :userId AND session.id = :sessionId', {
-        userId: user.id,
-        sessionId,
-      })
+      .where(
+        'session.user.id = :userId AND session.id = :sessionId AND session.mode = :mode AND session.finishedAt IS NULL AND session.abandonedAt IS NULL',
+        {
+          userId: user.id,
+          finishedAt: undefined,
+          abandonedAt: undefined,
+          sessionId,
+          mode,
+        },
+      )
       .leftJoinAndSelect(
         'session.deck',
         'deck',

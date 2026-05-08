@@ -5,14 +5,16 @@ import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
 import { Spinner } from "@/components/ui/spinner";
 import { FlashcardCreator } from "@/features/flashcard/components/FlashcardCreator";
 import { FlashcardFilter } from "@/features/flashcard/components/FlashcardFilter";
-import { FlashcardPreviewCard } from "@/features/flashcard/components/ui/FlashcardPreviewCard";
+import { FlashcardCard } from "@/features/flashcard/components/ui/FlashcardCard";
 import { useDeckFlashcards } from "@/features/flashcard/hooks/useDeckFlashcards";
 import { Plus } from "lucide-react";
 import { useDeckDetails } from "../hooks/useDeckDetails";
 import { StartAndSelectExamMode } from "@/features/exam/components/StartAndSelectExamMode.tsx";
+import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
 const DeckFlashcards = () => {
   const { data: deck, isPending } = useDeckDetails();
+  const { data: user } = useProfileDetails();
 
   const {
     flashcards,
@@ -34,26 +36,28 @@ const DeckFlashcards = () => {
         <header className="flex items-center gap-20">
           <div className="flex w-full gap-3 justify-end h-11">
             <FlashcardFilter flashcardFilter={flashcardFilter} />
-            <Dialog>
-              <DialogTrigger ref={createDeckFlashcardTriggerRef}>
-                <Button className="my-btn h-full">
-                  {" "}
-                  <Plus /> New Flashcard
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                className="min-w-4/10 w-full"
-                onCloseAutoFocus={(e) => e.preventDefault()}
-              >
-                <FlashcardCreator />
-              </DialogContent>
-            </Dialog>
+            {deck.userId === user.id && (
+              <Dialog>
+                <DialogTrigger ref={createDeckFlashcardTriggerRef}>
+                  <Button className="my-btn h-full">
+                    {" "}
+                    <Plus /> <p className="lg:block hidden"> New Flashcard</p>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent
+                  className="min-w-4/10 w-full"
+                  onCloseAutoFocus={(e) => e.preventDefault()}
+                >
+                  <FlashcardCreator />
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
         </header>
 
-        <main className="grid grid-cols-3  mt-10 gap-4 ">
+        <main className="grid grid-cols-1 lg:grid-cols-3  mt-10 gap-4 ">
           {flashcards.map((f) => (
-            <FlashcardPreviewCard color={deck.color} flashcard={f} key={f.id} />
+            <FlashcardCard color={deck.color} flashcard={f} key={f.id} />
           ))}
         </main>
         <footer className="mt-20">
