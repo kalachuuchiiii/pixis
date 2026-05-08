@@ -8,6 +8,7 @@ import {
 import { flashcardFormSchema } from "./flashcard.schemas.ts";
 import { visibilitySchema } from "./common.schemas";
 import { idSchema } from "./user.schemas";
+import { timestampSchema } from "./timestamp.schemas";
 
 export const ChatTypeSchema = z.enum(["generate", "text"]);
 export const BaseMessageSchema = z.object({
@@ -31,10 +32,18 @@ export const AssistantResponseTypeSchema = z.enum(["generate", "text"]);
 export const AssistantResponseSchema = z.object({
   role: z.literal("assistant"),
   content: z.string(),
+  conversationTitle: z.string(),
   type: AssistantResponseTypeSchema,
   set: GeneratedSetSchema.nullable().optional(),
 });
 
+export const ConversationSchema = z.object({
+  title: z.string(),
+  id: idSchema,
+  updatedAt: timestampSchema,
+});
+
+export type Conversation = z.infer<typeof ConversationSchema>;
 export type BaseMessage = z.infer<typeof BaseMessageSchema>;
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 export type GeneratedSet = z.infer<typeof GeneratedSetSchema>;

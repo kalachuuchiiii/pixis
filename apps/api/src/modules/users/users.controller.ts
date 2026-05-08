@@ -1,6 +1,10 @@
 import { Controller, Delete, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { idSchema, updateUserFormSchema } from '@pixis/schemas';
+import {
+  idSchema,
+  updateUserFormSchema,
+  userWithStatsSchema,
+} from '@pixis/schemas';
 import { AccessGuard } from '../auth/guards/access.guard';
 import type { Request } from 'express';
 import { authUserSchema } from '../auth/schemas/auth.schemas';
@@ -40,8 +44,9 @@ export class UsersController {
   async getProfile(@Req() request: Request) {
     const user = authUserSchema.parse(request.user);
     const result = await this.usersService.getUserById(user.id);
+    const userWithStats = userWithStatsSchema.parse(result);
     return {
-      user: result,
+      user: userWithStats,
     };
   }
 

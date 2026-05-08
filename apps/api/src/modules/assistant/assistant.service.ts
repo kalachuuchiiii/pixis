@@ -34,6 +34,17 @@ export class AssistantService {
     private readonly messageRepo: Repository<Message>,
   ) {}
 
+  async getConversations({ user }: { user: AuthUser }) {
+    const conversations = await this.conversationRepo.find({
+      where: { user: { id: user.id } },
+      select: { id: true, title: true, updatedAt: true },
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
+    return conversations;
+  }
+
   async getDeckSetByMessageId({
     messageId,
     user,
@@ -200,7 +211,7 @@ export class AssistantService {
       role: 'assistant',
       ...JSON.parse(jsonResponse),
     });
-    const { role, content, set, type } = assistantResponse;
+    const { role, content, set, type, conversationTitle } = assistantResponse;
     return await this.dataSource.transaction(async (m) => {
       let conversation = await m.findOne(Conversation, {
         where: { user: { id: user.id }, id: conversationId },
@@ -210,8 +221,12 @@ export class AssistantService {
       if (!conversation) {
         const conversationValues = m.create(Conversation, {
           user: { id: user.id },
+          title: conversationTitle,
         });
         conversation = await m.save(conversationValues);
+      } else {
+        conversation.title = conversationTitle;
+        await m.save(conversation);
       }
 
       const userPrompt = m.create(Message, {

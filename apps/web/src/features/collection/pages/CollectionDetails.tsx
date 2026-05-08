@@ -24,6 +24,8 @@ import { SaveOrUnsaveCollection } from "@/features/user-saved-collection/compone
 import { useCollectionDetails } from "../hooks/useCollectionDetails";
 import { useCollectionDecks } from "../hooks/useCollectionDecks";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
+import { UserBadge } from "@/features/account/components/ui/UserBadge";
+import { Separator } from "@/components/ui/separator";
 
 const CollectionDetails = () => {
   const { data: user } = useProfileDetails();
@@ -59,55 +61,61 @@ const CollectionDetails = () => {
   }
 
   return (
-    <div className={`page-container animate-fade-in-right rounded-2xl`}>
+    <div
+      className={`page-container animate-fade-in-right space-y-4 rounded-2xl`}
+    >
+      <UserBadge.Default user={collection.user} />
+      <Separator className="my-6" />
       <AppHeader
-        subheading={`${collection.user.username}'s collection`}
         heading={`${collection.name}`}
         description={`${collection.deckCount} Deck(s)`}
         beside={
           user.id === collection.userId && (
             <div className="w-full text-right flex items-end justify-end gap-2">
-              <DeckFilter deckFilter={deckFilter} />
-              <SaveOrUnsaveCollection collection={collection} />
-              <UpdateCollectionDialog
-                collection={collection}
-                collectionForm={collectionForm}
+              <DeckFilter
+                menus={[
+                  <SaveOrUnsaveCollection collection={collection} />,
+                  <UpdateCollectionDialog
+                    collection={collection}
+                    collectionForm={collectionForm}
+                  />,
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant={"destructive"} className="my-btn w-full">
+                        <Trash /> Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete collection?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This cannot be undone
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter className="flex items-center justify-end gap=1">
+                        <AlertDialogCancel variant={"outline"}>
+                          No, keep it
+                        </AlertDialogCancel>
+                        <AlertDialogCancel
+                          disabled={isDeletingCollection}
+                          onClick={() =>
+                            deleteCollection({ collectionId: collection.id })
+                          }
+                          variant={"destructive"}
+                        >
+                          Yes, Delete
+                        </AlertDialogCancel>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>,
+                ]}
+                deckFilter={deckFilter}
               />
-
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <Button variant={"destructive"} className="my-btn">
-                    <Trash />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete collection?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This cannot be undone
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter className="flex items-center justify-end gap=1">
-                    <AlertDialogCancel variant={"outline"}>
-                      No, keep it
-                    </AlertDialogCancel>
-                    <AlertDialogCancel
-                      disabled={isDeletingCollection}
-                      onClick={() =>
-                        deleteCollection({ collectionId: collection.id })
-                      }
-                      variant={"destructive"}
-                    >
-                      Yes, Delete
-                    </AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
             </div>
           )
         }
       />
-      <main className="grid grid-cols-3 gap-4">
+      <main className="grid grid-cols-1 lg:grid-cols-3  gap-4">
         {collectionDecks.map((d) => (
           <DeckDisplay.Default key={d.id} deck={d} />
         ))}

@@ -1,11 +1,12 @@
 import React from "react";
-import { useExploreCollections } from "../hooks/useExploreCollections";
+
 import { CollectionCard } from "../components/CollectionCard";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { CollectionFilter } from "../components/CollectionFilter";
 import { Link } from "react-router-dom";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "@/components/ui/EmptyResource";
+import { useExploreCollections } from "../hooks/useExploreCollections";
 
 const ExploreCollections = () => {
   const {
@@ -15,7 +16,7 @@ const ExploreCollections = () => {
     isFetching,
     hasNoData,
     hasNoMoreData,
-  } = useExploreCollections();
+  } = useExploreCollections(["visibility"]);
 
   return (
     <div className="page-container">
@@ -24,7 +25,7 @@ const ExploreCollections = () => {
         description="Discover and browse curated collections"
         beside={<CollectionFilter collectionFilter={collectionFilter} />}
       />
-      <main className="grid grid-cols-3 gap-4 ">
+      <main className="grid  grid-cols-1 lg:grid-cols-3 gap-4 ">
         {collections.map((c) => (
           <Link to={`/app/collections/${c.id}`}>
             <CollectionCard.Default collection={c} />

@@ -11,6 +11,11 @@ import { CollectionFilter } from "@/features/collection/components/CollectionFil
 import { useCollections } from "@/features/collection/hooks/useCollections";
 import { Plus } from "lucide-react";
 import { useCollectionDeck } from "@/features/collection-deck/hooks/useCollectionDeck";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const AddToCollectionDialog = ({
   deckId,
@@ -22,14 +27,19 @@ export const AddToCollectionDialog = ({
   return (
     <Sheet>
       <SheetTrigger>
-        <Button className="my-btn " variant={"outline"}>
-          <Plus /> Add to Collection
-        </Button>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button className="my-btn " variant={"outline"}>
+              <Plus />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Add to collection</TooltipContent>
+        </Tooltip>
       </SheetTrigger>
       <SheetContent className="px=">
         <SheetHeader>
           <div className="my-4 mb-10">
-            <h1 className="heading text-4xl ">Add to collection</h1>
+            <h1 className="heading text-3xl lg:text-4xl ">Add to collection</h1>
             <p className="description">
               Which collection you want this deck to add?
             </p>

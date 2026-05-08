@@ -37,11 +37,20 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
           render={({ field, fieldState }) => (
             <Field>
               <FieldLabel>Title</FieldLabel>
-              <Input
-                {...field}
-                placeholder="e.g. Cell Biology — Chapter 3"
-                className="dark:bg-zinc-900 dark:border-zinc-700"
-              />
+              <div className="flex items-center gap-2">
+                <div
+                  className="size-5 grow-1 rounded shadow-[0px_0px_8px]"
+                  style={{
+                    backgroundColor: color,
+                    boxShadow: color ? `0px 0px 8px ${color}` : undefined,
+                  }}
+                />
+                <Input
+                  {...field}
+                  placeholder="e.g. Cell Biology — Chapter 3"
+                  className="dark:bg-zinc-900 dark:border-zinc-700"
+                />
+              </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -120,7 +129,7 @@ export const DeckForm = memo(({ deckForm, header, footer }: DeckFormProps) => {
             render={({ fieldState }) => (
               <Field className="col-span-2">
                 <FieldLabel>Visibility</FieldLabel>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {VISIBILITY_OPTIONS.map((opt) => (
                     <VisibilityOptionButton
                       key={opt.value}

@@ -1,19 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export const useTimer = (callback?: () => void) => {
+export const useTimer = (
+  callback?: () => void,
+  options: { min: number; max: number } = { min: 10000, max: 60 * 60 * 1000 }
+) => {
   const [time, setTime] = useState(60 * 1000); //1 minute in ms;
   const [fixedTime, setFixedTime] = useState<null | number>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const callbackRef = useRef(callback);
   const beepSfx = new Audio("/beep-sfx.mp3");
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
   const deductSeconds = (seconds: number = 0) => {
     if (!seconds || isRunning) return;
-    setTime((prev) => (prev < 1000 ? 0 : prev - seconds * 1000));
+    setTime((prev) => {
+      const nextValue = prev - seconds * 1000;
+      if (nextValue <= options.min) {
+        return options.min;
+      }
+      return nextValue;
+    });
   };
 
   const addSeconds = (seconds: number = 0) => {
     if (!seconds || isRunning) return;
-    setTime((prev) => prev + seconds * 1000);
+    setTime((prev) => {
+      const nextValue = prev + seconds * 1000;
+      if (nextValue >= options.max) {
+        return options.max;
+      }
+      return nextValue;
+    });
   };
 
   const start = () => {
@@ -44,7 +64,10 @@ export const useTimer = (callback?: () => void) => {
       });
     }, 1000);
 
-    const timeoutId = setTimeout(() => callback && callback(), fixedTime);
+    const timeoutId = setTimeout(
+      () => callbackRef.current && callbackRef?.current(),
+      fixedTime
+    );
 
     return () => {
       clearTimeout(timeoutId);

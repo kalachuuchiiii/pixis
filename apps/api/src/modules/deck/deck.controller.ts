@@ -122,7 +122,7 @@ export class DeckController {
   async getDeck(@Req() request: Request) {
     const deckId = idSchema.parse(request.params.deckId);
     const user = authUserSchema.parse(request.user);
-    const deck = await this.service.findAccessibleDeck({
+    const deck = await this.service.findAccessibleDeckById({
       deckId,
       user,
     });

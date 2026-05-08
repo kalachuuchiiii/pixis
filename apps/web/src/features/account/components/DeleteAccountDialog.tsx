@@ -11,8 +11,11 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
+  AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { useProfileDetails } from "../hooks/useProfileDetails";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export const DeleteAccountDialog = () => {
   const { data: user } = useProfileDetails();
@@ -30,51 +33,62 @@ export const DeleteAccountDialog = () => {
   const requiredText = `Delete my account: ${user.username}`;
 
   return (
-    <div className="pt-8 border-t border-red-100">
-      <p className="font-medium text-red-600 mb-1">Delete Account</p>
-      <p className="text-sm text-zinc-500 mb-5">
-        Permanently delete your account and all data. This action cannot be
-        undone.
-      </p>
-
+    <div className="flex flex-col lg:flex-row items-center justify-between">
+      <header>
+        <p className="font-medium text-red-400">Delete Account</p>
+        <p className="text-sm dark:text-stone-500 ">
+          Permanently delete your account and all data. This action cannot be
+          undone.
+        </p>
+      </header>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button className="px-8 py-3 text-sm border border-red-200 text-red-600 hover:bg-red-50 rounded-2xl transition">
+          <Button
+            variant={"destructive"}
+            className="my-btn w-full lg:w-fit my-3"
+          >
             Delete My Account
-          </button>
+          </Button>
         </AlertDialogTrigger>
 
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Type to confirm deletion</AlertDialogTitle>
+            <AlertDialogTitle>Delete my account</AlertDialogTitle>
+            <AlertDialogDescription>
+              Type to confirm deletion
+            </AlertDialogDescription>
           </AlertDialogHeader>
+          <main className="w-full">
+            <div className="space-y-3">
+              <p className="text-sm text-zinc-500">
+                Type:
+                <span className="font-medium text-red-400 ml-1">
+                  {requiredText}
+                </span>
+              </p>
 
-          <div className="space-y-3">
-            <p className="text-sm text-zinc-500">
-              Type:
-              <span className="font-medium text-red-600 ml-1">
-                {requiredText}
-              </span>
-            </p>
+              <Input
+                value={confirmationInput}
+                onChange={(e) => setConfirmationInput(e.target.value)}
+                className="w-full"
+                placeholder="Type confirmation here..."
+              />
+            </div>
+          </main>
 
-            <input
-              value={confirmationInput}
-              onChange={(e) => setConfirmationInput(e.target.value)}
-              className="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-200"
-              placeholder="Type confirmation here..."
-            />
-          </div>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <main className="flex items-center justify-end gap-1">
+            <AlertDialogCancel className="my-btn">
+              Keep my account
+            </AlertDialogCancel>
             <AlertDialogAction
               disabled={!isValid || isDeletingAccount}
               onClick={() => deleteAccount()}
-              className="bg-red-600 hover:bg-red-700 disabled:opacity-50"
+              variant={"destructive"}
+              className="my-btn"
             >
-              {isDeletingAccount ? "Deleting..." : "Delete"}
+              Delete my account
             </AlertDialogAction>
-          </AlertDialogFooter>
+          </main>
         </AlertDialogContent>
       </AlertDialog>
     </div>

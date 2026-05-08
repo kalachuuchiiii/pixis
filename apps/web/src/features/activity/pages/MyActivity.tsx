@@ -1,11 +1,9 @@
-
-
-import React from 'react'
+import React from "react";
+import { useActivityQuery } from "../hooks/useActivityQuery";
 
 const MyActivity = () => {
-  return (
-    <div>MyActivity</div>
-  )
-}
+  const { data: activity } = useActivityQuery();
+  return <div>MyActivity</div>;
+};
 
-export default MyActivity
+export default MyActivity;

@@ -14,7 +14,7 @@ export const getStatusInfo = (session: Session) => {
       isFinished,
       duration: abandonedAtDate - createdAtDate,
       info: {
-        label: "Abandoned",
+        label: "Incomplete",
         color: "text-red-500",
         bg: "bg-red-100 dark:bg-red-950",
         icon: XCircle,

@@ -22,11 +22,10 @@ export const SessionCard = ({ session }: { session: Session }) => {
             </div>
           </div>
           <div className="space-x-2">
-            {!session.abandonedAt && (
-              <span className="text-emerald-600 font-bold">
-                +{session.totalPointsGained}
-              </span>
-            )}
+            <span className="text-emerald-600 font-bold">
+              +{session.totalPointsGained.toFixed(2)}
+            </span>
+
             <span className="tracking-tight  text-zinc-900 dark:text-zinc-100">
               {session.mode}
             </span>

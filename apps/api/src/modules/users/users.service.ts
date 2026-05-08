@@ -26,14 +26,31 @@ export class UsersService {
       .where('user.id = :userId', { userId })
       .leftJoinAndSelect('user.point', 'point')
       .leftJoinAndSelect('user.streak', 'streak')
+      .leftJoin('user.progresses', 'progress')
+      .leftJoin('progress.deck', 'deck')
       .leftJoin('user.sessions', 'session')
-      .addSelect('AVG(session.accuracy)', 'user_accuracy')
+      .addSelect(
+        'COALESCE(AVG(session.accuracy)::float, 0)::float',
+        'user_average_accuracy',
+      )
+      .addSelect(
+        'COALESCE(COUNT(distinct deck.id)::int, 0)::int',
+        'user_deck_studied_count',
+      )
+      .addSelect(
+        'COALESCE(COUNT(distinct progress.id)::int, 0)::int',
+        'user_flashcard_answered_count',
+      )
+      .addSelect(
+        `DENSE_RANK() OVER (ORDER BY COALESCE(SUM(session.totalPointsGained)::int, 0) DESC, COALESCE(AVG(session.accuracy)::float, 0) DESC )::int`,
+        'user_rank',
+      )
       .groupBy('user.id')
       .addGroupBy('point.id')
       .addGroupBy('streak.id');
 
     const result = await qb.getRawOne();
-
+    console.log(result);
     if (!result) {
       throw new UnauthorizedException({
         message: 'User not found.',
@@ -46,6 +63,7 @@ export class UsersService {
       point: nestql(result, { prefix: 'point' }),
       streak: nestql(result, { prefix: 'streak' }),
     };
+    console.log(mappedResult);
     return mappedResult;
   }
 

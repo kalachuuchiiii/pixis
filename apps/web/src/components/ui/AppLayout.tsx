@@ -6,8 +6,10 @@ import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import AppErrorBoundary from "@/app/AppErrorBoundary";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { AppSidebar } from "./AppSidebar";
+import { Separator } from "./separator";
+import streak from "/streak-fire.gif";
 
-const Topbar = () => {
+export const Topbar = () => {
   const { data: user } = useProfileDetails();
 
   return (
@@ -19,31 +21,27 @@ const Topbar = () => {
         <SidebarTrigger className="w-8 h-8 rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors flex items-center justify-center" />
       </div>
 
-      <motion.div layout className="flex items-center gap-3">
+      <motion.div layout className="flex items-center gap-6">
         {/* Streak */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100">
-          <Flame size={14} className="text-amber-500" strokeWidth={2} />
-          <span className="text-[13px] font-semibold text-amber-700">
-            {user.streak.currentStreak}
-          </span>
-          <span className="text-[11px] text-amber-400 hidden md:inline">
-            streak
-          </span>
-        </div>
 
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-50 border border-zinc-100">
-          <Zap
-            size={13}
-            className="text-zinc-500"
-            strokeWidth={2}
-            fill="currentColor"
-          />
-          <span className="text-[13px] font-semibold text-zinc-700">
-            {user.point.currentPoints}
-          </span>
-          <span className="text-[11px] text-zinc-400 hidden md:inline">
-            pts
-          </span>
+        <div className="flex items-center">
+          <div className="py-2 px-6 flex items-center space-x-2 ">
+            <img src={streak} />
+            <p className="font-bold text-xl leading-0">
+              <span className="text-amber-500">
+                {user.streak.currentStreak}
+              </span>{" "}
+            </p>
+          </div>
+
+          <div className="outline-2 rounded-xl space-x-2 py-2 px-6">
+            <span className="text-[13px] font-semibold text-zinc-700 dark:text-neutral-100">
+              {user.point.currentPoints}
+            </span>
+            <span className="text-[11px] text-zinc-400 hidden md:inline">
+              pts
+            </span>
+          </div>
         </div>
         {/* User pill */}
         <UserBadge.Default user={user} />
@@ -71,6 +69,7 @@ const AppLayout = () => {
           <AppErrorBoundary>
             <main className="flex-1  max-w-7xl w-full p-6">
               {!isPending && <Outlet />}
+              <Separator orientation="vertical" />
             </main>
           </AppErrorBoundary>
         </div>

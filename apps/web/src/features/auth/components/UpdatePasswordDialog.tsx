@@ -40,8 +40,10 @@ export const UpdatePasswordDialog = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <p className="font-medium text-zinc-900">Change Password</p>
-        <p className="text-sm text-zinc-500">Update your account password</p>
+        <p className="font-medium dark:text-neutral-100 ">Change Password</p>
+        <p className="text-sm dark:text-stone-500 ">
+          Update your account password
+        </p>
       </div>
       <Dialog>
         <DialogTrigger asChild>

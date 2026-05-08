@@ -7,6 +7,7 @@ import {
   idSchema,
   userBadgeSchema,
   topGlobalUserSchema,
+  topUserSchema,
 } from '@pixis/schemas';
 import z from 'zod';
 import { authUserSchema } from '../auth/schemas/auth.schemas';
@@ -24,7 +25,7 @@ export class LeaderboardsController {
       user,
       deckId,
     });
-    const topUsers = z.array(topDeckUserSchema).parse(result);
+    const topUsers = z.array(topUserSchema).parse(result);
     return {
       topUsers,
     };
@@ -35,10 +36,10 @@ export class LeaderboardsController {
   async getGlobalLeaderboard(@Req() request: Request) {
     const user = authUserSchema.parse(request.user);
     const data = await this.leaderboardsService.getLeaderboards();
-    const topGlobalUsers = z.array(topGlobalUserSchema).parse(data);
+    const topUsers = z.array(topUserSchema).parse(data);
 
     return {
-      topGlobalUsers,
+      topUsers,
     };
   }
 }

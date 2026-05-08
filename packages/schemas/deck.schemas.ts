@@ -44,10 +44,13 @@ export const deckSchema = rawDeckFormSchema
     updatedAt: timestampSchema,
     flashcardCount: z.number().int().nonnegative(),
     id: idSchema,
+    user: userBadgeSchema.optional(),
     userId: idSchema,
-    participantCount: z.number().positive().default(0).catch(0),
+    participantsCount: z.number().positive().default(0).catch(0).optional(),
+    averageAccuracy: z.float64().positive().default(0).catch(0).optional(),
     userSavedDeckCount: z.number().positive().default(0).catch(0),
     deletedAt: timestampSchema.nullable().optional(),
+
     savedByMe: z
       .object({
         id: idSchema,

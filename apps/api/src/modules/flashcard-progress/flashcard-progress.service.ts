@@ -8,7 +8,11 @@ import {
   Equal,
 } from 'typeorm';
 import { FlashcardProgress } from './entities/flashcard-progress.entity.ts';
-import { userBadgeSchema, type ExamAnswers } from '@pixis/schemas';
+import {
+  examAnswerSchema,
+  userBadgeSchema,
+  type ExamAnswers,
+} from '@pixis/schemas';
 import { Flashcard } from '../flashcard/entities/flashcard.entity';
 import { FlashcardService } from '../flashcard/flashcard.service';
 import { Session } from '../session/entities/session.entity';
@@ -38,11 +42,13 @@ export class FlashcardProgressService {
 
   createFlashcardsValues({
     flashcards,
+    isAbandoned,
     examAnswers,
     sessionId,
     user,
   }: {
     flashcards: Flashcard[];
+    isAbandoned: boolean;
     examAnswers: ExamAnswers;
     sessionId: number;
     user: AuthUser;
@@ -67,6 +73,10 @@ export class FlashcardProgressService {
         totalPointsGained += POINT_PER_MISTAKE;
       }
 
+      totalPointsGained = isAbandoned
+        ? totalPointsGained * 0.75
+        : totalPointsGained;
+
       return {
         flashcard: { id: f.id },
         session: { id: sessionId },
@@ -80,6 +90,7 @@ export class FlashcardProgressService {
     return {
       data: cleanValues,
       correctCount,
+      mistakeCount,
       totalPointsGained,
       accuracy,
     };
@@ -95,7 +106,6 @@ export class FlashcardProgressService {
     sessionId: number;
   }) {
     const isAbandoned = examAnswers.every((a) => !a.answer.trim());
-
     const flashcardIds = examAnswers.map(({ flashcardId }) => flashcardId);
     const { flashcards } =
       await this.flashcardService.findAccessibleFlashcardsByIds({
@@ -106,11 +116,11 @@ export class FlashcardProgressService {
     const { data, correctCount, totalPointsGained, accuracy } =
       this.createFlashcardsValues({
         flashcards,
+        isAbandoned,
         examAnswers,
         sessionId,
         user,
       });
-
     const values = this.flashcardProgressRepo.create(data);
 
     return await this.dataSource.manager.transaction(async (m) => {
@@ -134,53 +144,42 @@ export class FlashcardProgressService {
         });
       }
 
-      if (isAbandoned) {
-        const point = await m.increment(
-          Point,
-          { id: user.point.id },
-          'currentPoints',
-          totalPointsGained,
-        );
+      const point = await m.increment(
+        Point,
+        { id: user.point.id },
+        'currentPoints',
+        totalPointsGained,
+      );
 
-        const streak = (await m.findOne(Streak, {
-          where: { id: user.streak.id },
-        })) as Streak;
+      const streak = (await m.findOne(Streak, {
+        where: { id: user.streak.id },
+      })) as Streak;
 
-        const streakDetails = this.getStreakDetails(streak);
-        const { streakData, isTransformed } = this.keepOrTransformStreakObject(
-          streak,
-          streakDetails,
-        );
+      const streakDetails = this.getStreakDetails(streak);
+      const { streakData, isTransformed } = this.keepOrTransformStreakObject(
+        streak,
+        streakDetails,
+      );
 
-        if (isTransformed) {
-          await m.save(streakData);
-        }
+      if (isTransformed) {
+        await m.save(streakData);
+      }
 
-        if (point.affected === 0) {
-          throw new NotFoundException({
-            message: `Point not found`,
-            code: 'USER_NOT_FOUND',
-          });
-        }
-
-        return {
-          isStreakIncremented: streakDetails.increment,
-          totalFlashcards: flashcards.length,
-          totalPointsGained,
-          correctCount: 0,
-          accuracy,
-          isAbandoned,
-          isFinished: !isAbandoned,
-        };
+      if (point.affected === 0) {
+        throw new NotFoundException({
+          message: `Point not found`,
+          code: 'USER_NOT_FOUND',
+        });
       }
 
       return {
-        isStreakIncremented: false,
+        isStreakIncremented: streakDetails.increment,
         totalFlashcards: flashcards.length,
-        totalPointsGained: 0,
+        totalPointsGained,
         correctCount,
-        isAbandoned,
         accuracy,
+        deckId: flashcards[0]?.deckId,
+        isAbandoned,
         isFinished: !isAbandoned,
       };
     });

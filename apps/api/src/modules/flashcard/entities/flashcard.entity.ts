@@ -41,7 +41,12 @@ export class Flashcard {
   @Column()
   answer!: string;
 
-  @Column({ nullable: false, enum: TYPE_ENUM })
+  @Column({
+    nullable: false,
+    enum: TYPE_ENUM,
+    type: 'enum',
+    default: 'close_ended',
+  })
   type!: FlashcardType;
 
   @OneToMany(() => FlashcardProgress, (prog) => prog.flashcard, {

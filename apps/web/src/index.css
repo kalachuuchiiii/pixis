@@ -7,7 +7,7 @@
 
 
 .my-btn {
-  @apply px-6 py-5 h-12 rounded-xl
+  @apply lg:px-6 p-4 lg:h-8 lg:py-5 lg:h-12 rounded-lg lg:rounded-xl
 }
 
 @keyframes fade-in-down {

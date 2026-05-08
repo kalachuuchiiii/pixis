@@ -9,7 +9,12 @@ export const SaveOrUnsaveCollection = ({
 }: {
   collection: Collection;
 }) => {
-  const { saveCollection, isSavingCollection, unsaveCollection, isUnsavingCollection } = useUserSavedCollection();
+  const {
+    saveCollection,
+    isSavingCollection,
+    unsaveCollection,
+    isUnsavingCollection,
+  } = useUserSavedCollection();
 
   return (
     <>
@@ -17,8 +22,8 @@ export const SaveOrUnsaveCollection = ({
         <Button
           disabled={isSavingCollection}
           onClick={() => saveCollection({ collectionId: collection.id })}
-          className="my-btn"
-          variant={"outline"}
+          className="my-btn w-full"
+          variant={"ghost"}
         >
           <Bookmark /> Save
         </Button>

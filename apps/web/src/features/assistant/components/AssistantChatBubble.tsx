@@ -13,11 +13,11 @@ export const AssistantChatBubble = ({
 }) => {
   return (
     <div className="flex  w-full justify-start ">
-      <div className="flex  max-w-10/12  gap-2 p-2">
+      <div className="flex  max-w-11/12 lg:max-w-10/12  items-end  gap-2 p-2">
+        <img src={pixis} className="size-6" />
         <div className="flex  flex-col gap-2">
           <header className="flex items-center justify-start px-1">
             <div className="flex w-fit gap-2 items-center">
-              <img src={pixis} />
               <label className="text-xs opacity-50"> Pixis</label>
             </div>
           </header>

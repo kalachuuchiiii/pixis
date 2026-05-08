@@ -41,7 +41,7 @@ const DeckFlashcards = () => {
                 <DialogTrigger ref={createDeckFlashcardTriggerRef}>
                   <Button className="my-btn h-full">
                     {" "}
-                    <Plus /> New Flashcard
+                    <Plus /> <p className="lg:block hidden"> New Flashcard</p>
                   </Button>
                 </DialogTrigger>
                 <DialogContent
@@ -55,7 +55,7 @@ const DeckFlashcards = () => {
           </div>
         </header>
 
-        <main className="grid grid-cols-3  mt-10 gap-4 ">
+        <main className="grid grid-cols-1 lg:grid-cols-3  mt-10 gap-4 ">
           {flashcards.map((f) => (
             <FlashcardCard color={deck.color} flashcard={f} key={f.id} />
           ))}

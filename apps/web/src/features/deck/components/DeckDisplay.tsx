@@ -11,7 +11,7 @@ import type {
   DeckWithAuthorAndFlashcardPreview,
 } from "@pixis/schemas";
 import { formatDistanceToNow } from "date-fns";
-import { Calendar, Eye } from "lucide-react";
+import { Calendar, Eye, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { clsx } from "clsx";
 import { hexToRgb } from "react-beautiful-color";
@@ -40,7 +40,7 @@ const Root = ({
   className,
   ...props
 }: {
-  deck: DeckDisplay;
+  deck: Deck;
   children: ReactNode;
 } & ComponentProps<"div">) => {
   return (
@@ -56,15 +56,15 @@ const Card = ({ children }: { children: ReactNode }) => {
   const { deck } = useDeck();
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {/* Stacked Card Layers (Leak Effect) */}
-      <div className="absolute -bottom-2 -right-2 w-full h-full opacity-25 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[3deg]  z-0" />
-      <div className="absolute -bottom-1 -right-1 w-full h-full bg-white opacity-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[1.5deg]  z-10" />
+      <div className="absolute -bottom-2 -right-2 w-full h-full opacity-40 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[3deg]  z-0" />
+      <div className="absolute -bottom-1 -right-1 w-full h-full bg-white opacity-70 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[1.5deg]  z-10" />
 
       {/* Main Card */}
       <div
         className={clsx(
-          "relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 shadow-sm h-full flex flex-col justify-between overflow-hidden z-20 transition-all group-hover:shadow-xl ",
+          "relative bg-white  dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 shadow-sm h-full flex flex-col justify-between overflow-hidden z-20 transition-all group-hover:shadow-xl ",
           deck?.color && `border-l-8 border-l-[${deck.color}]`
         )}
       >
@@ -137,21 +137,32 @@ const Title = ({ title, color, flashcardCount }: TitleProps) => {
     <div className="mb-6">
       <div className="flex items-start gap-4">
         <div
-          className="size-5 translate-y-1 rounded shadow-[0px_0px_8px]"
+          className="w-5 h-5 shrink-0  translate-y-1 rounded shadow-[0px_0px_8px]"
           style={{
             backgroundColor: finalColor,
             boxShadow: finalColor ? `0px 0px 8px ${finalColor}` : undefined,
           }}
         />
 
-        <h3 className="text-2xl max-h-12 h-full mb-4 font-semibold text-zinc-900 dark:text-white tracking-tight">
+        <h3 className="text-2xl h-full mb-4 font-semibold text-zinc-900 dark:text-white tracking-tight">
           {finalTitle || <span className="opacity-40">Untitled Deck</span>}
         </h3>
       </div>
 
       <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
+        {(deck?.participantsCount ?? 0) > 0 && (
+          <div className="flex items-center gap-1">
+            {deck?.participantsCount ?? 0} <User className="size-4" />
+          </div>
+        )}
         {finalFlashcardCount > 0 && (
           <span>{finalFlashcardCount} flashcard(s)</span>
+        )}
+
+        {(deck?.averageAccuracy || 0) > 0 && (
+          <div className="flex items-center gap-1">
+            {(deck?.averageAccuracy ?? 0).toFixed(2)}% accuracy
+          </div>
         )}
         {(deck?.userSavedDeckCount ?? 0) > 0 && (
           <span>{deck?.userSavedDeckCount} saved</span>
@@ -188,7 +199,7 @@ const Footer = ({ createdAt, id }: FooterProps) => {
       </div>
 
       <Link to={`/app/decks/${finalId}/flashcards`}>
-        <Button variant="default" size="sm" className="gap-2">
+        <Button variant="default" className="gap-2 my-btn cursor-pointer">
           <Eye size={16} />
           View Deck
         </Button>

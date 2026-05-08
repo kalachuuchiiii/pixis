@@ -33,7 +33,9 @@ export const useExam = () => {
   const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session", sessionId],
     queryFn: async () => {
-      const res = await api.get<{ session: Session }>(`/session/${sessionId}`);
+      const res = await api.get<{ session: Session }>(
+        `/session/${sessionId}?mode=${mode}`
+      );
       const session = res.data.session;
       const flashcardIds = session.deck?.flashcardIds ?? [];
 
@@ -53,7 +55,7 @@ export const useExam = () => {
   const { mutate: processExamAnswers, isPending: isProcessingExamAnswers } =
     useMutation({
       mutationFn: async (answers: ExamAnswers) => {
-        if (!isRunning) return;
+        if (!isRunning && mode === "timed") return;
         const res = await api.post<{ result: ResultDetails }>(
           `/flashcard-progress`,
           {
@@ -66,7 +68,7 @@ export const useExam = () => {
       throwOnError: true,
       onSuccess: (res) => {
         if (!res?.result) return;
-        nav(-1);
+        nav(`/app/decks/${res.result.deckId}/flashcards`);
         queryClient.setQueryData(["profile-details"], (old: User) => ({
           ...(old ?? {}),
           point: {
@@ -89,7 +91,7 @@ export const useExam = () => {
   const { onNext, onPrevious } = useIndex({
     ceilIndex: flashcardIds.length - 1,
     set: setCurrentFlashcardIdx,
-    disabled: !isRunning,
+    disabled: !isRunning && mode === "timed",
     currentIdx: currentFlashcardIdx,
   });
 
@@ -115,7 +117,7 @@ export const useExam = () => {
 
   const setAnswer = (answer: string) => {
     if (
-      !isRunning ||
+      (!isRunning && mode === "timed") ||
       !answer.trim() ||
       examAnswers.find((a) => a.flashcardId === flashcard?.id)?.answer.trim()
     )

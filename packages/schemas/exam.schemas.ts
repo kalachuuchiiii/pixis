@@ -17,6 +17,7 @@ export const resultDetailsSchema = z
     accuracy: z.coerce.number().nonnegative(),
     isAbandoned: z.boolean(),
     isFinished: z.boolean(),
+    deckId: idSchema,
   })
   .transform((d) => {
     const { accuracy } = d;

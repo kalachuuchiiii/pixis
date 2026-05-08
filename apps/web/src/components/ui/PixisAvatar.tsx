@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import pixis from "/pixis.gif";
 import { Zap } from "lucide-react";
 
 export const PixisAvatar = ({ size = 28 }: { size?: number }) => (
@@ -6,20 +7,14 @@ export const PixisAvatar = ({ size = 28 }: { size?: number }) => (
     className="rounded-lg bg-zinc-900 flex items-center justify-center flex-shrink-0"
     style={{ width: size, height: size }}
   >
-    <Zap size={size * 0.46} className="text-white" />
+    <img src={pixis} className={` h-full w-full`} />
   </div>
 );
 
 export const Pixis = ({
-  size = "sm",
+  size = "lg",
 }: {
   size?: "xs" | "sm" | "md" | "lg";
 }) => {
-  return (
-    <div
-      className={clsx("uppercase tracking-widest font-medium", `text-${size}`)}
-    >
-      PIXIS
-    </div>
-  );
+  return <div className={clsx(" ", `text-${size}`)}>pixis</div>;
 };

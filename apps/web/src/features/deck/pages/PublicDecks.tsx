@@ -11,7 +11,7 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 
 const PublicDecksPage = () => {
-  const deckFilter = useDeckFilter();
+  const deckFilter = useDeckFilter(["visibility"]);
   const { query } = deckFilter;
   const { data, isPending, isFetching, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
@@ -49,20 +49,8 @@ const PublicDecksPage = () => {
           </div>
         }
       />
-      <div className=" ">
-        {/* Deck Display Section - Placeholder */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-[17px] font-semibold text-zinc-800">
-              Public Decks
-            </h2>
-            <div className="text-[13px] text-zinc-400">
-              1,284 decks • 42 added this week
-            </div>
-          </div>
-        </div>
-      </div>
-      <main className="grid grid-cols-3 gap-4">
+
+      <main className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {decks.map((d) => (
           <DeckDisplay.Default deck={d} />
         ))}

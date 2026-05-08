@@ -14,6 +14,11 @@ import { Button } from "@/components/ui/button";
 import { CloudBackup, Trash } from "lucide-react";
 import { useDeck } from "../hooks/useDeck";
 import { useArchive } from "../hooks/useArchive";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const RestoreDeckDialog = ({ deckId }: { deckId: number }) => {
   const { restoreDeck, isRestoringDeck } = useArchive();
@@ -21,9 +26,14 @@ export const RestoreDeckDialog = ({ deckId }: { deckId: number }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={"outline"} className="my-btn">
-          <CloudBackup />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant={"outline"} className="my-btn">
+              <CloudBackup />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Restore deck</TooltipContent>
+        </Tooltip>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

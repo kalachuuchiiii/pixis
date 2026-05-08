@@ -61,7 +61,7 @@ export const SetPreviewDialog = ({ messageId }: { messageId: number }) => {
         </div>
       </DialogHeader>
 
-      <div className="grid grid-cols-2 gap-2 overflow-y-auto py-6 pr-2 custom-scrollbar space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 overflow-y-auto py-6 pr-2 custom-scrollbar space-y-6">
         {set.flashcards.map((flashcard, index) => (
           <FlashcardView
             key={`${flashcard.question}.${flashcard.answer}.${index}`}

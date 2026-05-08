@@ -9,7 +9,15 @@ export const topDeckUserSchema = userBadgeSchema.and(
     accuracy: z.coerce.number().nonnegative(),
   })
 );
+
+export const topUserSchema = userBadgeSchema.extend({
+  points: z.number().nonnegative(),
+  averageAccuracy: z.float64().nonnegative(),
+  rank: z.number().nonnegative(),
+});
+
 export const topGlobalUserSchema = userBadgeSchema.and(userStatsSchema);
 
 export type TopGlobalUser = z.infer<typeof topGlobalUserSchema>;
 export type TopDeckUser = z.infer<typeof topDeckUserSchema>;
+export type TopUser = z.infer<typeof topUserSchema>;

@@ -25,16 +25,18 @@ import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { Pixis, PixisAvatar } from "./PixisAvatar";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 
+const NAV_SUPER_PRIMARY = [
+  { label: "Chat", to: "/app/chat", icon: () => PixisAvatar({ size: 20 }) },
+];
+
 const NAV_PRIMARY = [
-  { label: "Home", to: "/app/chat", icon: Home },
   {
     label: "My Collections",
     to: "/app/collections",
     icon: LibraryBig,
   },
   { label: "My Decks", to: "/app/decks", icon: Layers },
-
-  { label: "Activity", to: "/app/activity", icon: BarChart2 },
+  { label: "Dashboard", to: "/app/dashboard", icon: BarChart2 },
 ];
 
 const NAV_SOCIAL = [
@@ -109,10 +111,17 @@ export const AppSidebar = () => {
       <SidebarContent className="px-3 py-3 flex flex-col gap-1">
         {/* Primary — core study actions */}
         {/* Social — community & competition */}
+
         <SidebarGroup className="mt-3">
-          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase text-zinc-300 px-3 mb-1">
-            Community
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Assistant</SidebarGroupLabel>
+          <SidebarMenu>
+            {NAV_SUPER_PRIMARY.map((item) => (
+              <NavItem key={item.to} item={item} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Community</SidebarGroupLabel>
           <SidebarMenu>
             {NAV_SOCIAL.map((item) => (
               <NavItem key={item.to} item={item} />
@@ -120,9 +129,7 @@ export const AppSidebar = () => {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.14em] uppercase dark:text-zinc-200 text-zinc-300 px-3 mb-1">
-            Study
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Study</SidebarGroupLabel>
           <SidebarMenu>
             {NAV_PRIMARY.map((item) => (
               <NavItem key={item.to} item={item} />

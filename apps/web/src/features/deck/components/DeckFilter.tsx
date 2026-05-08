@@ -32,19 +32,19 @@ import type { DeckFilterHandler } from "@/features/deck/hooks/useDeckFilter";
 import { creationDateFilters } from "../data/creationDateFilter";
 import { sortOrdersMap } from "@/data/sort";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
+import type { JSX } from "react";
 
 export const sortableFieldsMap: Record<SortableDeckField, string> = {
   createdAt: "Creation Date",
   updatedAt: "Updated Date",
-  popularityScore: "Popularity",
-  userSavedDeckCount: "Saved count",
-  participantCount: "Participants",
 };
 
 export const DeckFilter = ({
   deckFilter,
+  menus = [],
 }: {
   deckFilter: DeckFilterHandler;
+  menus?: JSX.Element[];
 }) => {
   const { filterForm, sortForm, resetFilter, updateQuery, blacklistedFields } =
     deckFilter;
@@ -57,6 +57,7 @@ export const DeckFilter = ({
       filter={deckFilter}
       className="w-full"
       placeholder="Search decks by title, description, or keywords"
+      menus={menus}
       actions={[
         <Sheet>
           <SheetTrigger>

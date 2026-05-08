@@ -61,66 +61,71 @@ const MyCollections = () => {
         description="Collections of decks"
         beside={
           <div className=" flex items-center gap-2 w-full">
-            <CollectionFilter collectionFilter={collectionFilterHandlers} />
-            <Tooltip>
-              <TooltipTrigger>
-                <Link to={"/app/saved-collections"}>
-                  <Button className="my-btn" variant={"outline"}>
-                    <Bookmark className="text-yellow-500" />
+            <CollectionFilter
+              menus={[
+                <Link to={"/app/saved-collections"} className="w-full">
+                  <Button className="my-btn w-full" variant={"ghost"}>
+                    Save
                   </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>Go to your saved collections</TooltipContent>
-            </Tooltip>
-            <Dialog>
-              <DialogTrigger ref={collectionTriggerRef}>
-                <Button className="my-btn">
-                  Create <Plus />
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                className={`border-l-20 border-l-[${collectionValues.color}] min-w-5/12`}
-              >
-                <CollectionForm
-                  className="space-y-4"
-                  collectionFormHandlers={collectionForm}
-                  header={
-                    <header>
-                      <h1 className="heading text-4xl">Create collection</h1>
-                      <p className="description">
-                        Group your decks in one place!
-                      </p>
-                    </header>
-                  }
-                  footer={
-                    <footer>
-                      <DialogClose>
-                        <Button className="my-btn" variant={"secondary"}>
-                          Cancel
-                        </Button>
-                      </DialogClose>
-                      <DialogClose>
-                        <Button
-                          className="my-btn"
-                          disabled={isCreatingCollection}
-                          onClick={() =>
-                            createCollection({
-                              collectionForm: collectionForm.watch(),
-                            })
-                          }
-                        >
-                          Create
-                        </Button>
-                      </DialogClose>
-                    </footer>
-                  }
-                />
-              </DialogContent>
-            </Dialog>
+                </Link>,
+                <Dialog>
+                  <DialogTrigger asChild ref={collectionTriggerRef}>
+                    <Button className="my-btn">
+                      <Plus /> Create
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    className={`pl-0 py-0 flex rounded-xl overflow-hidden  min-w-5/12`}
+                  >
+                    <div
+                      className={`border-l-8 shadow-[0px_0px_16px] shadow-[${collectionValues.color}] border-l-[${collectionValues.color}]`}
+                    />
+                    <CollectionForm
+                      className="space-y-4 p-4"
+                      collectionFormHandlers={collectionForm}
+                      header={
+                        <header>
+                          <h1 className="heading text-4xl">
+                            Create collection
+                          </h1>
+                          <p className="description">
+                            Group your decks in one place!
+                          </p>
+                        </header>
+                      }
+                      footer={
+                        <footer className="flex items-center justify-end gap-1">
+                          <DialogClose>
+                            <Button className="my-btn" variant={"secondary"}>
+                              Cancel
+                            </Button>
+                          </DialogClose>
+                          <DialogClose>
+                            <Button
+                              type="button"
+                              className="my-btn"
+                              disabled={isCreatingCollection}
+                              onClick={() =>
+                                createCollection({
+                                  collectionForm: collectionForm.watch(),
+                                })
+                              }
+                            >
+                              Create
+                            </Button>
+                          </DialogClose>
+                        </footer>
+                      }
+                    />
+                  </DialogContent>
+                </Dialog>,
+              ]}
+              collectionFilter={collectionFilterHandlers}
+            />
           </div>
         }
       />
-      <main className="grid grid-cols-3 gap-4">
+      <main className="grid lg:grid-cols-3 grid-cols-1 gap-4">
         {collections.map((c, i) => (
           <Link to={`/app/collections/${c.id}`}>
             <CollectionCard.Default collection={c} />
@@ -141,8 +146,11 @@ const MyCollections = () => {
               title="No collections"
               description="No collections yet"
               content={
-                <Button onClick={() => collectionTriggerRef.current?.click()}>
-                  Create
+                <Button
+                  className="my-btn"
+                  onClick={() => collectionTriggerRef.current?.click()}
+                >
+                  <Plus /> Create
                 </Button>
               }
             />

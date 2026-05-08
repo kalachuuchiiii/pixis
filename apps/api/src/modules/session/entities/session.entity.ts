@@ -47,10 +47,10 @@ export class Session {
   @Column({ type: 'timestamp', nullable: true, name: 'abandoned_at' })
   abandonedAt!: Date | null;
 
-  @Column({ name: 'total_points_gained', default: 0 })
+  @Column({ name: 'total_points_gained', default: 0, type: 'float' })
   totalPointsGained!: number;
 
-  @Column({ name: 'accuracy', default: 0 })
+  @Column({ name: 'accuracy', default: 0, type: 'float' })
   accuracy!: number;
 
   @Column({ nullable: true, type: 'timestamp', name: 'finished_at' })

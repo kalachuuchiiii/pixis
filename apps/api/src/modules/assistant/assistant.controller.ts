@@ -13,6 +13,7 @@ import { authUserSchema } from '../auth/schemas/auth.schemas.js';
 import type { Request } from 'express';
 import {
   ChatMessageSchema,
+  ConversationSchema,
   GeneratedSetSchema,
   idSchema,
 } from '@pixis/schemas';
@@ -24,7 +25,18 @@ import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 export class AssistantController {
   constructor(private readonly assistantService: AssistantService) {}
 
-  @Delete('/conversation/:conversationId')
+  @Get('/conversations')
+  @UseGuards(AccessGuard)
+  async getConversations(@Req() request: Request) {
+    const user = authUserSchema.parse(request.user);
+    const result = await this.assistantService.getConversations({ user });
+    const conversations = z.array(ConversationSchema).parse(result);
+    return {
+      conversations,
+    };
+  }
+
+  @Delete('/conversations/:conversationId')
   @UseGuards(AccessGuard)
   async deleteConversation(@Req() request: Request) {
     const user = authUserSchema.parse(request.user);
@@ -55,7 +67,7 @@ export class AssistantController {
     };
   }
 
-  @Get('/conversation/:conversationId/messages')
+  @Get('/conversations/:conversationId/messages')
   @UseGuards(AccessGuard)
   async getConversation(
     @Req() request: Request,

@@ -67,9 +67,6 @@ export class Deck {
   @Column({ type: 'text', nullable: true })
   topic!: string;
 
-  @Column({ name: 'participant_count', default: 0 })
-  participantCount!: number;
-
   @OneToMany(() => UserSavedDeck, (usd) => usd.deck, { onDelete: 'CASCADE' })
   userSavedDecks?: UserSavedDeck[];
 

@@ -1,4 +1,5 @@
 export * from "./auth.schemas";
+export * from "./dashboard.schemas";
 export * from "./deck.schemas";
 export * from "./flashcard.schemas";
 export * from "./user.schemas";

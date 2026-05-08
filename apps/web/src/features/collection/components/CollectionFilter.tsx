@@ -34,6 +34,7 @@ import { SearchFilterBar } from "@/components/SearchFilterBar";
 import { creationDateFilters } from "@/features/deck/data/creationDateFilter";
 import type { CollectionFilterHandler } from "../hooks/useCollectionFilter";
 import { sortableFieldsMap } from "@/features/deck/components/DeckFilter";
+import type { JSX } from "react";
 
 const sortableFilterMap = {
   createdAt: "Creation date",
@@ -43,8 +44,10 @@ const sortableFilterMap = {
 
 export const CollectionFilter = ({
   collectionFilter,
+  menus = [],
 }: {
   collectionFilter: CollectionFilterHandler;
+  menus?: JSX.Element[];
 }) => {
   const {
     sortForm,
@@ -59,11 +62,13 @@ export const CollectionFilter = ({
   const filter = filterForm.watch();
   const setFilterValue = filterForm.setValue;
   const setSortValue = sortForm.setValue;
+  console.log(blacklistedFields);
 
   return (
     <SearchFilterBar
       filter={collectionFilter}
       className="w-full"
+      menus={menus}
       placeholder="Search decks by title, description, or keywords"
       actions={[
         <Sheet>
@@ -156,8 +161,6 @@ export const CollectionFilter = ({
                   </Select>
                 </div>
               </div>
-
-              {/* Visibility */}
               {!blacklistedFields.includes("visibility") && (
                 <div>
                   <label className="label mb-3 block">Visibility</label>

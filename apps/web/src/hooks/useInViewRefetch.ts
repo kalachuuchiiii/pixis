@@ -25,7 +25,9 @@ export const useInViewRefetch = (
     if (hasNextPage && options.direction === "next") {
       fetchNextPage();
       return;
-    } else if (hasPreviousPage && options.direction === "previous") {
+    }
+
+    if (hasPreviousPage && options.direction === "previous") {
       fetchPreviousPage();
       return;
     }
@@ -33,5 +35,6 @@ export const useInViewRefetch = (
 
   return {
     ref,
+    ...infiniteQuery,
   };
 };

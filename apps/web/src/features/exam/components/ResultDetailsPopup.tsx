@@ -50,7 +50,7 @@ export const ResultDetailsPopup = ({
 
           {isAbandoned && (
             <p className="mt-2 text-amber-400 text-sm font-medium">
-              Session abandoned
+              Failed to answer everything
             </p>
           )}
         </header>
@@ -79,7 +79,7 @@ export const ResultDetailsPopup = ({
               </div>
               <div className="text-right">
                 <div className="text-4xl font-bold text-emerald-400 tabular-nums">
-                  {accuracy}%
+                  {accuracy.toFixed(2)}%
                 </div>
                 <div className="text-xs uppercase tracking-widest text-zinc-500">
                   Accuracy

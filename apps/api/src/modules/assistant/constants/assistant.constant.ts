@@ -15,9 +15,10 @@ Do NOT wrap the JSON in code blocks.
 
 Output Format:
 {
+  "conversationTitle": string, 
+  //The title of conversation based on the current context. (1-30 characters)
   "content": string, 
   // A natural language response from the assistant.
-  // Example: "I've created a deck that matches what you're looking for."
 
   "type": "generate" | "text",
   // Indicates whether the response includes a generated flashcard set.
@@ -52,7 +53,7 @@ Output Format:
         // - "close_ended": Multiple-choice style question.
 
         "choices": string[] | null,
-        // Available options for "close_ended" questions. (a choice must be ${ANSWER_MIN} - ${ANSWER_MAX} characters)
+        // Available options for "close_ended" questions. if "close_ended" make sure the answer is in here, and shuffled (a choice must be ${ANSWER_MIN} - ${ANSWER_MAX} characters)
         // Must be null when type is "open_ended".
 
         "isAnswerCaseSensitive": boolean,

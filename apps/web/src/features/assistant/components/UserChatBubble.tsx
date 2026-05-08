@@ -26,7 +26,7 @@ export const UserChatBubble = ({
               </label>
             </div>
           </header>
-          <Card className="w-full flex flex-col items-start px-3">
+          <Card className="w-full dark:bg-white dark:text-zinc-900 flex flex-col items-start px-3">
             <CardTitle>{message.content}</CardTitle>
           </Card>
         </div>

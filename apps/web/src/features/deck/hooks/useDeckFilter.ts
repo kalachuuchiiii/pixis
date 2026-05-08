@@ -19,27 +19,27 @@ export type FilterObject = {
   };
   createdAt?: {
     op: DeckFilterOperation;
-    value: string | '*';
+    value: string | "*";
   };
 };
 
-export const useDeckFilter = () => {
+export const useDeckFilter = (blacklistedFields?: ["visibility"]) => {
   const sortForm = useForm<SortObject>({
     defaultValues: {
-      field: 'createdAt',
-      order: 'DESC'
-    }
+      field: "createdAt",
+      order: "DESC",
+    },
   });
   const filterForm = useForm<FilterObject>({
     defaultValues: {
       visibility: {
-        value: '*',
-        op: 'eq'
-      }
-    }
+        value: "*",
+        op: "eq",
+      },
+    },
   });
 
-  const deckFilter = useFilter({ sortForm, filterForm });
+  const deckFilter = useFilter({ sortForm, filterForm, blacklistedFields });
   return deckFilter;
 };
 
