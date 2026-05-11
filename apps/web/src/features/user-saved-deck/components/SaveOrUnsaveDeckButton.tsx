@@ -1,4 +1,3 @@
-import React from "react";
 import { useUserSavedDeck } from "../hooks/useUserSavedDeck";
 import type { Deck } from "@pixis/schemas";
 import { Button } from "@/components/ui/button";

@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import type { Dashboard } from "@pixis/schemas";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { useParams } from "react-router-dom";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 

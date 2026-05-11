@@ -1,9 +1,6 @@
-import { DynamicBackground } from "@/components/ui/DynamicBackground";
-import { Pixis, PixisAvatar } from "@/components/ui/PixisAvatar";
 import { Separator } from "@/components/ui/separator";
 import {
   Check,
-  Wifi,
   WifiOff,
   Bolt,
   Eye,
@@ -13,12 +10,10 @@ import {
   Users,
   BookOpen,
   Award,
-  Dot,
 } from "lucide-react";
 import { useEffect, useRef, type ComponentProps, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
-// ── Fade In on Scroll ─────────────────────────────────────────────────────
 const FadeIn = ({
   children,
   delay = 0,

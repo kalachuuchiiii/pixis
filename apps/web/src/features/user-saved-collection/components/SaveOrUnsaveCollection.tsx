@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import type { Collection } from "@pixis/schemas";
 import { Bookmark } from "lucide-react";
-import React from "react";
+
 import { useUserSavedCollection } from "../hooks/useUserSavedCollection";
 
 export const SaveOrUnsaveCollection = ({

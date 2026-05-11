@@ -1,4 +1,4 @@
-import { Bookmark, Edit3, List } from "lucide-react";
+import { Edit3, List } from "lucide-react";
 
 export const FlashcardTypeBadge = ({
   type,

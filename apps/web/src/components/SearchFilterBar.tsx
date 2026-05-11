@@ -1,12 +1,5 @@
-import { Filter, Search, Settings2 } from "lucide-react";
-import { memo, type ComponentProps, type JSX, type ReactNode } from "react";
-import { SheetTrigger, Sheet } from "./ui/sheet";
-import {
-  InputGroup,
-  InputGroupButton,
-  InputGroupInput,
-} from "./ui/input-group";
-import { Separator } from "./ui/separator";
+import { Settings2 } from "lucide-react";
+import { memo, type ComponentProps, type JSX } from "react";
 import type { DeckFilterHandler } from "@/features/deck/hooks/useDeckFilter";
 import type { CollectionFilterHandler } from "@/features/collection/hooks/useCollectionFilter";
 import type { FlashcardFilterHandler } from "@/features/flashcard/hooks/useFlashcardFilter";
@@ -14,7 +7,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
@@ -22,7 +14,7 @@ import { Input } from "./ui/input";
 import { Skeleton } from "boneyard-js/react";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import clsx from "clsx";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
+import { InputGroupButton } from "./ui/input-group";
 
 export type Addon = JSX.Element | undefined;
 
@@ -40,8 +32,7 @@ export const SearchFilterBar = memo(
       | CollectionFilterHandler
       | FlashcardFilterHandler;
   } & ComponentProps<"input">) => {
-    const { search, handleChangeSearch, updateQueryOnEnter, updateQuery } =
-      filter;
+    const { search, handleChangeSearch, updateQueryOnEnter } = filter;
 
     const { className, ...prop } = props;
     const { data: user } = useAuthUser();

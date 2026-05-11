@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from "react";
-import type { FieldValue, FieldValues, UseFormReturn } from "react-hook-form";
+import type { FieldValues, UseFormReturn } from "react-hook-form";
 
 export const useFilter = <T extends FieldValues, K extends FieldValues>({
   sortForm,

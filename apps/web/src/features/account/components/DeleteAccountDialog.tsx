@@ -8,12 +8,10 @@ import {
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
-import { useProfileDetails } from "../hooks/useProfileDetails";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";

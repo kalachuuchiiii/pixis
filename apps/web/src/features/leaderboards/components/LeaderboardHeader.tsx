@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import trophy from "/trophy.gif";
 import firstTrophy from "/first-place.gif";
 import secondTrophy from "/second-place.gif";
 import thirdTrophy from "/third-place.gif";

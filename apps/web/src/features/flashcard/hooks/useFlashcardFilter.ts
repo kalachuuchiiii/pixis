@@ -1,25 +1,15 @@
 import { useFilter } from "@/hooks/useFilter";
 import {
-  SORTABLE_FLASHCARD_FIELDS,
-  SORTING_ORDERS,
-  type FilterableFlashcardField,
   type FlashcardFilterOperator,
   type SortableFlashcardField,
   type SortingOrder,
 } from "@pixis/constants";
-import {
-  useCallback,
-  useMemo,
-  useState,
-  type ChangeEvent,
-  type ComponentProps,
-  type KeyboardEvent,
-} from "react";
+
 import { useForm } from "react-hook-form";
 
 type FilterForm = {
   type?: {
-    value: string | '*';
+    value: string | "*";
     op: FlashcardFilterOperator;
   };
 };

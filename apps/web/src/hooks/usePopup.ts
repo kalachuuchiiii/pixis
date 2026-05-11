@@ -1,4 +1,4 @@
-import { useState, type ComponentProps, type JSX, type ReactNode } from "react";
+import { useState, type JSX } from "react";
 
 type PopupDisplay = undefined | (() => JSX.Element);
 type PopupDetails = {

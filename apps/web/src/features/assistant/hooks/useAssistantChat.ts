@@ -7,17 +7,9 @@ import {
   useQueryClient,
   type InfiniteData,
 } from "@tanstack/react-query";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ChangeEvent,
-} from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useCallback, useRef, useState, type ChangeEvent } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
-import { uuid } from "zod";
 
 type ChatResponse = {
   messages: Message[];
@@ -84,7 +76,7 @@ export const useAssistantChat = () => {
       direction: "previous",
     } as PageParam,
   });
-  const { hasNextPage, data, fetchNextPage } = messagesQuery;
+  const { hasNextPage, data } = messagesQuery;
   const messages = data?.pages.flatMap((p) => p?.messages ?? []) ?? [];
   const hasNoMoreData = !hasNextPage && messages.length > 0;
   const hasNoData = !hasNextPage && messages.length === 0;
@@ -148,7 +140,7 @@ export const useAssistantChat = () => {
       return res.data;
     },
     retry: 3,
-    onSuccess: ({ response: { conversationId, response, request } }) => {
+    onSuccess: ({ response: { conversationId, response } }) => {
       navigate(`/app/chat/${conversationId}`, { replace: true });
       appendMessage(response);
     },

@@ -12,7 +12,6 @@ import { Button } from "../../../components/ui/button";
 import { Filter, ChevronRight } from "lucide-react";
 import {
   SORTABLE_COLLECTION_FIELDS,
-  SORTABLE_DECK_FIELDS,
   SORTING_ORDERS,
   VISIBILITY_ENUM,
   type SortableCollectionField,
@@ -33,11 +32,6 @@ import { sortOrdersMap } from "@/data/sort";
 import { SearchFilterBar, type Addon } from "@/components/SearchFilterBar";
 import { creationDateFilters } from "@/features/deck/data/creationDateFilter";
 import type { CollectionFilterHandler } from "../hooks/useCollectionFilter";
-import { sortableFieldsMap } from "@/features/deck/components/DeckFilter";
-import type { JSX } from "react";
-import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
-import { CollectionCreatorDialog } from "./CollectionCreatorDialog";
-import { useParams } from "react-router-dom";
 
 const sortableFilterMap = {
   createdAt: "Creation date",
@@ -58,17 +52,13 @@ export const CollectionFilter = ({
     filterForm,
     resetFilter,
     updateQuery,
-    updateQueryOnEnter,
-    search,
+
     blacklistedFields,
   } = collectionFilter;
   const sort = sortForm.watch();
   const filter = filterForm.watch();
   const setFilterValue = filterForm.setValue;
   const setSortValue = sortForm.setValue;
-  const { userId = "0" } = useParams();
-  const { data: user } = useAuthUser();
-  const isMine = String(user.id) === userId;
 
   return (
     <SearchFilterBar

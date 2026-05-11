@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 type TimestampFields = "createdAt" | "updatedAt";
 type TimestampOrder = "asc" | "desc";
 export const useTimestampSort = () => {
-  const [timestampField, setTimestampField] = useState<TimestampFields>("createdAt");
+  const [timestampField, setTimestampField] =
+    useState<TimestampFields>("createdAt");
   const [timestampOrder, setTimestampOrder] = useState<TimestampOrder>("desc");
 
   const handleChangeOrder = (val: TimestampOrder) => {

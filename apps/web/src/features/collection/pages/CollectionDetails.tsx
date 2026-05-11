@@ -2,7 +2,7 @@ import { type CollectionForm as CF } from "@pixis/schemas";
 import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Link2, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useCollection } from "../hooks/useCollection";
 import { DeckDisplay } from "@/features/deck/components/DeckDisplay";
@@ -23,11 +23,10 @@ import { DeckFilter } from "@/features/deck/components/DeckFilter";
 import { SaveOrUnsaveCollection } from "@/features/user-saved-collection/components/SaveOrUnsaveCollection";
 import { useCollectionDetails } from "../hooks/useCollectionDetails";
 import { useCollectionDecks } from "../hooks/useCollectionDecks";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
+
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { Separator } from "@/components/ui/separator";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
-import { copy } from "@/utils/copy";
 
 const CollectionDetails = () => {
   const { data: user } = useAuthUser();

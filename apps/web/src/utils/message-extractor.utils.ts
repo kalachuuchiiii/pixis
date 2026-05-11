@@ -17,8 +17,6 @@ export type ErrorObject = {
 };
 
 export const getErrorDetails = (error: unknown): ErrorObject => {
-  console.error("App Error:", error);
-
   if (isAxiosError(error)) {
     const statusCode = error.response?.status;
     const message = getErrorMessage(error);
@@ -50,7 +48,7 @@ export const getErrorDetails = (error: unknown): ErrorObject => {
   };
 };
 
-export const getErrorMessage = (err: unknown) => {
+export const getErrorMessage = (err: unknown): string => {
   if (isAxiosError(err)) {
     return (
       err.response?.data.message ??

@@ -6,12 +6,10 @@ import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { CollectionCard } from "@/features/collection/components/CollectionCard";
 import { CollectionFilter } from "@/features/collection/components/CollectionFilter";
 import { useCollectionFilter } from "@/features/collection/hooks/useCollectionFilter";
-import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 import api from "@/lib/api";
 import type { Collection } from "@pixis/schemas";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
 const MySavedCollections = () => {
@@ -34,13 +32,11 @@ const MySavedCollections = () => {
   const {
     data: collectionsData,
     hasNextPage,
-    isPending,
     isFetching,
     isLoading,
   } = infiniteSavedCollectionsQuery;
   const collections =
     collectionsData?.pages?.flatMap((p) => p.collections) ?? [];
-  const { ref } = useInViewRefetch(infiniteSavedCollectionsQuery);
 
   const hasNoMoreData = !hasNextPage && collections.length > 0;
   const hasNoData = !hasNextPage && collections.length === 0;

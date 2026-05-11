@@ -10,19 +10,11 @@ import {
   type FlashcardForm,
 } from "@pixis/schemas";
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  type InfiniteData,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useFlashcard = () => {
-  const nav = useNavigate();
   const queryClient = useQueryClient();
 
   const { mutate: createFlashcard, isPending: isCreatingFlashcard } =
@@ -60,14 +52,14 @@ export const useFlashcard = () => {
           }
         });
 
-        await toast.promise(promise, {
+        toast.promise(promise, {
           loading: "Creating flashcard...",
           success: getSuccessMessage,
           error: getErrorMessage,
         });
         return await promise;
       },
-      onSuccess: (result) => {
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["flashcards"] });
       },
     });
@@ -91,7 +83,7 @@ export const useFlashcard = () => {
           }
         });
 
-        await toast.promise(promise, {
+        toast.promise(promise, {
           loading: "Updating flashcard...",
           success: getSuccessMessage,
           error: getErrorMessage,
@@ -107,21 +99,20 @@ export const useFlashcard = () => {
     useMutation({
       mutationFn: async ({
         flashcardId,
-        deckId,
       }: {
         flashcardId: number | string;
         deckId: number | string;
       }) => {
         const promise = api.delete(`/flashcards/${flashcardId}/permanent`);
 
-        await toast.promise(promise, {
+        toast.promise(promise, {
           loading: "Deleting flashcard...",
           success: getSuccessMessage,
           error: getErrorMessage,
         });
         return await promise;
       },
-      onSuccess: (_res, { deckId }) => {
+      onSuccess: (_res) => {
         queryClient.invalidateQueries({ queryKey: ["flashcards"] });
       },
     });

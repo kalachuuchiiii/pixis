@@ -39,7 +39,7 @@ export const useExam = () => {
       const flashcardIds = session.deck?.flashcardIds ?? [];
 
       if (flashcardIds?.length === 0) {
-        return nav(`/app/decks/${session.deck?.id}`);
+        nav(`/app/decks/${session.deck?.id}`);
       }
 
       setFlashcardIds(flashcardIds);
@@ -65,7 +65,6 @@ export const useExam = () => {
       },
       throwOnError: true,
       onSuccess: (res) => {
-        if (!res?.result) return;
         nav(`/app/decks/${res.result.deckId}/flashcards`);
         queryClient.invalidateQueries({ queryKey: ["auth-user"] });
         pop(() =>
@@ -93,7 +92,7 @@ export const useExam = () => {
         `/flashcards/${flashcardIds[currentFlashcardIdx]}`
       );
       if (!res.data.flashcard) {
-        return nav(-1);
+        nav(-1);
       }
       return res.data.flashcard;
     },

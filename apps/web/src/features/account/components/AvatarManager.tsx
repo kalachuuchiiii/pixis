@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { useProfileDetails } from "../hooks/useProfileDetails";
 import { UserBadge } from "./ui/UserBadge";
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";

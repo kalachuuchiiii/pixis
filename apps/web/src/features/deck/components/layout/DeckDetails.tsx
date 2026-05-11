@@ -1,13 +1,6 @@
-import { Link, NavLink, Outlet, useParams } from "react-router-dom";
+import { NavLink, Outlet, useParams } from "react-router-dom";
 import { DeckDisplay } from "../DeckDisplay";
-import {
-  ChevronRight,
-  CreditCard,
-  History,
-  Link2,
-  Plus,
-  Trophy,
-} from "lucide-react";
+import { CreditCard, History, Link2, Trophy } from "lucide-react";
 import { DeleteDeckDialog } from "../DeleteDeckDialog";
 import { SoftDeleteDeckDialog } from "../SoftDeleteDeckDialog";
 import { RestoreDeckDialog } from "../RestoreDeckDialog";
@@ -19,7 +12,6 @@ import { StartAndSelectExamMode } from "@/features/exam/components/StartAndSelec
 import { useDeckDetails } from "../../hooks/useDeckDetails";
 import clsx from "clsx";
 import { Separator } from "@/components/ui/separator";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { Button } from "@/components/ui/button";

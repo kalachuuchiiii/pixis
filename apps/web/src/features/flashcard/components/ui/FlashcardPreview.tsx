@@ -1,3 +1,7 @@
+import type {
+  CloseEndedFlashcardForm,
+  OpenEndedFlashcardForm,
+} from "@pixis/schemas";
 import clsx from "clsx";
 import { capitalize } from "lodash";
 import { Dot } from "lucide-react";
@@ -6,21 +10,7 @@ export const FlashcardView = ({
   flashcard,
   color,
 }: {
-  flashcard:
-    | {
-        type: "open_ended";
-        question: string;
-        answer: string;
-        choices: null;
-        isAnswerCaseSensitive: boolean;
-      }
-    | {
-        type: "close_ended";
-        question: string;
-        answer: string;
-        choices: string[];
-        isAnswerCaseSensitive: false;
-      };
+  flashcard: OpenEndedFlashcardForm | CloseEndedFlashcardForm;
   color: string;
 }) => {
   const { type, question, answer, choices, isAnswerCaseSensitive } = flashcard;

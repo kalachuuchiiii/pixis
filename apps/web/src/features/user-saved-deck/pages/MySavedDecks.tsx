@@ -1,6 +1,5 @@
 import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Empty } from "@/components/ui/empty";
 import { EmptyResource } from "@/components/ui/EmptyResource";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
@@ -12,7 +11,6 @@ import api from "@/lib/api";
 import type { Deck } from "@pixis/schemas";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
 const MySavedDecks = () => {

@@ -1,4 +1,3 @@
-import React from "react";
 import { useDeckSessions } from "../hooks/useDeckSessions";
 import { SessionCard } from "../components/SessionCard";
 import history from "/history.gif";

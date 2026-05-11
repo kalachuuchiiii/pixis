@@ -1,4 +1,3 @@
-import { closePopup, pop } from "@/hooks/usePopup";
 import api from "@/lib/api";
 import type { UserWithStats } from "@pixis/schemas";
 import { useQuery } from "@tanstack/react-query";

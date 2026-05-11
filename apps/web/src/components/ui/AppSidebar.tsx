@@ -14,20 +14,15 @@ import {
   BarChart2,
   BookOpen,
   ChartArea,
-  Gift,
-  Home,
   Layers,
   LibraryBig,
   Settings,
   Trophy,
   User,
 } from "lucide-react";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { Pixis, PixisAvatar } from "./PixisAvatar";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
-import { queryClient } from "@/lib/queryClient";
-import type { UserWithStats } from "@pixis/schemas";
 
 const NAV_SUPER_PRIMARY = [
   { label: "Chat", to: "/app/chat", icon: () => PixisAvatar({ size: 20 }) },

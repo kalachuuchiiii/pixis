@@ -1,4 +1,3 @@
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import api from "@/lib/api";
 import type { Conversation } from "@pixis/schemas";

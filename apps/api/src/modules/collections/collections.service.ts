@@ -5,24 +5,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Collection } from './entities/collection.entity';
-import {
-  IsNull,
-  Not,
-  type FindOneOptions,
-  type Repository,
-  type SelectQueryBuilder,
-} from 'typeorm';
+import { type Repository } from 'typeorm';
 import type { CollectionForm } from '@pixis/schemas';
-import {
-  FilterOperator,
-  paginate,
-  type PaginateConfig,
-  type PaginateQuery,
-} from 'nestjs-paginate';
-import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
-import { SORTABLE_COLLECTION_FIELDS } from '@pixis/constants';
-import { CollectionDeck } from '../collection-deck/entities/collection-deck.entity';
-import { options } from 'axios';
+import { paginate, type PaginateQuery } from 'nestjs-paginate';
+import { getPaginationData } from '@/common/utils/pagination.util';
 import { collectionPaginationConfig } from '@/config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { withCollectionStats } from './query/withCollectionStats';

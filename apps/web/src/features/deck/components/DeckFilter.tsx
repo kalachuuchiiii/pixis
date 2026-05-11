@@ -33,9 +33,6 @@ import { creationDateFilters } from "../data/creationDateFilter";
 import { sortOrdersMap } from "@/data/sort";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
 import type { JSX } from "react";
-import { useParams } from "react-router-dom";
-import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
-import { DeckCreatorDialog } from "./DeckCreatorDialog";
 import { copy } from "@/utils/copy";
 
 export const sortableFieldsMap: Record<SortableDeckField, string> = {
@@ -57,9 +54,6 @@ export const DeckFilter = ({
 
   const sort = sortForm.watch();
   const filter = filterForm.watch();
-  const { userId = "0" } = useParams();
-  const { data: user } = useAuthUser();
-  const isMine = String(user.id) === userId;
 
   return (
     <SearchFilterBar

@@ -1,13 +1,8 @@
 import type { TopUser } from "@pixis/schemas";
-import { LeaderboardHeader } from "./LeaderboardHeader";
-import { Trophy, Medal } from "lucide-react";
 import firstPlaceTrophy from "/first-place.gif";
 import secondPlaceTrophy from "/second-place.gif";
 import thirdPlaceTrophy from "/third-place.gif";
-import { UserBadge } from "@/features/account/components/ui/UserBadge";
-import { toOrdinal } from "@/utils/toOrdinal";
 import { TopUserRow } from "./TopUserRow";
-import { Skeleton } from "boneyard-js/react";
 import { initialTopUserData } from "../data/leaderboard";
 
 export const getRankIcon = (rank: number) => {
@@ -39,8 +34,8 @@ export const Leaderboard = ({ topUsers }: { topUsers: TopUser[] }) => {
           <tbody className="divide-y divide-neutral-300 w-full dark:bg-zinc-900 bg-neutral-50 dark:divide-zinc-800">
             {topUsers.length > 0
               ? topUsers.map((user) => <TopUserRow key={user.id} user={user} />)
-              : Array.from({ length: 5 }).map((_, idx) => (
-                  <TopUserRow user={initialTopUserData} />
+              : Array.from({ length: 5 }).map((_, i) => (
+                  <TopUserRow key={i} user={initialTopUserData} />
                 ))}
           </tbody>
         </table>

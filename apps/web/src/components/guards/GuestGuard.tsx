@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useAuthUser } from "../../features/auth/hooks/useAuthUser";
 import { Navigate } from "react-router-dom";
 

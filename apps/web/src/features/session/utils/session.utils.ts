@@ -1,5 +1,5 @@
 import type { Session } from "@pixis/schemas";
-import { CircleStop, Clock, Trophy, XCircle } from "lucide-react";
+import { CircleStop, Trophy, XCircle } from "lucide-react";
 
 export const getStatusInfo = (session: Session) => {
   const isCompleted = session.status === "completed";

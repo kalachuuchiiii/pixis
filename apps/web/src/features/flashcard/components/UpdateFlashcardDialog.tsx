@@ -1,18 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle, Pencil } from "lucide-react";
-import React, { useState } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Pencil } from "lucide-react";
+
 import type { FlashcardFormHandler } from "../hooks/useFlashcardForm";
-import { Input } from "@/components/ui/input";
-import { Controller } from "react-hook-form";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { OpenEndedForm, type OpenEndedFormType } from "./OpenEndedForm";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { motion } from "framer-motion";
-import { CHOICES_MAX } from "@pixis/constants";
+
 import { CloseEndedForm, type CloseEndedFormType } from "./CloseEndedForm";
-import type { CloseEndedFlashcardForm } from "@pixis/schemas";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -24,7 +22,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useFlashcard } from "../hooks/useFlashcard";
-import { isEqual } from "lodash";
 
 export const UpdateFlashcardDialog = ({
   flashcardFormHandler,
@@ -35,8 +32,6 @@ export const UpdateFlashcardDialog = ({
 }) => {
   const { flashcardFormValues, flashcardForm, flashcard, hasNoChanges } =
     flashcardFormHandler;
-  const { type } =
-    flashcardFormValues;
   const { updateFlashcard, isUpdatingFlashcard } = useFlashcard();
 
   return (
@@ -56,7 +51,8 @@ export const UpdateFlashcardDialog = ({
             <OpenEndedForm openEndedForm={flashcardForm as OpenEndedFormType} />
           </>
         ) : (
-          flashcard?.type === 'close_ended' && flashcardFormValues.type === "close_ended" && (
+          flashcard?.type === "close_ended" &&
+          flashcardFormValues.type === "close_ended" && (
             <>
               <CloseEndedForm
                 className="min-w-8/12"
@@ -65,46 +61,53 @@ export const UpdateFlashcardDialog = ({
             </>
           )
         )}
-         <footer className="flex items-center justify-end gap-1">
-                <DialogClose>
-                   <Button className="my-btn" variant={"secondary"}>
-                  Cancel
-                </Button>
-                </DialogClose>
-                <Button onClick={() => flashcardForm.reset()} disabled = {hasNoChanges} className="my-btn" variant={"outline"}>
-                  Reset Changes
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    <Button className="my-btn" disabled = {hasNoChanges}>Update</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Update flashcard</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This might affect user's progresses. Are you sure you
-                        want to continue?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel variant={"default"}>
-                        No, cancel
-                      </AlertDialogCancel>
-                      <AlertDialogCancel
-                      disabled = {isUpdatingFlashcard}
-                        onClick={() =>
-                          updateFlashcard({
-                            updateForm: flashcardFormValues,
-                            flashcardId,
-                          })
-                        }
-                      >
-                        Yes, update
-                      </AlertDialogCancel>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </footer>
+        <footer className="flex items-center justify-end gap-1">
+          <DialogClose>
+            <Button className="my-btn" variant={"secondary"}>
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            onClick={() => flashcardForm.reset()}
+            disabled={hasNoChanges}
+            className="my-btn"
+            variant={"outline"}
+          >
+            Reset Changes
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger>
+              <Button className="my-btn" disabled={hasNoChanges}>
+                Update
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Update flashcard</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This might affect user's progresses. Are you sure you want to
+                  continue?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel variant={"default"}>
+                  No, cancel
+                </AlertDialogCancel>
+                <AlertDialogCancel
+                  disabled={isUpdatingFlashcard}
+                  onClick={() =>
+                    updateFlashcard({
+                      updateForm: flashcardFormValues,
+                      flashcardId,
+                    })
+                  }
+                >
+                  Yes, update
+                </AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </footer>
       </DialogContent>
     </Dialog>
   );
