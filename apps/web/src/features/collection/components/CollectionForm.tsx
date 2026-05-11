@@ -29,7 +29,7 @@ export const CollectionForm = ({
   return (
     <main {...props}>
       <>{header}</>
-      <main className="space-y-5">
+      <main className="space-y-6">
         <Controller
           name="name"
           control={control}

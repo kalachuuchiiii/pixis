@@ -7,6 +7,17 @@ import DeckSessionHistory from "@/features/session/pages/DeckSessionHistory";
 import ExploreCollections from "@/features/collection/pages/ExploreCollections";
 import { AssistantLayout } from "@/features/assistant/components/AssistantLayout";
 
+import ProfileDetails from "@/features/account/components/ProfileDetails";
+import DeckHistory from "@/features/deck/pages/DeckHistory";
+import ProfileStats from "@/features/account/pages/ProfileStats";
+import Decks from "@/features/deck/pages/Decks";
+import Collections from "@/features/collection/pages/Collections";
+import { GuestGuard } from "@/components/guards/GuestGuard";
+import { AuthGuard } from "@/features/auth/components/guards/AuthGuard";
+import NotFound from "@/pages/NotFound";
+import { GuestLayout } from "@/components/ui/GuestLayout";
+import Documentation from "@/pages/Documentation";
+
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const Layout = lazy(() => import("@/features/auth/components/Layout"));
 const SignIn = lazy(() => import("@/features/auth/pages/SignIn"));
@@ -14,10 +25,8 @@ const SignUp = lazy(() => import("@/features/auth/pages/SignUp"));
 
 const AppLayout = lazy(() => import("@/components/ui/AppLayout"));
 
-const MyProfile = lazy(() => import("@/features/account/pages/MyProfile"));
 const Settings = lazy(() => import("@/features/account/pages/Settings"));
 const Leaderboard = lazy(() => import("@/features/activity/pages/Leaderboard"));
-const MyActivity = lazy(() => import("@/features/activity/pages/MyActivity"));
 const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"));
 const Assistant = lazy(() => import("@/features/assistant/pages/Assistant"));
 
@@ -25,15 +34,14 @@ const CollectionDetails = lazy(
   () => import("@/features/collection/pages/CollectionDetails")
 );
 const MyCollections = lazy(
-  () => import("@/features/collection/pages/MyCollections")
+  () => import("@/features/collection/pages/Collections")
 );
 
 const ArchivedDecks = lazy(() => import("@/features/deck/pages/ArchivedDecks"));
 const DeckDetails = lazy(
   () => import("@/features/deck/components/layout/DeckDetails")
 );
-const MyDecks = lazy(() => import("@/features/deck/pages/MyDecks"));
-const PublicDecks = lazy(() => import("@/features/deck/pages/PublicDecks"));
+const ExploreDecks = lazy(() => import("@/features/deck/pages/ExploreDecks"));
 
 const Exam = lazy(() => import("@/features/exam/pages/Exam"));
 
@@ -51,12 +59,33 @@ const wrap = (element: React.ReactNode) => (
 
 const routes: RouteObject[] = [
   {
-    path: "/",
-    element: <LandingPage />,
+    element: <GuestLayout />,
+    children: [
+      {
+        path: "/",
+        element: (
+          <GuestGuard>
+            <LandingPage />
+          </GuestGuard>
+        ),
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+      {
+        path: "/documentation",
+        element: <Documentation />,
+      },
+    ],
   },
 
   {
-    element: <Layout />,
+    element: (
+      <GuestGuard>
+        <Layout />
+      </GuestGuard>
+    ),
     children: [
       {
         path: "/sign-in",
@@ -71,10 +100,18 @@ const routes: RouteObject[] = [
 
   {
     path: "/app/exam/:mode/:sessionId",
-    element: wrap(<Exam />),
+    element: wrap(
+      <AuthGuard>
+        <Exam />
+      </AuthGuard>
+    ),
   },
   {
-    element: <AssistantLayout />,
+    element: (
+      <AuthGuard>
+        <AssistantLayout />
+      </AuthGuard>
+    ),
     children: [
       {
         path: "/app/chat/:conversationId",
@@ -88,7 +125,11 @@ const routes: RouteObject[] = [
   },
 
   {
-    element: <AppLayout />,
+    element: (
+      <AuthGuard>
+        <AppLayout />
+      </AuthGuard>
+    ),
     children: [
       {
         element: wrap(<Outlet />),
@@ -108,10 +149,6 @@ const routes: RouteObject[] = [
           {
             path: "/app/collections/:collectionId",
             element: <CollectionDetails />,
-          },
-          {
-            path: "/app/decks",
-            element: <MyDecks />,
           },
           {
             element: <DeckDetails />,
@@ -150,16 +187,34 @@ const routes: RouteObject[] = [
           },
           {
             path: "/app/explore/decks",
-            element: <PublicDecks />,
+            element: <ExploreDecks />,
           },
           {
             path: "/app/explore/collections",
             element: <ExploreCollections />,
           },
           {
-            path: "/app/profile",
-            element: <MyProfile />,
+            element: <ProfileDetails />,
+            children: [
+              {
+                path: "/app/profile/:userId/history",
+                element: <DeckHistory />,
+              },
+              {
+                path: "/app/profile/:userId/stats",
+                element: <ProfileStats />,
+              },
+              {
+                path: "/app/profile/:userId/decks",
+                element: <Decks />,
+              },
+              {
+                path: "/app/profile/:userId/collections",
+                element: <Collections />,
+              },
+            ],
           },
+
           {
             path: "/app/settings",
             element: <Settings />,

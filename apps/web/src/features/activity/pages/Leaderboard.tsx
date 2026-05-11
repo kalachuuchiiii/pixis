@@ -4,9 +4,10 @@ import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { useLeaderboardDetails } from "../../leaderboards/hooks/useLeaderboardDetails";
 import { LeaderboardHeader } from "@/features/leaderboards/components/LeaderboardHeader";
 import { Leaderboard } from "@/features/leaderboards/components/Leaderboard";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 const LeaderboardPage = () => {
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
   const { data: topUsers } = useLeaderboardDetails();
 
   return (

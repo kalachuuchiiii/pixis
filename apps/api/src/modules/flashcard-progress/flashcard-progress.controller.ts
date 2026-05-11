@@ -3,11 +3,12 @@ import { FlashcardProgressService } from './flashcard-progress.service';
 import { AccessGuard } from '../auth/guards/access.guard';
 import type { Request } from 'express';
 import {
-  examAnswersSchema,
-  idSchema,
-  resultDetailsSchema,
+  ExamAnswersSchema,
+  IDSchema,
+  ResultDetailsSchema,
 } from '@pixis/schemas';
-import { authUserSchema } from '../auth/schemas/auth.schemas';
+import { AuthUserSchema } from '../auth/schemas/auth.schemas';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('flashcard-progress')
 export class FlashcardProgressController {
@@ -15,18 +16,19 @@ export class FlashcardProgressController {
     private readonly flashcardProgressService: FlashcardProgressService,
   ) {}
 
+  @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Post('/')
   @UseGuards(AccessGuard)
   async processExamAnswers(@Req() request: Request) {
-    const sessionId = idSchema.parse(request.body.sessionId);
-    const user = authUserSchema.parse(request.user);
-    const examAnswers = examAnswersSchema.parse(request.body.examAnswers);
+    const sessionId = IDSchema.parse(request.body.sessionId);
+    const user = AuthUserSchema.parse(request.user);
+    const examAnswers = ExamAnswersSchema.parse(request.body.examAnswers);
     const result = await this.flashcardProgressService.createProgresses({
       examAnswers,
       user,
       sessionId,
     });
-    const cleanResult = resultDetailsSchema.parse(result);
+    const cleanResult = ResultDetailsSchema.parse(result);
     return {
       result: cleanResult,
     };

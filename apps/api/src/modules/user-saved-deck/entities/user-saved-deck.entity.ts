@@ -10,7 +10,7 @@ import { Deck } from '../../deck/entities/deck.entity';
 import { User } from '@/modules/users/entities/user.entity';
 @Entity('user_saved_deck')
 export class UserSavedDeck {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })

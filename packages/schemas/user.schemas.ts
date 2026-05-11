@@ -5,14 +5,9 @@ import {
   USERNAME_MAX,
   USERNAME_MIN,
 } from "@pixis/constants";
-import { timestampSchema } from "./timestamp.schemas";
+import { IDSchema, TimestampSchema } from "./common.schemas";
 
-export const idSchema = z.coerce
-  .number("ID must be a number")
-  .int("ID must be an integer")
-  .positive("ID must be a positive number");
-
-export const usernameSchema = z
+export const UsernameSchema = z
   .string("Username is required")
   .min(USERNAME_MIN, `Username must be at least ${USERNAME_MIN} characters`)
   .max(USERNAME_MAX, `Username must be at most ${USERNAME_MAX} characters`)
@@ -20,8 +15,8 @@ export const usernameSchema = z
   .trim()
   .toLowerCase();
 
-export const nicknameSchema = z
-  .string("Nickname is required")
+export const NicknameSchema = z
+  .string()
   .min(NICKNAME_MIN, `Nickname must be at least ${NICKNAME_MIN} characters`)
   .max(NICKNAME_MAX, `Nickname must be at most ${NICKNAME_MAX} characters`)
   .regex(
@@ -30,43 +25,14 @@ export const nicknameSchema = z
   )
   .trim();
 
-export const avatarPublicUrlSchema = z
+export const AvatarUrlSchema = z
   .string("Avatar must be a string")
   .min(1, "Avatar ID cannot be empty")
-  .regex(/^[a-zA-Z0-9/_-]+$/, "Invalid Cloudinary public_id format")
   .nullable()
   .optional();
 
-export const lastUsernameUpdateSchema = z.coerce
-  .date()
-  .refine((d) => d < new Date(), {
-    message: "Last username update cannot be in the future",
-    path: ["lastUsernameUpdate"],
-  })
-  .transform((d) => d.toISOString());
-
-export const lastNicknameUpdateSchema = z.coerce
-  .date()
-  .refine((d) => d < new Date(), {
-    message: "Last nickname update cannot be in the future",
-    path: ["lastNicknameUpdate"],
-  })
-  .transform((d) => d.toISOString());
-
-export const plainUserSchema = z.object({
-  id: idSchema,
-  username: usernameSchema,
-  nickname: nicknameSchema,
-  avatarPublicUrl: avatarPublicUrlSchema,
-  lastUsernameUpdate: lastUsernameUpdateSchema,
-  isPrivate: z.boolean(),
-  lastNicknameUpdate: lastNicknameUpdateSchema,
-  createdAt: timestampSchema,
-});
-
-export const pointSchema = z.object({
-  id: idSchema,
-  user: plainUserSchema.optional().nullable(),
+export const PointSchema = z.object({
+  id: IDSchema,
   currentPoints: z
     .int("Current points must be an integer")
     .nonnegative("Current points cannot be negative"),
@@ -75,25 +41,15 @@ export const pointSchema = z.object({
     .nonnegative("Highest points cannot be negative"),
 });
 
-export const lastActionTimestampSchema = z.coerce
-  .date()
-  .refine(
-    (d) => d < new Date(),
-    "Last action timestamp cannot be in the future"
-  )
-  .transform((d) => d.toISOString());
-
-export const userStatsSchema = z.object({
+export const UserStatsSchema = z.object({
   deckStudiedCount: z.number().nonnegative(),
-
   averageAccuracy: z.float64().nonnegative(),
   rank: z.coerce.number().nonnegative().positive(),
   flashcardAnsweredCount: z.number().nonnegative(),
 });
 
 export const streakSchema = z.object({
-  id: idSchema,
-  user: plainUserSchema.optional().nullable(),
+  id: IDSchema,
   currentStreak: z
     .int("Current streak must be an integer")
     .nonnegative("Current streak cannot be negative"),
@@ -103,36 +59,43 @@ export const streakSchema = z.object({
   totalStreak: z
     .int("Total streak must be an integer")
     .nonnegative("Total streak cannot be negative"),
-  lastActionTimestamp: lastActionTimestampSchema,
+  lastActionTimestamp: TimestampSchema,
 });
 
-export const userSchema = plainUserSchema.extend({
-  point: pointSchema,
+export const UserSchema = z.object({
+  id: IDSchema,
+  username: UsernameSchema,
+  nickname: NicknameSchema,
+  avatarUrl: AvatarUrlSchema,
+  lastUsernameUpdate: TimestampSchema,
+  isPrivate: z.boolean(),
+  lastNicknameUpdate: TimestampSchema,
+  createdAt: TimestampSchema,
+  point: PointSchema,
   streak: streakSchema,
 });
 
-export const updateUserFormSchema = z.object({
-  username: usernameSchema,
-  nickname: nicknameSchema,
+export const UpdateUserFormSchema = z.object({
+  username: UsernameSchema,
+  nickname: NicknameSchema,
 });
 
-export const userBadgeSchema = z.object({
-  username: usernameSchema,
-  nickname: nicknameSchema,
-  avatarPublicUrl: avatarPublicUrlSchema,
+export const UserBadgeSchema = z.object({
+  username: UsernameSchema,
+  nickname: NicknameSchema,
+  avatarUrl: AvatarUrlSchema,
+  id: IDSchema,
 });
 
-export const userWithStatsSchema = userSchema.and(userStatsSchema);
+export const UserWithStatsSchema = UserSchema.and(UserStatsSchema);
 
-export type UserWithStats = z.infer<typeof userWithStatsSchema>;
-export type Id = z.infer<typeof idSchema>;
-export type Username = z.infer<typeof usernameSchema>;
-export type Nickname = z.infer<typeof nicknameSchema>;
-export type AvatarPublicUrl = z.infer<typeof avatarPublicUrlSchema>;
-export type UserBadge = z.infer<typeof userBadgeSchema>;
-
-export type PlainUser = z.infer<typeof plainUserSchema>;
-export type Point = z.infer<typeof pointSchema>;
+export type UserWithStats = z.infer<typeof UserWithStatsSchema>;
+export type Id = z.infer<typeof IDSchema>;
+export type Username = z.infer<typeof UsernameSchema>;
+export type Nickname = z.infer<typeof NicknameSchema>;
+export type AvatarUrl = z.infer<typeof AvatarUrlSchema>;
+export type UserBadge = z.infer<typeof UserBadgeSchema>;
+export type Point = z.infer<typeof PointSchema>;
 export type Streak = z.infer<typeof streakSchema>;
-export type User = z.infer<typeof userSchema>;
-export type UpdateUserForm = z.infer<typeof updateUserFormSchema>;
+export type User = z.infer<typeof UserSchema>;
+export type UpdateUserForm = z.infer<typeof UpdateUserFormSchema>;

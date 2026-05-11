@@ -1,3 +1,4 @@
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import api from "@/lib/api";
 import { getSuccessMessage } from "@/utils/message-extractor.utils";
 import type { Deck } from "@pixis/schemas";
@@ -22,6 +23,7 @@ type InfiniteDeckData =
 
 export const useArchive = (query: string = "") => {
   const queryClient = useQueryClient();
+  const { data: user } = useAuthUser();
   const nav = useNavigate();
 
   const removeUpdatedDecks = (deckIds: number[]) => {
@@ -89,7 +91,7 @@ export const useArchive = (query: string = "") => {
     },
     onSuccess: (_, id) => {
       removeUpdatedDecks([id]);
-      nav("/app/decks");
+      nav(`/app/profile/${user.id}/decks`);
     },
   });
 

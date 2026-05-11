@@ -1,4 +1,3 @@
-
 import { User } from '@/modules/users/entities/user.entity';
 import {
   Column,
@@ -21,7 +20,7 @@ import { UserSavedCollection } from '@/modules/user-saved-collections/entities/u
 
 @Entity('collection')
 export class Collection {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
   @Column({ nullable: true, default: '' })
@@ -30,18 +29,22 @@ export class Collection {
   @Column({ enum: VISIBILITY_ENUM, default: 'private' })
   visibility!: Visibility;
 
-  @OneToMany(() => UserSavedCollection, usc => usc.collection, { onDelete: 'CASCADE' })
+  @OneToMany(() => UserSavedCollection, (usc) => usc.collection, {
+    onDelete: 'CASCADE',
+  })
   userSavedCollections?: UserSavedCollection[];
 
-  @ManyToOne(() => User, u => u.collections)
+  @ManyToOne(() => User, (u) => u.collections, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user?: User; 
+  user?: User;
 
   @RelationId((c: Collection) => c.user)
   userId!: number;
 
-  @OneToMany(() => CollectionDeck, cd => cd.collection)
-  collectionDecks?: CollectionDeck[]
+  @OneToMany(() => CollectionDeck, (cd) => cd.collection, {
+    onDelete: 'CASCADE',
+  })
+  collectionDecks?: CollectionDeck[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
@@ -49,12 +52,12 @@ export class Collection {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at'})
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 
   @Column({ name: 'deck_count', default: 0 })
-  deckCount?: number
+  deckCount?: number;
 
-  @Column({ nullable: true, name: 'color', default: "#000000" })
+  @Column({ nullable: true, name: 'color', default: '#000000' })
   color!: string; // e.g., '#FF5733'
 }

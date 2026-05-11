@@ -14,7 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import type { FlashcardFilterHandler } from "../hooks/useFlashcardFilter";
-import { ChevronRight, Filter, Search } from "lucide-react";
+import { ChevronRight, Filter, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -29,7 +29,7 @@ import {
 import {
   SORTABLE_FLASHCARD_FIELDS,
   SORTING_ORDERS,
-  TYPE_ENUM,
+  FLASHCARD_TYPES,
   type FlashcardType,
   type SortableFlashcardField,
   type SortingOrder,
@@ -38,11 +38,17 @@ import { sortableFieldsMap } from "@/features/deck/components/DeckFilter";
 import { sortOrdersMap } from "@/data/sort";
 import { capitalize } from "lodash";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
+import type { Deck } from "@pixis/schemas";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { FlashcardCreator } from "./FlashcardCreator";
 
 export const FlashcardFilter = ({
   flashcardFilter,
+  deck,
 }: {
   flashcardFilter: FlashcardFilterHandler;
+  deck: Deck;
 }) => {
   const { sortForm, filterForm, updateQuery, updateQueryOnEnter, resetFilter } =
     flashcardFilter;
@@ -50,17 +56,20 @@ export const FlashcardFilter = ({
   const filter = filterForm.watch();
   const setFilterValue = filterForm.setValue;
   const setSortValue = sortForm.setValue;
+  const { data: user } = useAuthUser();
+
+  const isMine = user.id === deck.userId;
 
   return (
     <SearchFilterBar
       filter={flashcardFilter}
       placeholder="Search flashcard by question or answer"
-      actions={
+      actions={[
         <Sheet>
           <SheetTrigger>
-            <InputGroupButton className="my-btn h-full">
+            <Button variant={"outline"} className="my-btn h-full">
               <Filter />
-            </InputGroupButton>
+            </Button>
           </SheetTrigger>
           <SheetContent>
             <SheetHeader className="mt-4">
@@ -132,13 +141,14 @@ export const FlashcardFilter = ({
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Audience</SelectLabel>
-                      <SelectItem key={'*'} value={"*"}>All</SelectItem>
-                      {TYPE_ENUM.map((t: FlashcardType) => (
+                      <SelectItem key={"*"} value={"*"}>
+                        All
+                      </SelectItem>
+                      {FLASHCARD_TYPES.map((t: FlashcardType) => (
                         <SelectItem key={t} value={t}>
                           {capitalize(t).replaceAll("_", " ")}
                         </SelectItem>
                       ))}
-                      
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -165,8 +175,24 @@ export const FlashcardFilter = ({
               </SheetClose>
             </SheetFooter>
           </SheetContent>
-        </Sheet>
-      }
+        </Sheet>,
+        isMine ? (
+          <Dialog>
+            <DialogTrigger>
+              <Button className="my-btn h-full">
+                {" "}
+                <Plus /> <p className="lg:block hidden"> New Flashcard</p>
+              </Button>
+            </DialogTrigger>
+            <DialogContent
+              className="min-w-4/10 w-full"
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
+              <FlashcardCreator />
+            </DialogContent>
+          </Dialog>
+        ) : undefined,
+      ]}
     ></SearchFilterBar>
   );
 };

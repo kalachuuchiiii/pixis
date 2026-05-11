@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signInFormSchema, type SignInForm } from "@pixis/schemas";
+import { SignInFormSchema, type SignInForm } from "@pixis/schemas";
 import { Controller, useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -15,7 +15,7 @@ const SignIn = () => {
       username: "",
       password: "",
     },
-    resolver: zodResolver(signInFormSchema),
+    resolver: zodResolver(SignInFormSchema),
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -26,10 +26,7 @@ const SignIn = () => {
     <div className="space-y-8" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <div>
-        <h2
-          className="text-[26px] font-normal text-zinc-900 dark:text-white mb-1"
-          style={{ fontFamily: "'DM Serif Display', serif" }}
-        >
+        <h2 className="text-[26px] font-normal text-zinc-900 heading dark:text-white mb-1">
           Welcome back
         </h2>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">

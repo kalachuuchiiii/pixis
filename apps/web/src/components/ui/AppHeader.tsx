@@ -17,15 +17,12 @@ export const AppHeader = ({
 }: AppHeaderProps) => {
   return (
     <header
-      className={`flex flex-col  lg:flex-row lg:items-end gap-8 lg:gap-12 mb-12 ${className}`}
+      className={`flex flex-col w-full  gap-8 lg:gap-12 mb-12 ${className}`}
       {...props}
     >
       {/* Left Content */}
       <div className="flex-1 space-y-3">
-        <h1
-          className="text-3xl lg:text-4xl font-normal tracking-tighter text-zinc-900 dark:text-white"
-          style={{ fontFamily: "'DM Serif Display', serif" }}
-        >
+        <h1 className="text-3xl lg:text-4xl heading font-bold tracking-tighter text-zinc-900 dark:text-white">
           {heading}
         </h1>
 
@@ -45,7 +42,7 @@ export const AppHeader = ({
 
       {/* Right Side Content */}
       {beside && (
-        <div className="flex-shrink-0 lg:w-auto lg:self-end ">{beside}</div>
+        <div className="flex-shrink-0 w-full lg:max-w-7xl ">{beside}</div>
       )}
     </header>
   );

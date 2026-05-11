@@ -1,6 +1,13 @@
 import { Link, NavLink, Outlet, useParams } from "react-router-dom";
 import { DeckDisplay } from "../DeckDisplay";
-import { ChevronRight, CreditCard, History, Plus, Trophy } from "lucide-react";
+import {
+  ChevronRight,
+  CreditCard,
+  History,
+  Link2,
+  Plus,
+  Trophy,
+} from "lucide-react";
 import { DeleteDeckDialog } from "../DeleteDeckDialog";
 import { SoftDeleteDeckDialog } from "../SoftDeleteDeckDialog";
 import { RestoreDeckDialog } from "../RestoreDeckDialog";
@@ -14,10 +21,13 @@ import clsx from "clsx";
 import { Separator } from "@/components/ui/separator";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { Button } from "@/components/ui/button";
+import { copy } from "@/utils/copy";
 
 const DeckDetails = () => {
   const { deckId = 0 } = useParams();
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
   const { data: deck } = useDeckDetails();
 
   if (!deck) {
@@ -34,6 +44,13 @@ const DeckDetails = () => {
           </DeckDisplay>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
+              <Button
+                onClick={() => copy(window.location.href)}
+                variant={"outline"}
+                className="my-btn"
+              >
+                <Link2 />
+              </Button>
               <AddToCollectionDialog deckId={deckId} />
               <SaveOrUnsaveDeckButton deck={deck} />
             </div>
@@ -62,8 +79,8 @@ const DeckDetails = () => {
             to={`/app/decks/${deckId}/flashcards`}
             className={({ isActive }) =>
               clsx(
-                "px-10 py-4 border-b-1 border-b-background",
-                isActive && "border-b-zinc-200"
+                "px-10 py-4 border-b-2 ",
+                isActive && "border-b-zinc-900 dark:border-b-zinc-200"
               )
             }
           >
@@ -73,8 +90,8 @@ const DeckDetails = () => {
             to={`/app/decks/${deckId}/leaderboards`}
             className={({ isActive }) =>
               clsx(
-                "px-10 py-4 border-b-1 border-b-background",
-                isActive && "border-b-zinc-200"
+                "px-10 py-4 border-b-2 ",
+                isActive && "border-b-zinc-900 dark:border-b-zinc-200"
               )
             }
           >
@@ -84,8 +101,8 @@ const DeckDetails = () => {
             to={`/app/decks/${deckId}/history`}
             className={({ isActive }) =>
               clsx(
-                "px-10 py-4 border-b-1 border-b-background",
-                isActive && "border-b-zinc-200"
+                "px-10 py-4 border-b-2 ",
+                isActive && "border-b-zinc-900 dark:border-b-zinc-200"
               )
             }
           >
@@ -93,7 +110,7 @@ const DeckDetails = () => {
           </NavLink>
         </div>
 
-        <div className="max-w-6xl lg:w-15/16 mx-auto">
+        <div className="max-w-7xl w-full">
           <Outlet />
         </div>
       </div>

@@ -21,7 +21,7 @@ export const useSecurityManager = () => {
       return await promise;
     },
     onSuccess: () => {
-      nav("/");
+      nav("/sign-up");
     },
   });
 

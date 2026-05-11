@@ -46,7 +46,7 @@ export const UpdateCollectionDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className={`min-w-5/12 rounded-xl space-y-10  p-6 border-l-8 border-l-[${color}]`}
+        className={`min-w-5/12 rounded-xl space-y-10  p-8 border-l-8 border-l-[${color}]`}
       >
         <CollectionForm
           className="flex flex-col items-start h-full justify-between"

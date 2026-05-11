@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { clsx } from "clsx";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
+import { Skeleton } from "boneyard-js/react";
 
 type CollectionContextType = { collection: Collection };
 
@@ -23,33 +24,35 @@ const Root = ({
   children: React.ReactNode;
 }) => (
   <CollectionContext.Provider value={{ collection }}>
-    <div
-      className={clsx(
-        "group relative overflow-hidden rounded-2xl",
-        "hover:border-zinc-700 border border-zinc-800   transition-colors duration-200",
-        ` shadow-[${collection.color}]`
-      )}
-    >
-      {collection.color && (
-        <div
-          className={clsx(
-            "absolute top-0 left-0 w-1 h-full overflow-hidden  z-10",
-            `border-l-6 shadow-[0px_0px_16px] shadow-[${collection.color}] border-l-[${collection.color}]`
-          )}
-        />
-      )}
-
+    <Skeleton name="collection-card" loading={!collection}>
       <div
         className={clsx(
-          "relative bg-zinc-950 ",
-          "flex flex-col h-full",
-
-          collection.color && "pl-0"
+          "group relative min-h-fit overflow-x-hidden rounded-2xl",
+          "hover:border-zinc-700 border border-zinc-800   transition-colors duration-200",
+          ` shadow-[${collection.color}]`
         )}
       >
-        {children}
+        {collection.color && (
+          <div
+            className={clsx(
+              "absolute top-0 left-0 w-1 h-full overflow-x-hidden  z-10",
+              `border-l-6 shadow-[0px_0px_16px] shadow-[${collection.color}] border-l-[${collection.color}]`
+            )}
+          />
+        )}
+
+        <div
+          className={clsx(
+            "relative bg-neutral-50 dark:bg-zinc-950 ",
+            "flex flex-col h-full",
+
+            collection.color && "pl-0"
+          )}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </Skeleton>
   </CollectionContext.Provider>
 );
 
@@ -74,8 +77,7 @@ const Title = () => {
   return (
     <h3
       className={clsx(
-        "px-[22px] mb-5 text-2xl line-clamp-2 max-h-12 h-fit font-bold leading-[1.15] tracking-tight",
-        collection.name ? "text-zinc-50" : "text-zinc-600"
+        "px-[22px] mb-5 text-4xl line-clamp-2 max-h-12 h-fit font-bold leading-[1.15] tracking-tight"
       )}
     >
       {collection.name ?? "Untitled Collection"}

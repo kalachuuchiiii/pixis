@@ -7,10 +7,9 @@ import type {
   Flashcard,
   ResultDetails,
   Session,
-  User,
 } from "@pixis/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useImmer } from "use-immer";
 import { ResultDetailsPopup } from "../components/ResultDetailsPopup";
@@ -54,12 +53,11 @@ export const useExam = () => {
 
   const { mutate: processExamAnswers, isPending: isProcessingExamAnswers } =
     useMutation({
-      mutationFn: async (answers: ExamAnswers) => {
-        if (!isRunning && mode === "timed") return;
+      mutationFn: async () => {
         const res = await api.post<{ result: ResultDetails }>(
           `/flashcard-progress`,
           {
-            examAnswers: answers,
+            examAnswers,
             sessionId,
           }
         );
@@ -69,14 +67,7 @@ export const useExam = () => {
       onSuccess: (res) => {
         if (!res?.result) return;
         nav(`/app/decks/${res.result.deckId}/flashcards`);
-        queryClient.setQueryData(["profile-details"], (old: User) => ({
-          ...(old ?? {}),
-          point: {
-            ...(old.point ?? {}),
-            currentPoints:
-              old.point.currentPoints + res.result.totalPointsGained,
-          },
-        }));
+        queryClient.invalidateQueries({ queryKey: ["auth-user"] });
         pop(() =>
           ResultDetailsPopup({
             resultDetails: res.result,
@@ -85,7 +76,7 @@ export const useExam = () => {
       },
     });
 
-  const timerHandlers = useTimer(() => processExamAnswers(examAnswers));
+  const timerHandlers = useTimer(() => processExamAnswers());
   const { isRunning } = timerHandlers;
 
   const { onNext, onPrevious } = useIndex({
@@ -140,9 +131,22 @@ export const useExam = () => {
     const next = onNext();
 
     if (!next?.hasNext && updatedAnswers.every((a) => !!a.answer.trim())) {
-      processExamAnswers(updatedAnswers);
+      processExamAnswers();
     }
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return {
     onNext,
@@ -154,6 +158,7 @@ export const useExam = () => {
     setAnswer,
     isSessionLoading,
     mode,
+    processExamAnswers,
     timerHandlers,
     isFlashcardLoading,
     isProcessingExamAnswers,

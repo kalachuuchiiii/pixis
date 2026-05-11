@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import axios, { type AxiosError } from "axios";
 
 const api = axios.create({
@@ -7,30 +8,35 @@ const api = axios.create({
 
 api.interceptors.response.use(
   (response) => {
-    console.log(`${response.config.url}: `, response.data);
+    logger.log(response.data);
     return response;
   },
-  async (error: AxiosError & { config: AxiosError['config'] & { _retry?: boolean; }}) => {
-    console.log(`Error on ${error.response?.config.url}`, error.response);
-    const originalReponse = error.config;
-    const response = error.response;
-    if(!originalReponse || originalReponse._retry || !response || response.status !== 401 || originalReponse.url?.includes('/auth/refresh')){
+  async (error) => {
+    const originalRequest = error.config;
+    logger.log(originalRequest.url, error.response);
+    const isRefreshEndpoint = originalRequest.url?.includes("/auth/refresh");
+    const status = error.response?.status;
+
+    if (status !== 401 || isRefreshEndpoint || originalRequest._retry) {
       return Promise.reject(error);
     }
-    try{
 
-      const refresh = await api.post<{accessToken: string}>('/auth/refresh');
-      const accessToken = `Bearer ${refresh.data.accessToken}`;
-      api.defaults.headers.common.Authorization = accessToken;
-      originalReponse.headers.Authorization = accessToken;
-      originalReponse._retry = true;
+    try {
+      // If we already have a refresh in progress, queue this request
+      originalRequest._retry = true;
 
-      return api(originalReponse);
-    }catch(e){
-      
-      return Promise.reject(e);
+      const refresh = await api.post<{ accessToken: string }>("/auth/refresh");
+
+      const newToken = `Bearer ${refresh.data.accessToken}`;
+      api.defaults.headers.common.Authorization = newToken;
+      originalRequest.headers.Authorization = newToken;
+
+      return api(originalRequest);
+    } catch (refreshError) {
+      originalRequest._retry = true;
+      return Promise.reject(refreshError);
     }
-  
+    return Promise.reject(error);
   }
 );
 

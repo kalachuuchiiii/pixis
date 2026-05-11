@@ -53,11 +53,10 @@ export class SessionService {
     const session = await this.sessionRepo
       .createQueryBuilder('session')
       .where(
-        'session.user.id = :userId AND session.id = :sessionId AND session.mode = :mode AND session.finishedAt IS NULL AND session.abandonedAt IS NULL',
+        'session.user.id = :userId AND session.id = :sessionId AND session.mode = :mode AND session.status = :status',
         {
           userId: user.id,
-          finishedAt: undefined,
-          abandonedAt: undefined,
+          status: 'idle',
           sessionId,
           mode,
         },
@@ -99,7 +98,7 @@ export class SessionService {
         userId: user.id,
         deckId,
       })
-      .orderBy('session.createdAt', 'DESC');
+      .orderBy('session.startedAt', 'DESC');
     const result = await paginate(query, qb, sessionPaginationConfig);
     return getPaginationData(result);
   }

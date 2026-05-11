@@ -1,5 +1,5 @@
 import { Filter, Search, Settings2 } from "lucide-react";
-import type { ComponentProps, JSX, ReactNode } from "react";
+import { memo, type ComponentProps, type JSX, type ReactNode } from "react";
 import { SheetTrigger, Sheet } from "./ui/sheet";
 import {
   InputGroup,
@@ -18,72 +18,93 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Skeleton } from "boneyard-js/react";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import clsx from "clsx";
+import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
-export const SearchFilterBar = ({
-  actions,
-  filter,
-  menus = [],
-  ...props
-}: {
-  actions: JSX.Element[] | JSX.Element;
-  menus?: JSX.Element[];
-  filter: DeckFilterHandler | CollectionFilterHandler | FlashcardFilterHandler;
-} & ComponentProps<"input">) => {
-  const { search, handleChangeSearch, updateQueryOnEnter, updateQuery } =
-    filter;
-  return (
-    <div className="flex items-center w-full relative gap-2  ">
-      <InputGroup className="flex items-center  w-full h-12 h-full">
-        <InputGroupInput
-          value={search}
-          onChange={handleChangeSearch}
-          type="text"
-          className="h-full w-full"
-          {...props}
-          onKeyDown={updateQueryOnEnter}
-        />
+export type Addon = JSX.Element | undefined;
 
-        <InputGroupButton
-          onClick={updateQuery}
-          disabled={!search.trim()}
-          variant={"ghost"}
-          className="p-5 lg:p-6"
+export const SearchFilterBar = memo(
+  ({
+    actions,
+    filter,
+    menus = [],
+    ...props
+  }: {
+    actions: Addon[] | JSX.Element;
+    menus?: Addon[];
+    filter:
+      | DeckFilterHandler
+      | CollectionFilterHandler
+      | FlashcardFilterHandler;
+  } & ComponentProps<"input">) => {
+    const { search, handleChangeSearch, updateQueryOnEnter, updateQuery } =
+      filter;
+
+    const { className, ...prop } = props;
+    const { data: user } = useAuthUser();
+    const isLoading = !user.id;
+
+    return (
+      <div className="flex lg:flex-row flex-col items-center rounded-lg w-full relative gap-2  ">
+        <Skeleton
+          loading={isLoading}
+          name="search-bar"
+          className="w-full h-full"
         >
-          <Search className="size-5" />
-        </InputGroupButton>
-        <Separator orientation="vertical" className="bg-black/25" />
-        <div className="flex items-center gap-1">
+          <Input
+            value={search}
+            onChange={handleChangeSearch}
+            type="text"
+            className={clsx(" h-full h-8 lg:h-12 min-h-full ", className)}
+            {...prop}
+            onKeyDown={updateQueryOnEnter}
+          />
+        </Skeleton>
+        <div className="flex items-start w-full gap-2">
+          {menus.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Skeleton loading={isLoading} name="button">
+                  <Button variant={"outline"} className="my-btn">
+                    <Settings2 />
+                  </Button>
+                </Skeleton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup className="w-full">
+                  {menus?.length &&
+                    menus.map(
+                      (el) =>
+                        el && (
+                          <button
+                            className="w-full "
+                            onClick={(e) => e.preventDefault()}
+                          >
+                            {el}
+                          </button>
+                        )
+                    )}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           {Array.isArray(actions) ? (
-            actions.map((el) => (
-              <InputGroupButton key={el.key}>{el}</InputGroupButton>
-            ))
+            actions.map(
+              (el) =>
+                el && (
+                  <Skeleton loading={isLoading} name="button">
+                    <button key={el.key}>{el}</button>
+                  </Skeleton>
+                )
+            )
           ) : (
             <InputGroupButton>{actions}</InputGroupButton>
           )}
         </div>
-      </InputGroup>
-      {menus.length > 0 && (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button variant={"outline"} className="my-btn">
-              <Settings2 />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup className="w-full">
-              {menus?.length &&
-                menus.map((el) => (
-                  <DropdownMenuItem
-                    className="w-full"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    {el}
-                  </DropdownMenuItem>
-                ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-    </div>
-  );
-};
+      </div>
+    );
+  }
+);

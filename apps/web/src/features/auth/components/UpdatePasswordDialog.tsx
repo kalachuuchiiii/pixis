@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/useAuth";
 import {
-  updatePasswordFormSchema,
+  UpdatePasswordFormSchema,
   type UpdatePasswordForm,
 } from "@pixis/schemas";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 
 export const UpdatePasswordDialog = () => {
   const form = useForm<UpdatePasswordForm>({
-    resolver: zodResolver(updatePasswordFormSchema),
+    resolver: zodResolver(UpdatePasswordFormSchema),
     defaultValues: {
       newPassword: "",
       oldPassword: "",
@@ -39,15 +39,17 @@ export const UpdatePasswordDialog = () => {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div>
-        <p className="font-medium dark:text-neutral-100 ">Change Password</p>
-        <p className="text-sm dark:text-stone-500 ">
+      <div className="space-y-1">
+        <p className="font-medium  w-fit  text-zinc-900 dark:text-neutral-100 ">
+          Change Password
+        </p>
+        <p className="text-sm   w-fit dark:text-stone-500 ">
           Update your account password
         </p>
       </div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant={"secondary"} className="my-btn">
+          <Button variant={"default"} className="my-btn">
             Update Password
           </Button>
         </DialogTrigger>

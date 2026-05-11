@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { type RawDeckForm } from '@pixis/schemas';
+import { type DeckForm } from '@pixis/schemas';
 import { Deck } from './entities/deck.entity';
 import { In, IsNull, Not, type Repository } from 'typeorm';
 import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
@@ -23,24 +23,30 @@ export class DeckService {
     public dataSource: DataSource,
   ) {}
 
-  async getLatestDecksAnsweredByUserId({ userId }: { userId: number }) {
+  async getLatestDecksAnsweredByUserId({
+    userId,
+    user,
+  }: {
+    userId: number;
+    user: AuthUser;
+  }) {
     const qb = this.deckRepo
       .createQueryBuilder('deck')
+      .distinctOn(['deck.id'])
       .leftJoin('deck.sessions', 'session')
       .leftJoin('session.user', 'user')
       .where(
-        '(deck.user.id = :userId OR deck.visibility != :visibility) AND (user.id = :userId) AND user.isPrivate != :isPrivate',
+        '((user.id = :userId AND NOT user.isPrivate) OR (user.id = :myId)) AND (deck.visibility != :visibility OR deck.user_id = :myId )',
         {
           userId,
+          myId: user.id,
           visibility: 'private',
-          isPrivate: true,
         },
       )
-      .orderBy('session.createdAt', 'DESC')
-      .limit(3);
+      .orderBy('deck.id')
+      .addOrderBy('session.startedAt', 'DESC');
 
-    const decks = await withDeckStats(qb).getMany();
-
+    const decks = await withDeckStats(qb).limit(3).getMany();
     return decks;
   }
 
@@ -59,6 +65,35 @@ export class DeckService {
       });
     const qbWithCount = withDeckStats(qb);
     const result = await paginate(query, qbWithCount, deckPaginationConfig);
+    return getPaginationData(result);
+  }
+
+  async findAccessibleDecksByUserId({
+    userId,
+    user,
+    query,
+  }: {
+    userId: number;
+    user: AuthUser;
+    query: PaginateQuery;
+  }) {
+    const qb = this.deckRepo
+      .createQueryBuilder('deck')
+      .leftJoinAndSelect('deck.user', 'user')
+      .where(
+        'user.id = :userId AND (deck.visibility != :visibility OR user.id = :myId)',
+        { userId, myId: user.id, visibility: 'private' },
+      );
+    const result = await paginate(query, withDeckStats(qb), {
+      ...deckPaginationConfig,
+      filterableColumns: {
+        ...deckPaginationConfig.filterableColumns,
+        visibility:
+          userId === user.id
+            ? deckPaginationConfig.filterableColumns?.visibility
+            : [],
+      },
+    });
     return getPaginationData(result);
   }
 
@@ -83,25 +118,16 @@ export class DeckService {
 
     const result = await paginate(query, qbWithCount, {
       ...deckPaginationConfig,
-
       filterableColumns: {
         ...deckPaginationConfig.filterableColumns,
-        visibility: user
-          ? deckPaginationConfig.filterableColumns?.visibility
-          : [],
+        visibility: [],
       },
     });
 
     return getPaginationData(result);
   }
 
-  async createDeck({
-    deckForm,
-    user,
-  }: {
-    deckForm: RawDeckForm;
-    user: AuthUser;
-  }) {
+  async createDeck({ deckForm, user }: { deckForm: DeckForm; user: AuthUser }) {
     const newDeck = this.deckRepo.create({
       ...deckForm,
       user: { id: user.id },
@@ -115,7 +141,7 @@ export class DeckService {
     user,
   }: {
     deckId: number;
-    deckForm: RawDeckForm;
+    deckForm: DeckForm;
     user: AuthUser;
   }) {
     const result = await this.deckRepo.update(
@@ -158,7 +184,8 @@ export class DeckService {
         'deck',
         'user.username',
         'user.nickname',
-        'user.avatarPublicUrl',
+        'user.avatarUrl',
+        'user.id',
       ])
       .addSelect('AVG(session.accuracy)::float', 'deck_average_accuracy')
       .addSelect('COUNT(DISTINCT suser.id)::int', 'deck_participants_count')

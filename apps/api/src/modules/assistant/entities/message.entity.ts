@@ -15,10 +15,10 @@ export class Message {
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
-  @ManyToOne(() => User, (u) => u.messages)
+  @ManyToOne(() => User, (u) => u.messages, { onDelete: 'CASCADE' })
   user?: User;
 
   @RelationId((m: Message) => m.user)

@@ -3,7 +3,7 @@ import { FlashcardService } from './flashcard.service';
 import { FlashcardController } from './flashcard.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Flashcard } from './entities/flashcard.entity';
-import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity.ts';
+import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity';
 import { Deck } from '../deck/entities/deck.entity';
 import { DeckModule } from '../deck/deck.module';
 

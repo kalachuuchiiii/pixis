@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from '@/modules/users/users.service';
-import { authUserSchema } from '../schemas/auth.schemas';
+import { AuthUserSchema } from '../schemas/auth.schemas';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -45,7 +45,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         code: 'INVALID_CREDENTIALS',
       });
     }
-    const data = authUserSchema.strip().parse(user);
+    const data = AuthUserSchema.strip().parse(user);
     return data;
   }
 }

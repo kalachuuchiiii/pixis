@@ -30,6 +30,6 @@ export const collectionPaginationConfig: PaginateConfig<Collection> = {
 };
 
 export const sessionPaginationConfig: PaginateConfig<Session> = {
-  sortableColumns: ['createdAt'],
-  defaultSortBy: [['createdAt', 'DESC']],
+  sortableColumns: ['startedAt'],
+  defaultSortBy: [['startedAt', 'DESC']],
 };

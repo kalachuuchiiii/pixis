@@ -1,8 +1,8 @@
 import api from "@/lib/api";
 import { getSuccessMessage } from "@/utils/message-extractor.utils";
 import {
-  collectionFormSchema,
-  idSchema,
+  CollectionFormSchema,
+  IDSchema,
   type CollectionForm,
 } from "@pixis/schemas";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ export const useCollection = () => {
       }) => {
         const promise = new Promise((resolve, reject) => {
           try {
-            const cleanForm = collectionFormSchema.parse(collectionForm);
+            const cleanForm = CollectionFormSchema.parse(collectionForm);
             return resolve(api.post(`/collections`, cleanForm));
           } catch (e) {
             return reject(e);
@@ -39,8 +39,8 @@ export const useCollection = () => {
         return await promise;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['collections']})
-      }
+        queryClient.invalidateQueries({ queryKey: ["collections"] });
+      },
     });
 
   // UPDATE
@@ -50,13 +50,13 @@ export const useCollection = () => {
         collectionForm,
         collectionId,
       }: {
-      collectionId: number | string
+        collectionId: number | string;
         collectionForm: CollectionForm;
       }) => {
         const promise = new Promise((resolve, reject) => {
           try {
-            const cleanForm = collectionFormSchema.parse(collectionForm);
-            const cleanId = idSchema.parse(collectionId);
+            const cleanForm = CollectionFormSchema.parse(collectionForm);
+            const cleanId = IDSchema.parse(collectionId);
             return resolve(api.patch(`/collections/${cleanId}`, cleanForm));
           } catch (e) {
             return reject(e);
@@ -72,17 +72,20 @@ export const useCollection = () => {
         return await promise;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['collection']});
-      }
+        queryClient.invalidateQueries({ queryKey: ["collection"] });
+      },
     });
-
 
   const { mutate: deleteCollection, isPending: isDeletingCollection } =
     useMutation({
-      mutationFn: async ({ collectionId }: { collectionId: number | string}) => {
+      mutationFn: async ({
+        collectionId,
+      }: {
+        collectionId: number | string;
+      }) => {
         const promise = new Promise((resolve, reject) => {
           try {
-            const cleanId = idSchema.parse(collectionId);
+            const cleanId = IDSchema.parse(collectionId);
             return resolve(api.delete(`/collections/${cleanId}/permanent`));
           } catch (e) {
             return reject(e);
@@ -98,8 +101,8 @@ export const useCollection = () => {
         return await promise;
       },
       onSuccess: () => {
-        nav('/app/collections')
-      }
+        nav("/app/collections");
+      },
     });
 
   // RESTORE

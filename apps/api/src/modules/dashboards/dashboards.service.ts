@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity.ts';
+import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { User } from '../users/entities/user.entity';
@@ -55,8 +55,7 @@ export class DashboardsService {
       )
       .addSelect('COUNT(fp.id)::int', 'fp_total_attempts')
       .leftJoin('fp.deck', 'fdeck')
-      .leftJoin('fp.user', 'fuser')
-      .where('fuser.id = :userId', { userId })
+      .where('fp.user_id = :userId', { userId })
       .groupBy('fdeck.id')
       .addGroupBy('fdeck.title')
       .orderBy('fp_average_accuracy', 'DESC')
@@ -77,13 +76,12 @@ export class DashboardsService {
 
     const result = await this.sessionRepo
       .createQueryBuilder('s')
-      .leftJoin('s.user', 'u')
-      .select(`DATE(s.createdAt AT TIME ZONE 'UTC')`, 'date')
+      .select(`DATE(s.startedAt AT TIME ZONE 'UTC')`, 'date')
       .addSelect('AVG(s.accuracy)', 'averageAccuracy')
-      .where('u.id = :userId', { userId })
-      .andWhere(`s.createdAt >= NOW() - INTERVAL '30 days'`)
-      .groupBy(`DATE(s.createdAt AT TIME ZONE 'UTC')`)
-      .orderBy(`DATE(s.createdAt AT TIME ZONE 'UTC')`, 'ASC')
+      .where('s.user_id = :userId', { userId })
+      .andWhere(`s.startedAt >= NOW() - INTERVAL '30 days'`)
+      .groupBy(`DATE(s.startedAt AT TIME ZONE 'UTC')`)
+      .orderBy(`DATE(s.startedAt AT TIME ZONE 'UTC')`, 'ASC')
       .getRawMany();
 
     return result;
@@ -98,7 +96,7 @@ export class DashboardsService {
     });
     const retentionRate =
       totalProgresses === 0 ? 0 : (totalCorrect / totalProgresses) * 100;
-    console.log(retentionRate);
+
     return retentionRate;
   }
 

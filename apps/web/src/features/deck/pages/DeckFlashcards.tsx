@@ -9,12 +9,9 @@ import { FlashcardCard } from "@/features/flashcard/components/ui/FlashcardCard"
 import { useDeckFlashcards } from "@/features/flashcard/hooks/useDeckFlashcards";
 import { Plus } from "lucide-react";
 import { useDeckDetails } from "../hooks/useDeckDetails";
-import { StartAndSelectExamMode } from "@/features/exam/components/StartAndSelectExamMode.tsx";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
 const DeckFlashcards = () => {
   const { data: deck, isPending } = useDeckDetails();
-  const { data: user } = useProfileDetails();
 
   const {
     flashcards,
@@ -23,7 +20,6 @@ const DeckFlashcards = () => {
     ref,
     isFetching: isDeckFlashcardsFetching,
     isPending: isDeckFlashcardsPending,
-    createDeckFlashcardTriggerRef,
   } = useDeckFlashcards();
 
   if (isPending || !deck) {
@@ -35,23 +31,7 @@ const DeckFlashcards = () => {
       <main>
         <header className="flex items-center gap-20">
           <div className="flex w-full gap-3 justify-end h-11">
-            <FlashcardFilter flashcardFilter={flashcardFilter} />
-            {deck.userId === user.id && (
-              <Dialog>
-                <DialogTrigger ref={createDeckFlashcardTriggerRef}>
-                  <Button className="my-btn h-full">
-                    {" "}
-                    <Plus /> <p className="lg:block hidden"> New Flashcard</p>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  className="min-w-4/10 w-full"
-                  onCloseAutoFocus={(e) => e.preventDefault()}
-                >
-                  <FlashcardCreator />
-                </DialogContent>
-              </Dialog>
-            )}
+            <FlashcardFilter deck={deck} flashcardFilter={flashcardFilter} />
           </div>
         </header>
 

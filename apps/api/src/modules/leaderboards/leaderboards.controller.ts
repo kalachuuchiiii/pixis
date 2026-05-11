@@ -2,15 +2,9 @@ import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AccessGuard } from '../auth/guards/access.guard';
 import { LeaderboardsService } from './leaderboards.service';
 import type { Request } from 'express';
-import {
-  topDeckUserSchema,
-  idSchema,
-  userBadgeSchema,
-  topGlobalUserSchema,
-  topUserSchema,
-} from '@pixis/schemas';
+import { IDSchema, TopUserSchema } from '@pixis/schemas';
 import z from 'zod';
-import { authUserSchema } from '../auth/schemas/auth.schemas';
+import { AuthUserSchema } from '../auth/schemas/auth.schemas';
 
 @Controller('leaderboards')
 export class LeaderboardsController {
@@ -19,13 +13,13 @@ export class LeaderboardsController {
   @Get('/:deckId/deck')
   @UseGuards(AccessGuard)
   async getDeckLeaderboards(@Req() request: Request) {
-    const user = authUserSchema.parse(request.user);
-    const deckId = idSchema.parse(request.params.deckId);
+    const user = AuthUserSchema.parse(request.user);
+    const deckId = IDSchema.parse(request.params.deckId);
     const result = await this.leaderboardsService.getDeckLeaderboards({
       user,
       deckId,
     });
-    const topUsers = z.array(topUserSchema).parse(result);
+    const topUsers = z.array(TopUserSchema).parse(result);
     return {
       topUsers,
     };
@@ -34,10 +28,10 @@ export class LeaderboardsController {
   @Get('/')
   @UseGuards(AccessGuard)
   async getGlobalLeaderboard(@Req() request: Request) {
-    const user = authUserSchema.parse(request.user);
+    const user = AuthUserSchema.parse(request.user);
     const data = await this.leaderboardsService.getLeaderboards();
-    const topUsers = z.array(topUserSchema).parse(data);
 
+    const topUsers = z.array(TopUserSchema).parse(data);
     return {
       topUsers,
     };

@@ -1,23 +1,22 @@
 import z from "zod";
-import { idSchema } from "./user.schemas";
-import { answerSchema } from "./flashcard.schemas";
+import { IDSchema, PercentageSchema } from "./common.schemas";
 
-export const examAnswerSchema = z.object({
-  flashcardId: idSchema,
+export const ExamAnswerSchema = z.object({
+  flashcardId: IDSchema,
   answer: z.string(),
 });
-export const examAnswersSchema = z.array(examAnswerSchema);
 
-export const resultDetailsSchema = z
+export const ExamAnswersSchema = z.array(ExamAnswerSchema);
+export const ResultDetailsSchema = z
   .object({
     totalPointsGained: z.coerce.number().nonnegative(),
     isStreakIncremented: z.boolean(),
     totalFlashcards: z.coerce.number().nonnegative(),
     correctCount: z.coerce.number().nonnegative(),
-    accuracy: z.coerce.number().nonnegative(),
-    isAbandoned: z.boolean(),
-    isFinished: z.boolean(),
-    deckId: idSchema,
+    accuracy: PercentageSchema,
+    isIncomplete: z.boolean(),
+    isCompleted: z.boolean(),
+    deckId: IDSchema,
   })
   .transform((d) => {
     const { accuracy } = d;
@@ -46,6 +45,6 @@ export const resultDetailsSchema = z
     };
   });
 
-export type ResultDetails = z.infer<typeof resultDetailsSchema>;
-export type ExamAnswer = z.infer<typeof examAnswerSchema>;
-export type ExamAnswers = z.infer<typeof examAnswersSchema>;
+export type ResultDetails = z.infer<typeof ResultDetailsSchema>;
+export type ExamAnswer = z.infer<typeof ExamAnswerSchema>;
+export type ExamAnswers = z.infer<typeof ExamAnswersSchema>;

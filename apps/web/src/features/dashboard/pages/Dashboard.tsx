@@ -15,8 +15,10 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { data: dashboard, isLoading } = useDashboardQuery();
 
   return (
@@ -86,7 +88,13 @@ const Dashboard = () => {
                 />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="averageAccuracy" fill="#8884d8" />
+                <Bar
+                  onClick={(data) =>
+                    navigate(`/app/decks/${(data as any).deckId}/flashcards`)
+                  }
+                  dataKey="averageAccuracy"
+                  fill="#8884d8"
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

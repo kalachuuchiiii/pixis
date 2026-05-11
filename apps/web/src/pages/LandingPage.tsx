@@ -1,4 +1,6 @@
+import { DynamicBackground } from "@/components/ui/DynamicBackground";
 import { Pixis, PixisAvatar } from "@/components/ui/PixisAvatar";
+import { Separator } from "@/components/ui/separator";
 import {
   Check,
   Wifi,
@@ -71,10 +73,7 @@ const SectionTag = ({ children }: { children: ReactNode }) => (
 );
 
 const SectionTitle = ({ children }: { children: ReactNode }) => (
-  <h2
-    className="text-[clamp(28px,5vw,48px)] font-normal leading-tight text-zinc-900 dark:text-white"
-    style={{ fontFamily: "'DM Serif Display', serif" }}
-  >
+  <h2 className="text-[clamp(28px,5vw,48px)] font-bold tracking-tighter leading-tight text-zinc-900 dark:text-white">
     {children}
   </h2>
 );
@@ -94,56 +93,15 @@ const SectionSub = ({
 );
 
 // ── Navigation ────────────────────────────────────────────────────────────
-const Nav = () => (
-  <nav className="sticky top-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 h-16 px-6 md:px-8 flex items-center justify-between">
-    <div className="flex tracking-widest items-center gap-3">
-      <PixisAvatar /> <Pixis />
-    </div>
-
-    <div className="hidden md:flex items-center gap-8 text-sm text-zinc-600 dark:text-zinc-400">
-      {["Features", "Modes", "Dashboard", "Docs"].map((item) => (
-        <a
-          key={item}
-          href={`#${item.toLowerCase()}`}
-          className="hover:text-zinc-900 dark:hover:text-white transition-colors"
-        >
-          {item}
-        </a>
-      ))}
-    </div>
-
-    <Link to="/sign-up">
-      <button className="h-9 px-5 rounded-xl bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
-        Get started free
-      </button>
-    </Link>
-  </nav>
-);
 
 // ── Hero ──────────────────────────────────────────────────────────────────
 const Hero = () => (
-  <section className="relative overflow-hidden px-6 md:px-8 pt-20 pb-24 text-center bg-white dark:bg-zinc-950">
+  <section className="relative overflow-hidden px-6 md:px-8 pt-20 pb-24 text-center">
     {/* Background Grid */}
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle, #d1d5db 1px, transparent 1px)",
-        backgroundSize: "32px 32px",
-        opacity: 0.4,
-      }}
-    />
 
     <div className="relative z-10 max-w-3xl mx-auto">
-      <FadeIn>
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-500 mb-8">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          Free forever • No email needed
-        </div>
-      </FadeIn>
-
       <FadeIn delay={80}>
-        <h1 className="text-[clamp(42px,7vw,68px)] font-normal leading-[1.05] text-zinc-900 dark:text-white mb-6">
+        <h1 className="text-[clamp(42px,7vw,68px)] font-bold tracking-tighter leading-[1.05] text-zinc-900 dark:text-white mb-6">
           The smarter way
           <br />
           to <span className="text-zinc-400 dark:text-zinc-500">
@@ -171,9 +129,6 @@ const Hero = () => (
             Watch 45s demo
           </button>
         </div>
-        <p className="text-xs text-zinc-500 mt-4">
-          No signup. Open and start instantly.
-        </p>
       </FadeIn>
     </div>
   </section>
@@ -184,8 +139,8 @@ const CardPreview = () => (
   <FadeIn className="flex justify-center px-6 pb-20">
     <div className="relative w-full max-w-md h-[220px]">
       {/* Background cards */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-80 h-48 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 rotate-[-6deg]" />
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-80 h-48 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 rotate-[-2deg]" />
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-80 h-40 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 rotate-[-6deg]" />
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-80 h-40 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 rotate-[-2deg]" />
 
       {/* Main Card */}
       <div className="absolute left-1/2 -translate-x-1/2 w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-6 shadow-xl">
@@ -196,29 +151,6 @@ const CardPreview = () => (
           Explain the sodium-potassium pump and its role in resting membrane
           potential.
         </p>
-
-        <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <span className="flex items-center gap-1.5 text-xs text-zinc-500">
-            <Clock className="w-3.5 h-3.5" />
-            Spaced • due in 2 days
-          </span>
-          <div className="flex gap-1.5">
-            {["Again", "Hard", "Got it"].map((label, i) => (
-              <button
-                key={i}
-                className={`px-3 py-1 text-xs font-medium rounded-lg border transition-colors ${
-                  i === 0
-                    ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400"
-                    : i === 1
-                      ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400"
-                      : "border-green-200 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   </FadeIn>
@@ -244,8 +176,8 @@ const features = [
     icon: Shuffle,
     color: "text-emerald-600",
     bg: "bg-emerald-100 dark:bg-emerald-950",
-    title: "Multiple Study Modes",
-    desc: "Normal, Exam, Shuffle, and Spaced Repetition — all in one deck.",
+    title: "Study Modes",
+    desc: "Normal, or timed in one deck. (more coming soon)",
   },
   {
     icon: TrendingUp,
@@ -271,10 +203,7 @@ const features = [
 ];
 
 const Features = () => (
-  <section
-    id="features"
-    className="px-6 md:px-8 py-20 bg-white dark:bg-zinc-950"
-  >
+  <section id="features" className="px-6 md:px-8 py-20  ">
     <div className="max-w-6xl mx-auto">
       <FadeIn className="text-center mb-16">
         <SectionTag>Everything you need</SectionTag>
@@ -291,7 +220,7 @@ const Features = () => (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((f, i) => (
           <FadeIn key={f.title} delay={i * 50}>
-            <div className="group border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all hover:shadow-sm">
+            <div className="group border h-full border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all hover:shadow-sm">
               <div
                 className={`w-11 h-11 rounded-2xl ${f.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}
               >
@@ -328,35 +257,24 @@ const modes = [
     desc: "Timed, high-pressure simulation.",
   },
   {
-    name: "Shuffle",
-    tag: "Random",
-    color: "sky",
-    icon: Shuffle,
-    desc: "Random order to break pattern recognition.",
-  },
-  {
     name: "Spaced Rep.",
     tag: "Smart",
     color: "violet",
     icon: TrendingUp,
-    desc: "Scientifically optimized review schedule.",
+    desc: "Scientifically optimized review schedule. ( Coming soon )",
   },
 ];
 
 const Modes = () => (
-  <section
-    id="modes"
-    className="px-6 md:px-8 py-20 bg-zinc-50 dark:bg-zinc-900 border-y border-zinc-100 dark:border-zinc-800"
-  >
+  <section id="modes" className="px-6 md:px-8 py-20 dark:border-zinc-800">
     <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
       <FadeIn>
         <SectionTag>Study modes</SectionTag>
         <SectionTitle>
           One deck,
-          <br />
-          four powerful ways to learn.
+          <br />2 powerful ways to learn.
         </SectionTitle>
-        <SectionSub>Switch modes anytime without losing progress.</SectionSub>
+        <SectionSub>Switch modes anytime</SectionSub>
       </FadeIn>
 
       <FadeIn delay={80}>
@@ -364,7 +282,7 @@ const Modes = () => (
           {modes.map((m) => (
             <div
               key={m.name}
-              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-6 hover:shadow transition-shadow"
+              className="bg-white dark:bg-zinc-900  border border-zinc-200 dark:border-zinc-700 rounded-3xl p-6 hover:shadow transition-shadow"
             >
               <div
                 className={`w-9 h-9 rounded-xl bg-${m.color}-100 dark:bg-${m.color}-950 flex items-center justify-center mb-4`}
@@ -407,31 +325,28 @@ const FreeCTA = () => (
     <FadeIn>
       <div
         className="
-       mx-auto bg-gradient-to-br from-zinc-900 to-black dark:from-zinc-800 dark:to-black  text-white p-12 md:p-20 text-center relative overflow-hidden"
+       mx-auto  text-zinc-900 dark:text-white p-12 md:p-20 text-center relative overflow-hidden"
       >
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-white/20 bg-white/10 text-sm mb-6">
             <Check className="w-4 h-4" /> Always free
           </div>
 
-          <h2
-            className="text-5xl md:text-6xl font-normal leading-tight mb-6"
-            style={{ fontFamily: "'DM Serif Display', serif" }}
-          >
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tighter leading-tight mb-6">
             Everything.
             <br />
             Free. Forever.
           </h2>
 
-          <p className="text-xl text-zinc-300 max-w-lg mx-auto mb-10">
+          <p className="text-xl dark:text-neutral-100 text-zinc-500 max-w-lg mx-auto mb-10">
             No paywalls. No premium tiers. Just powerful flashcards.
           </p>
 
-          <div className="flex flex-wrap gap-x-8 gap-y-4 justify-center mb-12 text-zinc-300">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 justify-center mb-12 ">
             {perks.map((perk) => (
               <div key={perk} className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <Check className="w-3.5 h-3.5 text-green-400" />
+                  <Check className="w-3.5 h-3.5 " />
                 </div>
                 <span>{perk}</span>
               </div>
@@ -452,7 +367,7 @@ const FreeCTA = () => (
 // ── Offline Banner ────────────────────────────────────────────────────────
 const OfflineBanner = () => (
   <FadeIn className="px-6 max-w-5xl mx-auto py-20">
-    <div className="border border-dashed border-zinc-300 dark:border-zinc-700 rounded-3xl px-8 py-8 bg-white dark:bg-zinc-900 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="flex flex-col items-center justify-center ">
       <div className="flex items-center gap-5">
         <WifiOff className="w-10 h-10 text-zinc-400" />
         <div>
@@ -464,52 +379,25 @@ const OfflineBanner = () => (
           </p>
         </div>
       </div>
-      <span className="px-5 py-2 text-xs font-semibold tracking-widest uppercase bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 rounded-full">
-        Coming soon
-      </span>
+      <span className="opacity-75 my-5">Coming soon</span>
     </div>
   </FadeIn>
 );
 
 // ── Footer ────────────────────────────────────────────────────────────────
-const Footer = () => (
-  <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-10 text-sm text-zinc-500 dark:text-zinc-400">
-    <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div className="flex items-center gap-1">
-        <div className="flex items-center gap-2">
-          <PixisAvatar />
-          <Pixis />
-        </div>
-        <Dot />
-        <span className=" text-xs"> Free AI flashcards</span>
-      </div>
-
-      <div className="flex gap-6">
-        {["Features", "Docs", "Privacy", "GitHub"].map((link) => (
-          <a
-            key={link}
-            href="#"
-            className="hover:text-zinc-900 dark:hover:text-white transition-colors"
-          >
-            {link}
-          </a>
-        ))}
-      </div>
-    </div>
-  </footer>
-);
 
 // ── Main Landing Page ─────────────────────────────────────────────────────
 const LandingPage = () => (
-  <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
-    <Nav />
+  <div className="min-h-screen text-zinc-900 dark:text-zinc-100">
     <Hero />
     <CardPreview />
+    <Separator />
     <Features />
+    <Separator />
     <Modes />
+    <Separator />
     <FreeCTA />
     <OfflineBanner />
-    <Footer />
   </div>
 );
 

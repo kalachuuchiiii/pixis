@@ -1,29 +1,60 @@
 import {
   HttpException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { User } from './entities/user.entity';
 import { Repository, type FindOneOptions } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { UpdateUserForm } from '@pixis/schemas';
+
 import { withCooldown } from '@/common/utils/cooldown.util';
 import ms from 'ms';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import nestql from 'nestql';
+import { UploadsService } from '../uploads/uploads.service';
+import type { UploadApiResponse } from 'cloudinary';
+import type { UpdateUserForm } from '@pixis/schemas';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+
+  async saveAvatar({
+    user,
+    uploadResult,
+  }: {
+    user: AuthUser;
+    uploadResult: UploadApiResponse;
+  }) {
+    const result = await this.userRepo.update(
+      { id: user.id },
+      {
+        avatarPublicId: uploadResult.public_id,
+        avatarUrl: uploadResult.secure_url,
+      },
+    );
+    if (result.affected === 0) {
+      throw new NotFoundException({
+        message: 'Avatar upload failed',
+        code: 'Avatar upload failed',
+      });
+    }
+
+    return result;
+  }
 
   async findByUsername(username: string, options: FindOneOptions<User> = {}) {
     return await this.userRepo.findOne({ where: { username }, ...options });
   }
 
   async getUserById(userId: number) {
+    //point, streak, averageAccuracy, deckStudiedCount, flashcardAnsweredCount, rank;
+
     const qb = this.userRepo
       .createQueryBuilder('user')
-      .where('user.id = :userId', { userId })
+
       .leftJoinAndSelect('user.point', 'point')
       .leftJoinAndSelect('user.streak', 'streak')
       .leftJoin('user.progresses', 'progress')
@@ -42,16 +73,21 @@ export class UsersService {
         'user_flashcard_answered_count',
       )
       .addSelect(
-        `DENSE_RANK() OVER (ORDER BY COALESCE(SUM(session.totalPointsGained)::int, 0) DESC, COALESCE(AVG(session.accuracy)::float, 0) DESC )::int`,
+        `DENSE_RANK() OVER (ORDER BY COALESCE(SUM(point.currentPoints)::int, 0) DESC, COALESCE(AVG(session.accuracy)::float, 0) DESC )::int`,
         'user_rank',
       )
       .groupBy('user.id')
       .addGroupBy('point.id')
       .addGroupBy('streak.id');
 
-    const result = await qb.getRawOne();
-    console.log(result);
-    if (!result) {
+    const userStats = await this.userRepo
+      .createQueryBuilder()
+      .select('*')
+      .from(`(${qb.getQuery()})`, 'leaderboard')
+      .where('leaderboard.user_id = :userId', { userId })
+      .getRawOne();
+
+    if (!userStats) {
       throw new UnauthorizedException({
         message: 'User not found.',
         code: 'USER_NOT_FOUND',
@@ -59,11 +95,10 @@ export class UsersService {
     }
 
     const mappedResult = {
-      ...nestql(result, { prefix: 'user' }),
-      point: nestql(result, { prefix: 'point' }),
-      streak: nestql(result, { prefix: 'streak' }),
+      ...nestql(userStats, { prefix: 'user' }),
+      point: nestql(userStats, { prefix: 'point' }),
+      streak: nestql(userStats, { prefix: 'streak' }),
     };
-    console.log(mappedResult);
     return mappedResult;
   }
 
@@ -150,6 +185,7 @@ export class UsersService {
         code: 'USER_NOT_FOUND',
       });
     }
+
     return result;
   }
 }

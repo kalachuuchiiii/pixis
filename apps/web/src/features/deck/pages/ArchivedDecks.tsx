@@ -1,12 +1,7 @@
 import api from "@/lib/api";
-import type { Deck, DeckWithAuthor } from "@pixis/schemas";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-  type InfiniteData,
-} from "@tanstack/react-query";
-import React from "react";
+import type { Deck } from "@pixis/schemas";
+import { useInfiniteQuery } from "@tanstack/react-query";
+
 import { AppHeader } from "@/components/ui/AppHeader";
 import { useDeckFilter } from "../hooks/useDeckFilter";
 import { DeckFilter } from "../components/DeckFilter";
@@ -31,6 +26,7 @@ import { useArchive } from "../hooks/useArchive";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "../../../components/ui/EmptyResource";
 import { SelectedDeckActions } from "../components/SelectedDeckActions";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 const ArchivedDecks = () => {
   const deckFilterHandlers = useDeckFilter();
@@ -42,6 +38,7 @@ const ArchivedDecks = () => {
     handleSelectOrDeselect,
   } = archiveSelector;
   const { query } = deckFilterHandlers;
+  const { data: user } = useAuthUser();
   const { data, isPending, hasNextPage, isFetching } = useInfiniteQuery({
     queryKey: ["archived", query],
     queryFn: async ({ pageParam = 1 }) => {
@@ -51,7 +48,7 @@ const ArchivedDecks = () => {
       }
       const result = await api.get<{
         nextPage: number | undefined;
-        archivedDecks: DeckWithAuthor[];
+        archivedDecks: Deck[];
       }>(`/decks/archived?${queries.join("&")}`);
       return result.data;
     },

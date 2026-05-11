@@ -1,46 +1,25 @@
 import api from "@/lib/api";
-import type { User, UserWithStats } from "@pixis/schemas";
+import { IDSchema, type User, type UserWithStats } from "@pixis/schemas";
 import { useQuery } from "@tanstack/react-query";
-
-export const initialData: UserWithStats = {
-  id: 0,
-  username: "",
-  nickname: "",
-  avatarPublicUrl: "",
-  isPrivate: false,
-  lastNicknameUpdate: new Date().toISOString(),
-  lastUsernameUpdate: new Date().toISOString(),
-  averageAccuracy: 0,
-  deckStudiedCount: 0,
-  flashcardAnsweredCount: 0,
-  rank: 0,
-  point: {
-    id: 0,
-    currentPoints: 0,
-    highestPoints: 0,
-  },
-  streak: {
-    id: 0,
-    currentStreak: 0,
-    highestStreak: 0,
-    totalStreak: 0,
-    lastActionTimestamp: new Date().toISOString(),
-  },
-  createdAt: new Date().toISOString(),
-};
+import { useParams } from "react-router-dom";
+import { initialUserStatData } from "../data/profile";
 
 export const useProfileDetails = () => {
+  const { userId = "0" } = useParams();
+
   const { data, error, ...result } = useQuery({
-    queryKey: ["profile-details"],
+    queryKey: ["profile", userId],
     queryFn: async () => {
-      const res = await api.get<{ user: UserWithStats }>("/users/me/profile");
+      const cleanId = IDSchema.catch(0).parse(userId);
+      const res = await api.get<{ user: UserWithStats }>(
+        `/users/${cleanId}/profile`
+      );
       return res.data.user;
     },
-    staleTime: Infinity,
   });
 
   return {
-    data: data ?? initialData,
+    data: data ?? initialUserStatData,
     ...result,
   };
 };

@@ -1,18 +1,19 @@
 import type { Session } from "@pixis/schemas";
-import { Clock, Trophy, XCircle } from "lucide-react";
+import { CircleStop, Clock, Trophy, XCircle } from "lucide-react";
 
 export const getStatusInfo = (session: Session) => {
-  const isFinished = !!session.finishedAt;
-  const isAbandoned = !!session.abandonedAt;
-  const finishedAtDate = new Date(session.finishedAt ?? new Date()).getTime();
-  const abandonedAtDate = new Date(session.abandonedAt ?? new Date()).getTime();
-  const createdAtDate = new Date(session.createdAt ?? new Date()).getTime();
+  const isCompleted = session.status === "completed";
+  const isIncomplete = session.status === "incomplete";
 
-  if (isAbandoned) {
+  const stoppedAt = new Date(session.stoppedAt ?? new Date()).getTime();
+  const startedAt = new Date(session.startedAt).getTime();
+  const duration = stoppedAt - startedAt;
+
+  if (isIncomplete) {
     return {
-      isAbandoned,
-      isFinished,
-      duration: abandonedAtDate - createdAtDate,
+      isIncomplete,
+      isCompleted,
+      duration,
       info: {
         label: "Incomplete",
         color: "text-red-500",
@@ -21,15 +22,30 @@ export const getStatusInfo = (session: Session) => {
       },
     };
   }
+
+  if (isCompleted) {
+    return {
+      isIncomplete,
+      isCompleted,
+      duration,
+      info: {
+        label: "Completed",
+        color: "text-emerald-500",
+        bg: "bg-emerald-100 dark:bg-emerald-950",
+        icon: Trophy,
+      },
+    };
+  }
+
   return {
-    isAbandoned,
-    isFinished,
-    duration: finishedAtDate - createdAtDate,
+    isIncomplete,
+    isCompleted,
+    duration,
     info: {
-      label: "Completed",
-      color: "text-emerald-500",
-      bg: "bg-emerald-100 dark:bg-emerald-950",
-      icon: Trophy,
+      label: "Idle",
+      color: "text-amber-500",
+      bg: "bg-amber-100 dark:bg-amber-950",
+      icon: CircleStop,
     },
   };
 };

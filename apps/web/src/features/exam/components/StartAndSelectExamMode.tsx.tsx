@@ -24,7 +24,10 @@ export const StartAndSelectExamMode = ({ deck }: { deck: Deck }) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md rounded-2xl p-6">
+      <DialogContent
+        onCloseAutoFocus={(e) => e.preventDefault()}
+        className="max-w-md rounded-2xl p-6"
+      >
         <DialogHeader className="space-y-1 text-center">
           <h2 className="text-xl font-semibold tracking-tight">
             Choose your mode

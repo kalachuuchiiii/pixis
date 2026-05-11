@@ -12,10 +12,10 @@ export const Timer = ({
   return (
     <div className="flex flex-col items-center justify-center max-w-md ">
       {/* Timer Card */}
-      <div className="bg-zinc-950 rounded-3xl shadow-2xl w-full">
+      <div className=" rounded-3xl w-full">
         {/* Display */}
         <div className="relative flex items-center justify-center">
-          <div className="text-[5.5rem] md:text-[6.5rem] font-mono font-bold tracking-tighter text-white tabular-nums">
+          <div className="text-[5.5rem] md:text-[6.5rem] font-mono font-bold tracking-tighter  tabular-nums">
             {formatMs(time)}
           </div>
 

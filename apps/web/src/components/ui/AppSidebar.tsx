@@ -13,6 +13,7 @@ import {
 import {
   BarChart2,
   BookOpen,
+  ChartArea,
   Gift,
   Home,
   Layers,
@@ -24,19 +25,12 @@ import {
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { Pixis, PixisAvatar } from "./PixisAvatar";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { queryClient } from "@/lib/queryClient";
+import type { UserWithStats } from "@pixis/schemas";
 
 const NAV_SUPER_PRIMARY = [
   { label: "Chat", to: "/app/chat", icon: () => PixisAvatar({ size: 20 }) },
-];
-
-const NAV_PRIMARY = [
-  {
-    label: "My Collections",
-    to: "/app/collections",
-    icon: LibraryBig,
-  },
-  { label: "My Decks", to: "/app/decks", icon: Layers },
-  { label: "Dashboard", to: "/app/dashboard", icon: BarChart2 },
 ];
 
 const NAV_SOCIAL = [
@@ -48,11 +42,6 @@ const NAV_SOCIAL = [
   { label: "Explore Decks", to: "/app/explore/decks", icon: BookOpen },
 
   { label: "Leaderboard", to: "/app/leaderboard", icon: Trophy },
-];
-
-const NAV_SYSTEM = [
-  { label: "Profile", to: "/app/profile", icon: User },
-  { label: "Settings", to: "/app/settings", icon: Settings },
 ];
 
 const NavItem = ({
@@ -94,7 +83,29 @@ const NavItem = ({
 };
 
 export const AppSidebar = () => {
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
+  const NAV_SYSTEM = [
+    { label: "Profile", to: `/app/profile/${user.id}/stats`, icon: User },
+    { label: "Settings", to: "/app/settings", icon: Settings },
+  ];
+  const NAV_PRIMARY = [
+    {
+      label: "My Collections",
+      to: `/app/profile/${user.id}/collections`,
+      icon: LibraryBig,
+    },
+    { label: "My Decks", to: `/app/profile/${user.id}/decks`, icon: Layers },
+  ];
+
+  const NAV_STATS = [
+    { label: "Dashboard", to: "/app/dashboard", icon: BarChart2 },
+    {
+      label: "Stats",
+      to: `/app/profile/${user.id}/stats`,
+      icon: ChartArea,
+    },
+  ];
+
   return (
     <Sidebar
       className="border-r dark:border-zinc-800 border-zinc-100"
@@ -129,9 +140,18 @@ export const AppSidebar = () => {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Study</SidebarGroupLabel>
+          <SidebarGroupLabel>Shortcuts</SidebarGroupLabel>
           <SidebarMenu>
             {NAV_PRIMARY.map((item) => (
+              <NavItem key={item.to} item={item} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Stats</SidebarGroupLabel>
+          <SidebarMenu>
+            {NAV_STATS.map((item) => (
               <NavItem key={item.to} item={item} />
             ))}
           </SidebarMenu>

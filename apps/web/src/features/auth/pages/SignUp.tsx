@@ -6,7 +6,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Controller, useForm } from "react-hook-form";
-import { signUpFormSchema, type SignUpForm } from "@pixis/schemas";
+import { SignUpFormSchema, type SignUpForm } from "@pixis/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../hooks/useAuth";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -14,12 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
+import { privacyPolicy } from "../data/auth";
 
 const SignUp = () => {
   const { signUp, isSigningUp } = useAuth();
 
   const form = useForm<SignUpForm>({
-    resolver: zodResolver(signUpFormSchema),
+    resolver: zodResolver(SignUpFormSchema),
     defaultValues: {
       username: "",
       password: "",
@@ -36,10 +37,7 @@ const SignUp = () => {
     <div className="space-y-8" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <div>
-        <h2
-          className="text-[26px] font-normal text-zinc-900 dark:text-white mb-1"
-          style={{ fontFamily: "'DM Serif Display', serif" }}
-        >
+        <h2 className="text-[26px] font-normal heading text-zinc-900 dark:text-white mb-1">
           Create an account
         </h2>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -127,7 +125,7 @@ const SignUp = () => {
                         <DialogTitle>Privacy Policy</DialogTitle>
                       </DialogHeader>
                       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        Your data is safe. (shortened version for demo)
+                        {privacyPolicy}
                       </p>
                     </DialogContent>
                   </Dialog>{" "}

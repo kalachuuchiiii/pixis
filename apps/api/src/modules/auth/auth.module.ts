@@ -11,16 +11,18 @@ import { LocalStrategy } from './strategies/local.strategies';
 import { UsersService } from '../users/users.service';
 import { RefreshStrategy } from './strategies/refresh.strategies';
 import { AccessStrategy } from './strategies/access.strategy';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, UsersService, RefreshStrategy, AccessStrategy],
+  providers: [AuthService, LocalStrategy, RefreshStrategy, AccessStrategy],
   imports: [
     TypeOrmModule.forFeature([Credential, User]),
     TypeOrmModule,
+    UsersModule,
     PassportModule,
-    JwtModule.register({})
+    JwtModule.register({}),
   ],
-  exports: [AuthService]
+  exports: [AuthService],
 })
-export class AuthModule {} 
+export class AuthModule {}

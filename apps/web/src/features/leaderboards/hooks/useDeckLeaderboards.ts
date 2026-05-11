@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { TopDeckUser, TopUser } from "@pixis/schemas";
+import type { TopUser } from "@pixis/schemas";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 

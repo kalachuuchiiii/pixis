@@ -13,7 +13,7 @@ import { User } from '@/modules/users/entities/user.entity';
 
 @Entity('conversation')
 export class Conversation {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
   @UpdateDateColumn({ name: 'updated_at' })

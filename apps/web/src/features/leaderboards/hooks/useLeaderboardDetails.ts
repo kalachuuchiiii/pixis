@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { TopGlobalUser, TopUser } from "@pixis/schemas";
+import type { TopUser } from "@pixis/schemas";
 import { useQuery } from "@tanstack/react-query";
 
 export const useLeaderboardDetails = () => {

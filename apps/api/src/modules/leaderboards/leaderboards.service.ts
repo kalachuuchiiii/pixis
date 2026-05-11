@@ -4,16 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
 
-import {
-  userBadgeSchema,
-  type TopGlobalUser,
-  type TopUser,
-} from '@pixis/schemas';
+import { type TopUser } from '@pixis/schemas';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
-import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity.ts';
-import { POINT_PER_CORRECT } from '@pixis/constants';
-import { DashboardsService } from '../dashboards/dashboards.service';
-import { withUserStats } from '../users/query/withUserStats';
+import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity';
 import nestql from 'nestql';
 import { withLeaderboardStats } from './query/withLeaderboardStats';
 
@@ -39,6 +32,7 @@ export class LeaderboardsService {
     const qb = this.userRepo
       .createQueryBuilder('user')
       .leftJoin('user.sessions', 'session');
+
     const result = await withLeaderboardStats(qb).limit(10).getRawMany();
     const mappedResult = result.map((r) =>
       nestql<TopUser>(r, {
@@ -48,12 +42,14 @@ export class LeaderboardsService {
           'username',
           'nickname',
           'average_accuracy',
-          'avatar_public_url',
+          'avatar_url',
+          'id',
           'points',
           'rank',
         ],
       }),
     );
+
     return mappedResult;
   }
 
@@ -77,14 +73,14 @@ export class LeaderboardsService {
         pick: [
           'username',
           'nickname',
-          'avatar_public_url',
+          'avatar_url',
+          'id',
           'points',
           'average_accuracy',
           'rank',
         ],
       }),
     );
-    console.log(mappedResult);
 
     return mappedResult;
   }

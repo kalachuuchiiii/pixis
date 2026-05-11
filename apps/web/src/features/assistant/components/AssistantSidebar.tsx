@@ -26,9 +26,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 export const AssistantSidebar = () => {
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
   const { data: conversations = [] } = useAssistantConversations();
   const { deleteConversation, isDeletingConversation } = useAssistant();
 
@@ -40,7 +41,7 @@ export const AssistantSidebar = () => {
           <Pixis />
         </div>
       </SidebarHeader>
-      <SidebarContent className="px-3 py-3 flex flex-col gap-1">
+      <SidebarContent className="px-3 py-3  flex flex-col gap-1">
         {/* Primary — core study actions */}
         {/* Social — community & competition */}
         <SidebarGroup>
@@ -49,7 +50,7 @@ export const AssistantSidebar = () => {
               {" "}
               <NavLink
                 className={"flex items-center gap-2 w-full"}
-                to={`/app/decks`}
+                to={`/app/explore/decks`}
               >
                 <Home /> Home
               </NavLink>
@@ -69,46 +70,60 @@ export const AssistantSidebar = () => {
 
           <Separator className="my-4" />
           <SidebarGroupLabel>Conversations</SidebarGroupLabel>
-          {conversations.map((c) => (
-            <SidebarMenu>
-              <SidebarMenuButton>
-                <NavLink className={"w-full h-full "} to={`/app/chat/${c.id}`}>
-                  {c.title || "Untitled"}
-                </NavLink>
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    <Button
-                      variant={"ghost"}
-                      className="opacity-10 hover:opacity-100 hover:text-red-500"
-                    >
-                      <Trash />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete conversation?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This cannot be undone
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <main className="flex items-center justify-end gap-1">
-                      <AlertDialogCancel variant={"outline"} className="my-btn">
-                        keep this conversation
-                      </AlertDialogCancel>
-                      <AlertDialogCancel
-                        disabled={isDeletingConversation}
-                        onClick={() => deleteConversation({ id: c.id })}
-                        variant={"destructive"}
-                        className="my-btn"
+          {conversations.length > 0 ? (
+            conversations.map((c) => (
+              <SidebarMenu>
+                <SidebarMenuButton>
+                  <NavLink
+                    className={"w-full h-full truncate "}
+                    to={`/app/chat/${c.id}`}
+                  >
+                    {c.title || "Untitled"}
+                  </NavLink>
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <Button
+                        variant={"ghost"}
+                        className="opacity-10 hover:opacity-100 hover:text-red-500"
                       >
-                        Delete
-                      </AlertDialogCancel>
-                    </main>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </SidebarMenuButton>
-            </SidebarMenu>
-          ))}
+                        <Trash />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Delete conversation?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This cannot be undone
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <main className="flex items-center justify-end gap-1">
+                        <AlertDialogCancel
+                          variant={"outline"}
+                          className="my-btn"
+                        >
+                          keep this conversation
+                        </AlertDialogCancel>
+                        <AlertDialogCancel
+                          disabled={isDeletingConversation}
+                          onClick={() => deleteConversation({ id: c.id })}
+                          variant={"destructive"}
+                          className="my-btn"
+                        >
+                          Delete
+                        </AlertDialogCancel>
+                      </main>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </SidebarMenuButton>
+              </SidebarMenu>
+            ))
+          ) : (
+            <p className="text-xs opacity-50 my-3 text-center truncate">
+              No conversations yet
+            </p>
+          )}
         </SidebarGroup>
       </SidebarContent>
 

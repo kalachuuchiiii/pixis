@@ -20,7 +20,7 @@ const DeckSessionHistory = () => {
           Your previous sessions
         </h4>
       </header>
-      <main className="grid grid-cols-3 gap-1">
+      <main className="grid grid-cols-1 lg:grid-cols-3 gap-1">
         {sessions.map((s) => (
           <SessionCard session={s} />
         ))}

@@ -1,11 +1,11 @@
-import { idSchema } from '@pixis/schemas';
+import { IDSchema } from '@pixis/schemas';
 import z from 'zod';
 
 export const flashcardProgressValuesSchema = z.object({
-  flashcard: z.object({ id: idSchema }),
-  deck: z.object({ id: idSchema }),
-  user: z.object({ id: idSchema }),
-  session: z.object({ id: idSchema }),
+  flashcard: z.object({ id: IDSchema }),
+  deck: z.object({ id: IDSchema }),
+  user: z.object({ id: IDSchema }),
+  session: z.object({ id: IDSchema }),
   isAnswerCorrect: z.boolean(),
 });
 

@@ -17,6 +17,7 @@ import {
 import { useFlashcardForm } from "../../hooks/useFlashcardForm";
 import clsx from "clsx";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 export const FlashcardCard = ({
   flashcard,
@@ -25,7 +26,7 @@ export const FlashcardCard = ({
   color?: string;
   flashcard: Flashcard;
 }) => {
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
   const flashcardFormHandler = useFlashcardForm(flashcard);
 
   return (
@@ -33,7 +34,7 @@ export const FlashcardCard = ({
       <DialogTrigger asChild>
         <Card
           className={clsx(
-            "group h-full flex flex-col justify-between p-6 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-zinc-900 outline-1 outline-zinc-500 dark:outline-zinc-700 ",
+            "group h-full flex flex-col justify-between p-6 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-zinc-900 outline-1 outline-neutral-300 dark:outline-zinc-700 ",
             `border-l-10 border-l-[${color}]`
           )}
         >
