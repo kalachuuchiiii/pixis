@@ -2,7 +2,6 @@ import { createContext, useContext } from "react";
 import type { Collection } from "@pixis/schemas";
 import { formatDistanceToNow } from "date-fns";
 import { clsx } from "clsx";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { Skeleton } from "boneyard-js/react";
 

@@ -17,7 +17,6 @@ export const useInViewRefetch = (
     isFetching,
     fetchNextPage,
     fetchPreviousPage,
-    data,
   } = infiniteQuery;
 
   useEffect(() => {

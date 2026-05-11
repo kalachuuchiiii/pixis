@@ -1,11 +1,8 @@
 import { usePopup } from "@/hooks/usePopup";
 import { Dialog, DialogContent } from "./dialog";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 export const PopupProvider = () => {
   const { state, setState } = usePopup();
-  const location = useLocation();
 
   const handleOpenChange = () => {
     setState({

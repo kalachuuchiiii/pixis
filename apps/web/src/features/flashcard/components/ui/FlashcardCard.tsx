@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useFlashcardForm } from "../../hooks/useFlashcardForm";
 import clsx from "clsx";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 export const FlashcardCard = ({

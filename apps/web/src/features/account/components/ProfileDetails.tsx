@@ -1,11 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { DeckDisplay } from "@/features/deck/components/DeckDisplay";
-import { getRankIcon } from "@/features/leaderboards/components/Leaderboard";
-import { toOrdinal } from "@/utils/toOrdinal";
-import clsx from "clsx";
 import { UserBadge } from "./ui/UserBadge";
-import type { Deck, UserWithStats } from "@pixis/schemas";
-import streakFire from "/streak-fire.gif";
 import { Link, NavLink, Outlet, useParams } from "react-router-dom";
 import { useProfileDetails } from "../hooks/useProfileDetails";
 import { Button } from "@/components/ui/button";

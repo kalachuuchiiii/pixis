@@ -1,5 +1,3 @@
-import React from "react";
-
 import { CollectionCard } from "../components/CollectionCard";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { CollectionFilter } from "../components/CollectionFilter";
@@ -7,7 +5,6 @@ import { Link } from "react-router-dom";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "@/components/ui/EmptyResource";
 import { useExploreCollections } from "../hooks/useExploreCollections";
-import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { CollectionCreatorDialog } from "../components/CollectionCreatorDialog";
 
 const ExploreCollections = () => {

@@ -1,26 +1,11 @@
-import {
-  getErrorDetails,
-  getErrorMessage,
-} from "@/utils/message-extractor.utils";
-import { isAxiosError } from "axios";
+import { getErrorDetails } from "@/utils/message-extractor.utils";
 import React, { type ReactNode, useState } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 
-import {
-  AlertTriangle,
-  X,
-  RefreshCw,
-  Home,
-  ShieldAlert,
-  ServerCrash,
-  Lock,
-  FileQuestion,
-  type LucideIcon,
-  ChevronLeft,
-} from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AlertTriangle, X, RefreshCw, Home, ChevronLeft } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useNavigate, type NavigateOptions, type To } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   const {

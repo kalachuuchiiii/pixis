@@ -4,7 +4,6 @@ import type {
   SortingOrder,
   Visibility,
 } from "@pixis/constants";
-import { useCallback, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 
 type SortObject = {

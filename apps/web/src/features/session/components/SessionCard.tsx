@@ -1,4 +1,3 @@
-import { Clock, Trophy, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import type { Session } from "@pixis/schemas";
 import { getStatusInfo } from "../utils/session.utils";

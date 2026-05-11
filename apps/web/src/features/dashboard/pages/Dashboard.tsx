@@ -1,9 +1,7 @@
-import React from "react";
 import { useDashboardQuery } from "../hooks/useDashboardQuery";
 import { AppHeader } from "@/components/ui/AppHeader";
-import { BarChart3, TrendingUp, Target, BookOpen } from "lucide-react";
+import { BarChart3, TrendingUp, BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   LineChart,
   Line,
@@ -19,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { data: dashboard, isLoading } = useDashboardQuery();
+  const { data: dashboard } = useDashboardQuery();
 
   return (
     <div className="p-6 space-y-6">

@@ -1,9 +1,8 @@
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails.ts";
 import { useAssistantChat } from "../hooks/useAssistantChat";
 import { PromptInput } from "../components/PromptInput";
 import { AssistantChatBubble } from "../components/AssistantChatBubble";
 import { UserChatBubble } from "../components/UserChatBubble";
-import { useEffect, useLayoutEffect, useRef } from "react";
+
 import { Spinner } from "@/components/ui/spinner";
 import { PixisAvatar } from "@/components/ui/PixisAvatar";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,11 +14,9 @@ const AssistantPage = () => {
   const { data: user } = useAuthUser();
   const assistantChat = useAssistantChat();
   const {
-    sendPrompt,
     isSendingPrompt,
     bottomRef,
-    prompt,
-    setPrompt,
+
     messages,
     previousRef,
     nextRef,

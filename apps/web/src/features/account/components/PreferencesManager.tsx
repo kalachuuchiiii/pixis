@@ -1,6 +1,5 @@
 import { Switch } from "@/components/ui/switch";
 import { useProfile } from "../hooks/useProfile";
-import { useProfileDetails } from "../hooks/useProfileDetails";
 import { useEffect, useState } from "react";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 

@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import pixis from "/pixis.gif";
-import { Zap } from "lucide-react";
 
 export const PixisAvatar = ({ size = 20 }: { size?: number }) => (
   <div

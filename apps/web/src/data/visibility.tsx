@@ -1,5 +1,5 @@
 import type { Visibility } from "@pixis/constants";
-import { Globe, Lock, Link } from "lucide-react";
+import { Globe, Lock } from "lucide-react";
 
 export type VisibilityOption = {
   value: Visibility;

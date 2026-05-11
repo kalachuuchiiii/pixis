@@ -1,5 +1,3 @@
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
-import { pop, usePopup } from "@/hooks/usePopup";
 import api from "@/lib/api";
 import {
   getErrorMessage,
@@ -16,11 +14,9 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuthUser } from "./useAuthUser";
 
 export const useAuth = () => {
   const nav = useNavigate();
-  const { refetch } = useAuthUser();
   const queryClient = useQueryClient();
 
   const { mutate: signUp, isPending: isSigningUp } = useMutation({

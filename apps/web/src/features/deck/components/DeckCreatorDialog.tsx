@@ -15,7 +15,6 @@ import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
 export const DeckCreatorDialog = ({ ...props }: ComponentProps<"button">) => {
   const { deckForm, onSubmit, isCreatingDeck } = useDeckCreator();
-  const color = deckForm.watch("color");
   const { data: user } = useAuthUser();
   const { data: profile } = useProfileDetails();
 

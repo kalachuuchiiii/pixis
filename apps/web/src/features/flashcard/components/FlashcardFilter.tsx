@@ -1,9 +1,4 @@
 import {
-  InputGroup,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import {
   Sheet,
   SheetClose,
   SheetContent,
@@ -14,7 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import type { FlashcardFilterHandler } from "../hooks/useFlashcardFilter";
-import { ChevronRight, Filter, Plus, Search } from "lucide-react";
+import { ChevronRight, Filter, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -50,8 +45,7 @@ export const FlashcardFilter = ({
   flashcardFilter: FlashcardFilterHandler;
   deck: Deck;
 }) => {
-  const { sortForm, filterForm, updateQuery, updateQueryOnEnter, resetFilter } =
-    flashcardFilter;
+  const { sortForm, filterForm, updateQuery, resetFilter } = flashcardFilter;
   const sort = sortForm.watch();
   const filter = filterForm.watch();
   const setFilterValue = filterForm.setValue;

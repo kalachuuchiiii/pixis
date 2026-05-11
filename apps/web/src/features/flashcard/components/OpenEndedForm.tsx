@@ -1,5 +1,4 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
-import type { CreateOpenEndedForm } from "../hooks/useCreateFlashcard";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle } from "lucide-react";
@@ -19,7 +18,7 @@ export const OpenEndedForm = ({
 }: {
   openEndedForm: OpenEndedFormType;
 } & ComponentProps<"div">) => {
-  const { control, watch } = openEndedForm;
+  const { control } = openEndedForm;
 
   return (
     <div {...props}>

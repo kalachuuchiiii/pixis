@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useFlashcardFilter } from "./useFlashcardFilter";
-import { useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { Flashcard } from "@pixis/schemas";
 import api from "@/lib/api";

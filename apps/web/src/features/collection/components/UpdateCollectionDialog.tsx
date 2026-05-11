@@ -10,7 +10,6 @@ import { CollectionForm } from "./CollectionForm";
 import { useCollection } from "../hooks/useCollection";
 import type { UseFormReturn } from "react-hook-form";
 import type { Collection } from "@pixis/schemas";
-import { memo } from "react";
 import type { Visibility } from "@pixis/constants";
 
 type CF = UseFormReturn<

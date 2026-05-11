@@ -9,7 +9,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "@/components/ui/EmptyResource";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { CollectionCreatorDialog } from "../components/CollectionCreatorDialog";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
 const Collections = () => {
   const { data: user } = useAuthUser();
@@ -50,8 +49,8 @@ const Collections = () => {
         />
       </div>
       <main className="grid my-6 lg:grid-cols-2 grid-cols-1 gap-4">
-        {collections.map((c, i) => (
-          <Link to={`/app/collections/${c.id}`}>
+        {collections.map((c) => (
+          <Link key={c.id} to={`/app/collections/${c.id}`}>
             <CollectionCard.Default collection={c} />
           </Link>
         ))}

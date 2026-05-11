@@ -10,14 +10,14 @@ export const useUserSavedDeck = () => {
   const { mutate: saveDeck, isPending: isSavingDeck } = useMutation({
     mutationFn: async ({ deckId }: { deckId: number | string }) => {
       const p = api.post(`/user-saved-deck/${deckId}`);
-      await toast.promise(p, {
+      toast.promise(p, {
         loading: "Saving deck...",
         success: getSuccessMessage,
         error: getErrorMessage,
       });
       return await p;
     },
-    onSuccess: (_, { deckId }) => {
+    onSuccess: (_) => {
       queryClient.invalidateQueries({ queryKey: ["deck"] });
     },
   });
@@ -25,14 +25,14 @@ export const useUserSavedDeck = () => {
   const { mutate: unsaveDeck, isPending: isUnsavingDeck } = useMutation({
     mutationFn: async ({ deckId }: { deckId: number | string }) => {
       const p = api.delete(`/user-saved-deck/${deckId}`);
-      await toast.promise(p, {
+      toast.promise(p, {
         loading: "Unsaving deck...",
         success: getSuccessMessage,
         error: getErrorMessage,
       });
       return await p;
     },
-    onSuccess: (_, { deckId }) => {
+    onSuccess: (_) => {
       queryClient.invalidateQueries({ queryKey: ["deck"] });
     },
   });

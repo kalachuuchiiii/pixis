@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
-import React from "react";
 import { Link } from "react-router-dom";
 
 const NotFound = () => {

@@ -1,11 +1,9 @@
-import { useState, type ChangeEvent } from "react";
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
   DialogClose,
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -15,7 +13,7 @@ import {
   UpdatePasswordFormSchema,
   type UpdatePasswordForm,
 } from "@pixis/schemas";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";

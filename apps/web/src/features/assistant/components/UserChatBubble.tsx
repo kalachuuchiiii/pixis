@@ -1,10 +1,5 @@
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import type { Message } from "@pixis/schemas";
-import pixis from "/pixis.gif";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Astroid } from "lucide-react";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { memo } from "react";

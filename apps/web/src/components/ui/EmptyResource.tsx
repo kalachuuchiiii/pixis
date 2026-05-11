@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -8,8 +7,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { CreditCard } from "lucide-react";
-import type { ReactNode, RefObject } from "react";
-import { Link } from "react-router-dom";
+import type { ReactNode } from "react";
 
 interface EmptyResourceProps {
   title: string;

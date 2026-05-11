@@ -5,14 +5,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 
 import { Button } from "@/components/ui/button";
-import { CloudBackup, Trash } from "lucide-react";
-import { useDeck } from "../hooks/useDeck";
+import { CloudBackup } from "lucide-react";
 import { useArchive } from "../hooks/useArchive";
 import {
   Tooltip,

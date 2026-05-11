@@ -1,14 +1,11 @@
 import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { motion } from "framer-motion";
-import { Flame, Zap } from "lucide-react";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import AppErrorBoundary from "@/app/AppErrorBoundary";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { AppSidebar } from "./AppSidebar";
 import { Separator } from "./separator";
 import streak from "/streak-fire.gif";
-import { PopupProvider } from "./PopupProvider";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import point from "/point.gif";
 
