@@ -9,7 +9,7 @@ import { User } from './user.entity';
 
 @Entity('streak')
 export class Streak {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @OneToOne(() => User, (user) => user.streak, { onDelete: 'CASCADE' })

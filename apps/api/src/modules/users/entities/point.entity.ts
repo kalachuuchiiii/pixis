@@ -14,7 +14,7 @@ import { User } from './user.entity';
 
 @Entity('point')
 export class Point {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @OneToOne(() => User, (user) => user.point, { onDelete: 'CASCADE' })

@@ -25,7 +25,7 @@ import { Conversation } from '@/modules/assistant/entities/conversation.entity';
 
 @Entity('user')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @OneToMany(() => Conversation, (c) => c.user, { onDelete: 'CASCADE' })

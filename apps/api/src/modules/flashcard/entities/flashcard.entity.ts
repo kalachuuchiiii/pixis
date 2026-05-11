@@ -16,7 +16,7 @@ import { FlashcardProgress } from '../../flashcard-progress/entities/flashcard-p
 
 @Entity('flashcard')
 export class Flashcard {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @ManyToOne(() => Deck, (d) => d.flashcards, {

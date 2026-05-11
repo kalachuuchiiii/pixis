@@ -4,7 +4,7 @@ import { Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 @Entity('user_saved_collection')
 export class UserSavedCollection {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @ManyToOne(() => Collection, (c) => c.userSavedCollections, {
