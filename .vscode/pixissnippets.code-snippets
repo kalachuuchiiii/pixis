@@ -31,7 +31,7 @@
 	"Resource ID parameter": {
 		"scope": "typescript",
 		"prefix": "rid",
-		"body": "const $1 = idSchema.parse(request.params.$1);",
+		"body": "const $1 = IDSchema.parse(request.params.$1);",
 		"description": "Quick Resource ID Access"
 	}
 }

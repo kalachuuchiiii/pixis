@@ -5,11 +5,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "@/components/ui/button";
-import type {
-  Deck,
-  DeckWithAuthor,
-  DeckWithAuthorAndFlashcardPreview,
-} from "@pixis/schemas";
+import type { Deck } from "@pixis/schemas";
 import { formatDistanceToNow } from "date-fns";
 import { Calendar, Eye, User } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -17,10 +13,8 @@ import { clsx } from "clsx";
 import { hexToRgb } from "react-beautiful-color";
 import type { Visibility } from "@pixis/constants";
 
-type DeckDisplay = DeckWithAuthor | DeckWithAuthorAndFlashcardPreview | Deck;
-
 type DeckContextType = {
-  deck: DeckDisplay;
+  deck: Deck;
 };
 
 const DeckContext = createContext<DeckContextType | null>(null);
@@ -56,7 +50,7 @@ const Card = ({ children }: { children: ReactNode }) => {
   const { deck } = useDeck();
 
   return (
-    <div className="relative w-full">
+    <div className="relative h-full w-full">
       {/* Stacked Card Layers (Leak Effect) */}
       <div className="absolute -bottom-2 -right-2 w-full h-full opacity-40 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[3deg]  z-0" />
       <div className="absolute -bottom-1 -right-1 w-full h-full bg-white opacity-70 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[1.5deg]  z-10" />
@@ -210,7 +204,7 @@ const Footer = ({ createdAt, id }: FooterProps) => {
 // --------------------
 // Default Export
 // --------------------
-const Default = ({ deck }: { deck: DeckDisplay }) => (
+const Default = ({ deck }: { deck: Deck }) => (
   <Root deck={deck}>
     <Card>
       <Header />

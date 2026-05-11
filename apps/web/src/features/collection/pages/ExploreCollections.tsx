@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "@/components/ui/EmptyResource";
 import { useExploreCollections } from "../hooks/useExploreCollections";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { CollectionCreatorDialog } from "../components/CollectionCreatorDialog";
 
 const ExploreCollections = () => {
   const {
@@ -23,7 +25,12 @@ const ExploreCollections = () => {
       <AppHeader
         heading="Explore Collections"
         description="Discover and browse curated collections"
-        beside={<CollectionFilter collectionFilter={collectionFilter} />}
+        beside={
+          <CollectionFilter
+            additionalActions={[<CollectionCreatorDialog />]}
+            collectionFilter={collectionFilter}
+          />
+        }
       />
       <main className="grid  grid-cols-1 lg:grid-cols-3 gap-4 ">
         {collections.map((c) => (

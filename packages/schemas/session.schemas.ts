@@ -1,30 +1,34 @@
-import { EXAM_MODE_ENUM } from "@pixis/constants";
+import { EXAM_MODE_ENUM, SESSION_STATUS } from "@pixis/constants";
 import z from "zod";
-import { idSchema } from "./user.schemas";
-import { timestampSchema } from "./timestamp.schemas";
+import { IDSchema, PercentageSchema } from "./common.schemas";
+import { TimestampSchema } from "./common.schemas";
 
-export const examModeSchema = z.preprocess(
+export const ExamModeSchema = z.preprocess(
   (v) => String(v || "").toUpperCase(),
-  z.enum(EXAM_MODE_ENUM)
+  z.enum(EXAM_MODE_ENUM, "Invalid exam mode")
 );
 
-export const sessionSchema = z.object({
-  deckId: idSchema,
-  mode: examModeSchema,
-  createdAt: timestampSchema,
-  id: idSchema,
-  cancelledAt: timestampSchema.nullable().optional(),
-  finishedAt: timestampSchema.nullable().optional(),
-  abandonedAt: timestampSchema.nullable().optional(),
+export const SessionStatusSchema = z.enum(
+  SESSION_STATUS,
+  "Invalid session status"
+);
+
+export const SessionSchema = z.object({
+  deckId: IDSchema,
+  mode: ExamModeSchema,
+  startedAt: TimestampSchema,
+  id: IDSchema,
+  status: SessionStatusSchema,
+  stoppedAt: TimestampSchema.nullable(),
   totalPointsGained: z.number().nonnegative(),
-  accuracy: z.number().nonnegative(),
+  accuracy: PercentageSchema,
   deck: z
     .object({
-      id: idSchema,
-      flashcardIds: z.array(idSchema).nullable().optional(),
+      id: IDSchema,
+      flashcardIds: z.array(IDSchema),
     })
     .nullable()
     .optional(),
 });
 
-export type Session = z.infer<typeof sessionSchema>;
+export type Session = z.infer<typeof SessionSchema>;

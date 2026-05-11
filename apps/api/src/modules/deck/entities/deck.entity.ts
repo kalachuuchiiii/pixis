@@ -23,7 +23,7 @@ import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
 import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
 import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
 import { Session } from '@/modules/session/entities/session.entity';
-import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity.ts';
+import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity';
 
 @Entity('deck')
 export class Deck {
@@ -36,7 +36,7 @@ export class Deck {
   })
   progresses?: FlashcardProgress[];
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
   @ManyToOne(() => User, (u) => u.decks, { onDelete: 'CASCADE' })

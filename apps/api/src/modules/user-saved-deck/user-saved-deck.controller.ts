@@ -2,20 +2,22 @@ import { Controller, Delete, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { UserSavedDeckService } from './user-saved-deck.service';
 import { AccessGuard } from '../auth/guards/access.guard';
 import type { Request } from 'express';
-import { deckSchema, idSchema } from '@pixis/schemas';
+import { DeckSchema, IDSchema } from '@pixis/schemas';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 import z from 'zod';
-import { authUserSchema } from '../auth/schemas/auth.schemas';
+import { AuthUserSchema } from '../auth/schemas/auth.schemas';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('user-saved-deck')
 export class UserSavedDeckController {
   constructor(private readonly userSavedDeckService: UserSavedDeckService) {}
 
+  @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Post('/:deckId')
   @UseGuards(AccessGuard)
   async saveDeck(@Req() request: Request) {
-    const user = authUserSchema.parse(request.user);
-    const deckId = idSchema.parse(request.params.deckId);
+    const user = AuthUserSchema.parse(request.user);
+    const deckId = IDSchema.parse(request.params.deckId);
     const result = await this.userSavedDeckService.createSavedDeck({
       deckId,
       user,
@@ -26,11 +28,12 @@ export class UserSavedDeckController {
     };
   }
 
+  @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Delete('/:deckId')
   @UseGuards(AccessGuard)
   async unsaveDeck(@Req() request: Request) {
-    const user = authUserSchema.parse(request.user);
-    const deckId = idSchema.parse(request.params.deckId);
+    const user = AuthUserSchema.parse(request.user);
+    const deckId = IDSchema.parse(request.params.deckId);
     const result = await this.userSavedDeckService.deleteSavedDeck({
       deckId,
       user,
@@ -47,13 +50,13 @@ export class UserSavedDeckController {
     @Req() request: Request,
     @Paginate() query: PaginateQuery,
   ) {
-    const user = authUserSchema.parse(request.user);
+    const user = AuthUserSchema.parse(request.user);
 
     const result = await this.userSavedDeckService.getUserSavedDecks({
       user,
       query,
     });
-    const cleanDecks = z.array(deckSchema).parse(result.data);
+    const cleanDecks = z.array(DeckSchema).parse(result.data);
     return {
       decks: cleanDecks,
       ...result,

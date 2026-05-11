@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity.ts';
+import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity';
 import { User } from '../users/entities/user.entity';
 import { LeaderboardsService } from './leaderboards.service';
 import { LeaderboardsController } from './leaderboards.controller';

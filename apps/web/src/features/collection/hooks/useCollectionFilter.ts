@@ -19,7 +19,7 @@ type FilterObject = {
   };
   visibility?: {
     op?: "eq";
-    value?: Visibility | '*';
+    value?: Visibility | "*";
   };
 };
 
@@ -28,11 +28,18 @@ export const useCollectionFilter = (
 ) => {
   const sortForm = useForm<SortObject>({
     defaultValues: {
-      field: 'createdAt',
-      order: 'DESC'
-    }
+      field: "createdAt",
+      order: "DESC",
+    },
   });
-  const filterForm = useForm<FilterObject>();
+  const filterForm = useForm<FilterObject>({
+    defaultValues: {
+      visibility: {
+        op: "eq",
+        value: "*",
+      },
+    },
+  });
 
   const filter = useFilter({ sortForm, filterForm, blacklistedFields });
 

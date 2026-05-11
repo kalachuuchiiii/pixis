@@ -7,12 +7,8 @@ import {
   IsNull,
   Equal,
 } from 'typeorm';
-import { FlashcardProgress } from './entities/flashcard-progress.entity.ts';
-import {
-  examAnswerSchema,
-  userBadgeSchema,
-  type ExamAnswers,
-} from '@pixis/schemas';
+import { FlashcardProgress } from './entities/flashcard-progress.entity';
+import { type ExamAnswers } from '@pixis/schemas';
 import { Flashcard } from '../flashcard/entities/flashcard.entity';
 import { FlashcardService } from '../flashcard/flashcard.service';
 import { Session } from '../session/entities/session.entity';
@@ -42,13 +38,13 @@ export class FlashcardProgressService {
 
   createFlashcardsValues({
     flashcards,
-    isAbandoned,
+    isIncomplete,
     examAnswers,
     sessionId,
     user,
   }: {
     flashcards: Flashcard[];
-    isAbandoned: boolean;
+    isIncomplete: boolean;
     examAnswers: ExamAnswers;
     sessionId: number;
     user: AuthUser;
@@ -73,7 +69,7 @@ export class FlashcardProgressService {
         totalPointsGained += POINT_PER_MISTAKE;
       }
 
-      totalPointsGained = isAbandoned
+      totalPointsGained = isIncomplete
         ? totalPointsGained * 0.75
         : totalPointsGained;
 
@@ -105,7 +101,7 @@ export class FlashcardProgressService {
     user: AuthUser;
     sessionId: number;
   }) {
-    const isAbandoned = examAnswers.every((a) => !a.answer.trim());
+    const isIncomplete = examAnswers.some((a) => !a.answer.trim());
     const flashcardIds = examAnswers.map(({ flashcardId }) => flashcardId);
     const { flashcards } =
       await this.flashcardService.findAccessibleFlashcardsByIds({
@@ -116,7 +112,7 @@ export class FlashcardProgressService {
     const { data, correctCount, totalPointsGained, accuracy } =
       this.createFlashcardsValues({
         flashcards,
-        isAbandoned,
+        isIncomplete,
         examAnswers,
         sessionId,
         user,
@@ -132,8 +128,8 @@ export class FlashcardProgressService {
         {
           totalPointsGained,
           accuracy,
-          abandonedAt: !isAbandoned ? null : new Date(),
-          finishedAt: !isAbandoned ? new Date() : null,
+          stoppedAt: new Date(),
+          status: isIncomplete ? 'incomplete' : 'completed',
         },
       );
 
@@ -179,8 +175,8 @@ export class FlashcardProgressService {
         correctCount,
         accuracy,
         deckId: flashcards[0]?.deckId,
-        isAbandoned,
-        isFinished: !isAbandoned,
+        isIncomplete,
+        isCompleted: !isIncomplete,
       };
     });
   }

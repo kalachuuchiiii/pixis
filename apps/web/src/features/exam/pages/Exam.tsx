@@ -32,6 +32,7 @@ const Exam = () => {
     isSessionLoading,
     timerHandlers,
     mode,
+    processExamAnswers,
     isProcessingExamAnswers,
   } = useExam();
 
@@ -78,12 +79,18 @@ const Exam = () => {
                   exit?
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction className="bg-destructive hover:bg-destructive/90">
+              <main className="flex items-center justify-end gap-2">
+                <AlertDialogCancel variant={"outline"} className="my-btn">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => processExamAnswers()}
+                  variant={"destructive"}
+                  className="bg-destructive my-btn hover:bg-destructive/90"
+                >
                   Yes, Leave
                 </AlertDialogAction>
-              </AlertDialogFooter>
+              </main>
             </AlertDialogContent>
           </AlertDialog>
 
@@ -131,6 +138,7 @@ const Exam = () => {
                   />
                 ) : (
                   <OpenEndedAnswerInput
+                    isCaseSensitive={flashcard?.isAnswerCaseSensitive || false}
                     currentFlashcardIdx={currentFlashcardIdx}
                     setAnswer={setAnswer}
                   />

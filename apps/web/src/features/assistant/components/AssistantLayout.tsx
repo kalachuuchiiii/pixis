@@ -4,9 +4,11 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { Outlet } from "react-router-dom";
 import { AssistantSidebar } from "./AssistantSidebar";
+import { PopupProvider } from "@/components/ui/PopupProvider";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 export const AssistantLayout = () => {
-  const { data: user, isPending } = useProfileDetails();
+  const { data: user, isPending } = useAuthUser();
   return (
     <SidebarProvider defaultOpen={true}>
       <div

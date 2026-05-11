@@ -16,14 +16,26 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Spinner } from "@/components/ui/spinner";
+import { EmptyResource } from "@/components/ui/EmptyResource";
 
 export const AddToCollectionDialog = ({
   deckId,
 }: {
   deckId: number | string;
 }) => {
-  const { collectionFilterHandlers, collections, ref } = useCollections();
+  const {
+    collectionFilterHandlers,
+    collections,
+    ref,
+    hasNoData,
+    hasNoMoreData,
+    isPending,
+    isFetching,
+  } = useCollections();
+
   const { addDeckToCollection, isAddingDeckToCollection } = useCollectionDeck();
+
   return (
     <Sheet>
       <SheetTrigger>
@@ -50,16 +62,17 @@ export const AddToCollectionDialog = ({
         </SheetHeader>
 
         <div className="p-2 space-y-10">
-          <main className="overflow-y-scroll rounded-xl border-1 p-2 dark:bg-zinc-900 h-[65vh] flex items- flex-col gap-1">
+          <main className="overflow-y-scroll rounded-xl border-1 p-2 h-[65vh] flex items- flex-col gap-1">
             {collections.map((c) => (
-              <CollectionCard.Root collection={c}>
+              <CollectionCard collection={c}>
                 <CollectionCard.Header />
                 <CollectionCard.Title />
                 <CollectionCard.DeckCount />
+                <CollectionCard.Author />
                 <SheetClose asChild>
                   <Button
                     disabled={isAddingDeckToCollection}
-                    className="my-btn"
+                    className="my-btn m-2"
                     onClick={() =>
                       addDeckToCollection({ collectionId: c.id, deckId })
                     }
@@ -68,8 +81,22 @@ export const AddToCollectionDialog = ({
                     Add here <Plus />
                   </Button>
                 </SheetClose>
-              </CollectionCard.Root>
+              </CollectionCard>
             ))}
+            <div className="my-20">
+              {isPending && isFetching ? (
+                <Spinner />
+              ) : hasNoData ? (
+                <EmptyResource title="No collections yet" description=":)" />
+              ) : (
+                hasNoMoreData && (
+                  <EmptyResource
+                    title="You've reached the last page"
+                    description="No more collections"
+                  />
+                )
+              )}
+            </div>
             <div ref={ref} />
           </main>
         </div>

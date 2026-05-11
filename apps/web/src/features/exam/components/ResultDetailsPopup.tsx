@@ -12,28 +12,28 @@ export const ResultDetailsPopup = ({
     feedback,
     totalFlashcards,
     correctCount,
-    isAbandoned,
-    isFinished,
     accuracy,
+    isCompleted,
+    isIncomplete,
   } = resultDetails;
 
   useEffect(() => {
-    if (!isAbandoned && isFinished && totalPointsGained > 0) {
+    if (!isIncomplete && isCompleted && totalPointsGained > 0) {
       const victorySfx = new Audio("/victory-sfx.mp3");
       victorySfx.volume = 0.65;
       victorySfx.play().catch(() => {});
     }
-  }, [isAbandoned, isFinished, totalPointsGained]);
+  }, [isIncomplete, isCompleted, totalPointsGained]);
 
   const getResultIcon = () => {
-    if (isAbandoned) return "😔";
+    if (isIncomplete) return "😔";
     if (accuracy >= 90) return "🏆";
     if (accuracy >= 70) return "🎉";
     if (accuracy >= 50) return "👍";
     return "📚";
   };
 
-  const isSuccess = !isAbandoned && isFinished;
+  const isSuccess = !isIncomplete && isCompleted;
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 sm:p-6">
@@ -48,7 +48,7 @@ export const ResultDetailsPopup = ({
             {feedback}
           </h1>
 
-          {isAbandoned && (
+          {isIncomplete && (
             <p className="mt-2 text-amber-400 text-sm font-medium">
               Failed to answer everything
             </p>
@@ -114,7 +114,7 @@ export const ResultDetailsPopup = ({
       </div>
 
       <p className="mt-8 text-center text-xs sm:text-sm text-zinc-500">
-        {isAbandoned
+        {isIncomplete
           ? "Better luck next time • Click anywhere to continue"
           : "Well done! Click anywhere to continue"}
       </p>

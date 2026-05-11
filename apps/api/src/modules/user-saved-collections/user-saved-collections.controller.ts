@@ -2,10 +2,11 @@ import { Controller, Delete, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { UserSavedCollectionsService } from './user-saved-collections.service';
 import type { Request } from 'express';
 import { AccessGuard } from '../auth/guards/access.guard';
-import { collectionSchema, idSchema } from '@pixis/schemas';
+import { CollectionSchema, IDSchema } from '@pixis/schemas';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 import z from 'zod';
-import { authUserSchema } from '../auth/schemas/auth.schemas';
+import { AuthUserSchema } from '../auth/schemas/auth.schemas';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('user-saved-collections')
 export class UserSavedCollectionsController {
@@ -13,11 +14,12 @@ export class UserSavedCollectionsController {
     private readonly userSavedCollectionsService: UserSavedCollectionsService,
   ) {}
 
+  @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Post('/:collectionId/save')
   @UseGuards(AccessGuard)
   async saveCollection(@Req() request: Request) {
-    const collectionId = idSchema.parse(request.params.collectionId);
-    const user = authUserSchema.parse(request.user);
+    const collectionId = IDSchema.parse(request.params.collectionId);
+    const user = AuthUserSchema.parse(request.user);
     await this.userSavedCollectionsService.saveCollection({
       collectionId,
       user,
@@ -28,11 +30,12 @@ export class UserSavedCollectionsController {
     };
   }
 
+  @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Delete('/:collectionId/unsave')
   @UseGuards(AccessGuard)
   async unsaveCollection(@Req() request: Request) {
-    const collectionId = idSchema.parse(request.params.collectionId);
-    const user = authUserSchema.parse(request.user);
+    const collectionId = IDSchema.parse(request.params.collectionId);
+    const user = AuthUserSchema.parse(request.user);
     await this.userSavedCollectionsService.unsaveCollection({
       collectionId,
       user,
@@ -49,13 +52,13 @@ export class UserSavedCollectionsController {
     @Req() request: Request,
     @Paginate() query: PaginateQuery,
   ) {
-    const user = authUserSchema.parse(request.user);
+    const user = AuthUserSchema.parse(request.user);
     const { data, nextPage } =
       await this.userSavedCollectionsService.getSavedCollections({
         user,
         query,
       });
-    const collections = z.array(collectionSchema).parse(data);
+    const collections = z.array(CollectionSchema).parse(data);
     return {
       collections,
       nextPage,

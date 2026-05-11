@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  flashcardFormSchema,
+  FlashcardFormSchema,
   type Flashcard,
   type FlashcardForm,
 } from "@pixis/schemas";
@@ -11,21 +11,21 @@ import { useForm } from "react-hook-form";
 export const useFlashcardForm = (fc?: Flashcard) => {
   const [prevChoices, setPrevChoices] = useState<string[]>([]);
   const flashcardForm = useForm<FlashcardForm>({
-    defaultValues: flashcardFormSchema.safeParse(fc).data ?? {
+    defaultValues: FlashcardFormSchema.safeParse(fc).data ?? {
       type: "open_ended",
       question: "",
       answer: "",
       choices: null,
       isAnswerCaseSensitive: false,
     },
-    resolver: zodResolver(flashcardFormSchema),
+    resolver: zodResolver(FlashcardFormSchema),
     mode: "onChange",
   });
   const { reset, watch } = flashcardForm;
 
   const flashcardFormValues = watch();
   const hasNoChanges = useMemo(
-    () => _.isEqual(flashcardFormSchema.parse(fc), flashcardFormValues),
+    () => _.isEqual(FlashcardFormSchema.parse(fc), flashcardFormValues),
     [flashcardFormValues, fc]
   );
 

@@ -25,7 +25,7 @@ export const RestoreDeckDialog = ({ deckId }: { deckId: number }) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
+      <AlertDialogTrigger>
         <Tooltip>
           <TooltipTrigger>
             <Button variant={"outline"} className="my-btn">
@@ -41,15 +41,19 @@ export const RestoreDeckDialog = ({ deckId }: { deckId: number }) => {
           <AlertDialogDescription>Restore this deck?</AlertDialogDescription>
         </AlertDialogHeader>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <main className="flex items-center justify-end gap-2 ">
+          <AlertDialogCancel variant={"outline"} className="my-btn">
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
+            variant={"default"}
+            className="my-btn"
             disabled={isRestoringDeck}
             onClick={() => restoreDeck(deckId)}
           >
             Restore
           </AlertDialogAction>
-        </AlertDialogFooter>
+        </main>
       </AlertDialogContent>
     </AlertDialog>
   );

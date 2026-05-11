@@ -2,17 +2,17 @@ import type { User, UserBadge as UB } from "@pixis/schemas";
 import {
   createContext,
   useContext,
-  useState,
   type ComponentProps,
   type ReactNode,
 } from "react";
-import { motion } from "framer-motion";
 import {
   AvatarFallback,
   Avatar as AvatarIcon,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import clsx from "clsx";
+import { Link } from "react-router-dom";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { Skeleton } from "boneyard-js/react";
 
 interface UserProviderProps {
   user: UB;
@@ -44,50 +44,58 @@ const Avatar = ({ ...props }: ComponentProps<"div">) => {
     String(user.username?.substring(0, 2) ?? "NA") ?? "NA";
 
   return (
-    <>
+    <Skeleton loading={!user} name="avatar">
       <AvatarIcon {...props}>
         <AvatarImage
           src={
-            user.avatarPublicUrl
-              ? `https://res.cloudinary.com/<cloud-name>/image/upload/${user.avatarPublicUrl}`
-              : "https://i.pinimg.com/550x/04/29/6e/04296eecc2068ff6326efffca76f7836.jpg"
+            user.avatarUrl ||
+            "https://i.pinimg.com/550x/04/29/6e/04296eecc2068ff6326efffca76f7836.jpg"
           }
         />
         <AvatarFallback>{firstTwoLetters}</AvatarFallback>
       </AvatarIcon>
-    </>
+    </Skeleton>
   );
 };
 
-const Username = ({ ...props }: ComponentProps<"p">) => {
+const Username = () => {
   const user = useUser();
-  return <p {...props}>@{user.username}</p>;
+  const { data } = useAuthUser();
+
+  const url =
+    data.id === user.id
+      ? `/app/profile/${data.id}/stats`
+      : `/app/profile/${user.id}/stats`;
+
+  return (
+    <Skeleton name="username" loading={!user.username}>
+      <Link className="cursor-pointer" to={url}>
+        <p className="text-xs w-fit  lg:text-sm dark:text-zinc-300 opacity-75 text-zinc-500">
+          @{user.username}
+        </p>
+      </Link>
+    </Skeleton>
+  );
 };
 
 const Nickname = () => {
   const user = useUser();
   return (
-    <p className="text-[13px] dark:text-zinc-200 w-fit font-semibold text-zinc-800 truncate leading-tight">
-      {user.nickname || user.username}
-    </p>
+    <Skeleton loading={!user.nickname && !user.username} name="nickname">
+      <p className="lg:text-lg  text-sm dark:text-zinc-200 w-fit font-semibold text-zinc-900 tracking-tighter truncate leading-tight">
+        {user.nickname || user.username}
+      </p>
+    </Skeleton>
   );
 };
 
 const Info = () => {
   const user = useUser();
 
-  return !user.username ? (
-    <div className="w-full flex-1 space-y-1">
-      {/* Nickname / Username skeleton */}
-      <div className="h-3 w-26 bg-zinc-200 rounded animate-pulse"></div>
-
-      {/* Username skeleton */}
-      <div className="h-2 w-20 bg-zinc-200 rounded animate-pulse"></div>
-    </div>
-  ) : (
-    <div className="min-w-0 flex-1 w-fit">
+  return (
+    <div className="min-w-0 flex-1 space-y-[1px] w-fit">
       <Nickname />
-      <Username className="text-xs dark:text-zinc-300 opacity-75 text-zinc-500" />
+      <Username />
     </div>
   );
 };
@@ -95,7 +103,7 @@ const Info = () => {
 const Default = ({ user }: { user: UB }) => {
   return (
     <Root className="flex items-center gap-4" user={user}>
-      <Avatar className="outline-[2.5px] outline-offset-3 outline-sky-500" />
+      <Avatar className="outline-[2px] outline-offset-3 outline-amber-400" />
       <Info />
     </Root>
   );

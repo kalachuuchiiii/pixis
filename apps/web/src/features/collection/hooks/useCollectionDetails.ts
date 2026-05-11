@@ -1,6 +1,6 @@
 import api from "@/lib/api";
 import {
-  collectionFormSchema,
+  CollectionFormSchema,
   type Collection,
   type CollectionForm,
 } from "@pixis/schemas";
@@ -16,7 +16,7 @@ export const useCollectionDetails = (
       const res = await api.get<{ collection: Collection }>(
         `/collections/${collectionId}`
       );
-      const cleanCollection = collectionFormSchema.parse(res.data.collection);
+      const cleanCollection = CollectionFormSchema.parse(res.data.collection);
       if (!!onSuccessCallback) {
         onSuccessCallback(cleanCollection);
       }

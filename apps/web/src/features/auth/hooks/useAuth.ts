@@ -1,31 +1,35 @@
+import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
+import { pop, usePopup } from "@/hooks/usePopup";
 import api from "@/lib/api";
 import {
   getErrorMessage,
   getSuccessMessage,
 } from "@/utils/message-extractor.utils";
 import {
-  signInFormSchema,
-  signUpFormSchema,
-  updatePasswordFormSchema,
+  SignInFormSchema,
+  SignUpFormSchema,
+  UpdatePasswordFormSchema,
   type SignInForm,
   type SignUpForm,
   type UpdatePasswordForm,
 } from "@pixis/schemas";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuthUser } from "./useAuthUser";
 
 export const useAuth = () => {
   const nav = useNavigate();
+  const { refetch } = useAuthUser();
+  const queryClient = useQueryClient();
 
   const { mutate: signUp, isPending: isSigningUp } = useMutation({
     mutationFn: async (form: SignUpForm) => {
       const promise = new Promise((resolve, reject) => {
         try {
-          const validatedForm = signUpFormSchema.parse(form);
+          const validatedForm = SignUpFormSchema.parse(form);
           return resolve(api.post("/auth/signup", validatedForm));
         } catch (e) {
-          console.dir(e, { depth: 1 });
           return reject(e);
         }
       });
@@ -46,7 +50,7 @@ export const useAuth = () => {
     mutationFn: async (form: SignInForm) => {
       const promise = new Promise((resolve, reject) => {
         try {
-          const validatedForm = signInFormSchema.parse(form);
+          const validatedForm = SignInFormSchema.parse(form);
           resolve(api.post("/auth/signin", validatedForm));
         } catch (e) {
           reject(e);
@@ -61,7 +65,8 @@ export const useAuth = () => {
       return await promise;
     },
     onSuccess: () => {
-      nav("/app/chat");
+      nav("/app/explore/decks");
+      queryClient.invalidateQueries();
     },
   });
 
@@ -73,10 +78,12 @@ export const useAuth = () => {
         success: getSuccessMessage,
         error: getErrorMessage,
       });
-      return await promise;
+
+      const result = await promise;
+      return result;
     },
-    onSuccess: () => {
-      nav("/sign-in");
+    onSuccess: async () => {
+      setTimeout(() => window.location.replace("/"), 0);
     },
   });
 
@@ -85,8 +92,8 @@ export const useAuth = () => {
       mutationFn: async (form: UpdatePasswordForm) => {
         const promise = new Promise((resolve, reject) => {
           try {
-            const cleanForm = updatePasswordFormSchema.parse(form);
-            return resolve(api.patch("/auth/me/password", cleanForm));
+            const cleanForm = UpdatePasswordFormSchema.parse(form);
+            return resolve(api.patch("/auth/password", cleanForm));
           } catch (e) {
             return reject(e);
           }

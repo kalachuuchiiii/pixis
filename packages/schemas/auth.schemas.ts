@@ -1,24 +1,24 @@
 import z from "zod";
-import { idSchema, usernameSchema } from "./user.schemas";
+import { IDSchema } from "./common.schemas";
 import { PASSWORD_MAX, PASSWORD_MIN } from "@pixis/constants";
+import { UsernameSchema } from "./user.schemas";
 
-export const passwordSchema = z
+export const PasswordSchema = z
   .string()
-  .min(PASSWORD_MIN, {
-    message: `Password must be at least ${PASSWORD_MIN} characters long`,
-  })
-  .max(PASSWORD_MAX, {
-    message: `Password must not exceed ${PASSWORD_MAX} characters`,
-  })
+  .min(
+    PASSWORD_MIN,
+    `Password must be at least ${PASSWORD_MIN} characters long`
+  )
+  .max(PASSWORD_MAX, `Password must not exceed ${PASSWORD_MAX} characters`)
   .regex(/^\S+$/, { message: "Password must not contain spaces" })
   .trim()
-  .transform((val) => val.toLowerCase());
+  .transform((val) => val.toLowerCase().trim());
 
-export const signUpFormSchema = z
+export const SignUpFormSchema = z
   .object({
-    username: usernameSchema,
-    password: passwordSchema,
-    confirmPassword: passwordSchema,
+    username: UsernameSchema,
+    password: PasswordSchema,
+    confirmPassword: PasswordSchema,
     hasAgreedToPrivacyPolicy: z.boolean(),
   })
   .refine(
@@ -30,16 +30,16 @@ export const signUpFormSchema = z
     "Please read and agree to the privacy policy first."
   );
 
-export const signInFormSchema = z.object({
-  username: usernameSchema,
-  password: passwordSchema,
+export const SignInFormSchema = z.object({
+  username: UsernameSchema,
+  password: PasswordSchema,
 });
 
-export const updatePasswordFormSchema = z.object({
-  oldPassword: passwordSchema,
-  newPassword: passwordSchema,
+export const UpdatePasswordFormSchema = z.object({
+  oldPassword: PasswordSchema,
+  newPassword: PasswordSchema,
 });
 
-export type UpdatePasswordForm = z.infer<typeof updatePasswordFormSchema>;
-export type SignUpForm = z.infer<typeof signUpFormSchema>;
-export type SignInForm = z.infer<typeof signInFormSchema>;
+export type UpdatePasswordForm = z.infer<typeof UpdatePasswordFormSchema>;
+export type SignUpForm = z.infer<typeof SignUpFormSchema>;
+export type SignInForm = z.infer<typeof SignInFormSchema>;

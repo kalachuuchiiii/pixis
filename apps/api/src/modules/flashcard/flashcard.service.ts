@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { FlashcardForm, Query } from '@pixis/schemas';
+import type { FlashcardForm } from '@pixis/schemas';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck } from '../deck/entities/deck.entity';
 import { Equal, In, Not, type Repository } from 'typeorm';

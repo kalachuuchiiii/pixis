@@ -30,24 +30,28 @@ import {
 } from "@/components/ui/select";
 import { capitalize } from "lodash";
 import { sortOrdersMap } from "@/data/sort";
-import { SearchFilterBar } from "@/components/SearchFilterBar";
+import { SearchFilterBar, type Addon } from "@/components/SearchFilterBar";
 import { creationDateFilters } from "@/features/deck/data/creationDateFilter";
 import type { CollectionFilterHandler } from "../hooks/useCollectionFilter";
 import { sortableFieldsMap } from "@/features/deck/components/DeckFilter";
 import type { JSX } from "react";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { CollectionCreatorDialog } from "./CollectionCreatorDialog";
+import { useParams } from "react-router-dom";
 
 const sortableFilterMap = {
   createdAt: "Creation date",
   updatedAt: "Updated date",
-  deckCount: "Number of decks",
 };
 
 export const CollectionFilter = ({
   collectionFilter,
-  menus = [],
+  menus,
+  additionalActions,
 }: {
   collectionFilter: CollectionFilterHandler;
-  menus?: JSX.Element[];
+  menus?: Addon[];
+  additionalActions?: Addon[];
 }) => {
   const {
     sortForm,
@@ -62,18 +66,20 @@ export const CollectionFilter = ({
   const filter = filterForm.watch();
   const setFilterValue = filterForm.setValue;
   const setSortValue = sortForm.setValue;
-  console.log(blacklistedFields);
+  const { userId = "0" } = useParams();
+  const { data: user } = useAuthUser();
+  const isMine = String(user.id) === userId;
 
   return (
     <SearchFilterBar
       filter={collectionFilter}
       className="w-full"
       menus={menus}
-      placeholder="Search decks by title, description, or keywords"
+      placeholder="Search collections by title"
       actions={[
         <Sheet>
           <SheetTrigger>
-            <Button variant={"ghost"}>
+            <Button className="my-btn" variant={"outline"}>
               <Filter />
             </Button>
           </SheetTrigger>
@@ -213,6 +219,7 @@ export const CollectionFilter = ({
             </SheetFooter>
           </SheetContent>
         </Sheet>,
+        ...(additionalActions ?? []),
       ]}
     />
   );

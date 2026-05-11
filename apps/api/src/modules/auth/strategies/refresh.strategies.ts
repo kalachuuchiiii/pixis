@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import type { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import env from '@/config/env';
-import { authUserSchema } from '../schemas/auth.schemas';
+import { AuthUserSchema } from '../schemas/auth.schemas';
 
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -19,6 +19,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   }
 
   async validate(_req: Request, payload: any) {
-    return authUserSchema.parse(payload);
+    return AuthUserSchema.parse(payload);
   }
 }

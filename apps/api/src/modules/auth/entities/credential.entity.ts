@@ -5,6 +5,7 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  Index,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -13,7 +14,7 @@ import {
 
 @Entity()
 export class Credential {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
   @OneToOne(() => User, (user) => user.credential, { onDelete: 'CASCADE' })

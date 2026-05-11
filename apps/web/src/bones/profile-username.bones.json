@@ -1,0 +1,95 @@
+{
+  "breakpoints": {
+    "375": {
+      "name": "profile-username",
+      "viewportWidth": 213,
+      "width": 213,
+      "height": 28,
+      "bones": [
+        [
+          28.83,
+          0,
+          42.3401,
+          28,
+          8
+        ]
+      ]
+    },
+    "640": {
+      "name": "profile-username",
+      "viewportWidth": 213,
+      "width": 213,
+      "height": 28,
+      "bones": [
+        [
+          28.83,
+          0,
+          42.3401,
+          28,
+          8
+        ]
+      ]
+    },
+    "768": {
+      "name": "profile-username",
+      "viewportWidth": 213,
+      "width": 213,
+      "height": 28,
+      "bones": [
+        [
+          28.83,
+          0,
+          42.3401,
+          28,
+          8
+        ]
+      ]
+    },
+    "1024": {
+      "name": "profile-username",
+      "viewportWidth": 213,
+      "width": 213,
+      "height": 28,
+      "bones": [
+        [
+          28.83,
+          0,
+          42.3401,
+          28,
+          8
+        ]
+      ]
+    },
+    "1280": {
+      "name": "profile-username",
+      "viewportWidth": 213,
+      "width": 213,
+      "height": 28,
+      "bones": [
+        [
+          28.83,
+          0,
+          42.3401,
+          28,
+          8
+        ]
+      ]
+    },
+    "1536": {
+      "name": "profile-username",
+      "viewportWidth": 213,
+      "width": 213,
+      "height": 28,
+      "bones": [
+        [
+          28.83,
+          0,
+          42.3401,
+          28,
+          8
+        ]
+      ]
+    }
+  },
+  "_hash": "e4c9d4730668b59558528baa43060564"
+}

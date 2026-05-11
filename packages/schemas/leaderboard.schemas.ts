@@ -1,23 +1,11 @@
 import z from "zod";
-import { pointSchema, userBadgeSchema, userStatsSchema } from "./user.schemas";
+import { UserBadgeSchema } from "./user.schemas";
+import { PercentageSchema } from "./common.schemas";
 
-export const deckPointsSchema = z.coerce.number().nonnegative();
-
-export const topDeckUserSchema = userBadgeSchema.and(
-  z.object({
-    deckPoints: z.coerce.number().nonnegative(),
-    accuracy: z.coerce.number().nonnegative(),
-  })
-);
-
-export const topUserSchema = userBadgeSchema.extend({
+export const TopUserSchema = UserBadgeSchema.extend({
   points: z.number().nonnegative(),
-  averageAccuracy: z.float64().nonnegative(),
+  averageAccuracy: PercentageSchema,
   rank: z.number().nonnegative(),
 });
 
-export const topGlobalUserSchema = userBadgeSchema.and(userStatsSchema);
-
-export type TopGlobalUser = z.infer<typeof topGlobalUserSchema>;
-export type TopDeckUser = z.infer<typeof topDeckUserSchema>;
-export type TopUser = z.infer<typeof topUserSchema>;
+export type TopUser = z.infer<typeof TopUserSchema>;

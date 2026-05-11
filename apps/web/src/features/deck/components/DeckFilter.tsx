@@ -9,7 +9,7 @@ import {
   SheetTrigger,
 } from "../../../components/ui/sheet";
 import { Button } from "../../../components/ui/button";
-import { Filter, ChevronRight } from "lucide-react";
+import { Filter, ChevronRight, Link2 } from "lucide-react";
 import {
   SORTABLE_DECK_FIELDS,
   SORTING_ORDERS,
@@ -33,6 +33,10 @@ import { creationDateFilters } from "../data/creationDateFilter";
 import { sortOrdersMap } from "@/data/sort";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
 import type { JSX } from "react";
+import { useParams } from "react-router-dom";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { DeckCreatorDialog } from "./DeckCreatorDialog";
+import { copy } from "@/utils/copy";
 
 export const sortableFieldsMap: Record<SortableDeckField, string> = {
   createdAt: "Creation Date",
@@ -42,15 +46,20 @@ export const sortableFieldsMap: Record<SortableDeckField, string> = {
 export const DeckFilter = ({
   deckFilter,
   menus = [],
+  additionalActions,
 }: {
   deckFilter: DeckFilterHandler;
-  menus?: JSX.Element[];
+  menus?: (JSX.Element | undefined)[];
+  additionalActions?: (JSX.Element | undefined)[];
 }) => {
   const { filterForm, sortForm, resetFilter, updateQuery, blacklistedFields } =
     deckFilter;
 
   const sort = sortForm.watch();
   const filter = filterForm.watch();
+  const { userId = "0" } = useParams();
+  const { data: user } = useAuthUser();
+  const isMine = String(user.id) === userId;
 
   return (
     <SearchFilterBar
@@ -60,8 +69,8 @@ export const DeckFilter = ({
       menus={menus}
       actions={[
         <Sheet>
-          <SheetTrigger>
-            <Button variant={"ghost"}>
+          <SheetTrigger asChild className="my-btn">
+            <Button variant={"outline"} className="my-btn">
               <Filter />
             </Button>
           </SheetTrigger>
@@ -76,7 +85,6 @@ export const DeckFilter = ({
             </SheetHeader>
 
             <main className="px-7 space-y-8 py-6">
-              {/* Sort Section */}
               <div>
                 <label className="label mb-3 block">Creation Date</label>
                 <div className="flex flex-wrap gap-2">
@@ -154,7 +162,6 @@ export const DeckFilter = ({
                 </div>
               </div>
 
-              {/* Visibility */}
               {!blacklistedFields.includes("visibility") && (
                 <div>
                   <label className="label mb-3 block">Visibility</label>
@@ -207,6 +214,14 @@ export const DeckFilter = ({
             </SheetFooter>
           </SheetContent>
         </Sheet>,
+        <Button
+          className="my-btn"
+          variant={"outline"}
+          onClick={() => copy(window.location.href)}
+        >
+          <Link2 />
+        </Button>,
+        ...(additionalActions ?? []),
       ]}
     />
   );

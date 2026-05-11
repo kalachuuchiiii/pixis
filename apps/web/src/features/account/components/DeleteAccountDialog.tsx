@@ -16,9 +16,10 @@ import {
 import { useProfileDetails } from "../hooks/useProfileDetails";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 export const DeleteAccountDialog = () => {
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
   const [confirmationInput, setConfirmationInput] = useState("");
   const { deleteAccount, isDeletingAccount } = useSecurityManager();
 
@@ -33,10 +34,12 @@ export const DeleteAccountDialog = () => {
   const requiredText = `Delete my account: ${user.username}`;
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between">
-      <header>
-        <p className="font-medium text-red-400">Delete Account</p>
-        <p className="text-sm dark:text-stone-500 ">
+    <div className="flex flex-col lg:flex-row w-full items-center justify-between">
+      <header className="space-y-1 w-fit">
+        <p className="font-medium w-fit text-red-500 dark:text-red-400">
+          Delete Account
+        </p>
+        <p className="text-sm dark:text-stone-500 w-fit  ">
           Permanently delete your account and all data. This action cannot be
           undone.
         </p>
@@ -45,7 +48,7 @@ export const DeleteAccountDialog = () => {
         <AlertDialogTrigger asChild>
           <Button
             variant={"destructive"}
-            className="my-btn w-full lg:w-fit my-3"
+            className="my-btn w-full  lg:w-fit my-3"
           >
             Delete My Account
           </Button>
@@ -76,7 +79,7 @@ export const DeleteAccountDialog = () => {
             </div>
           </main>
 
-          <main className="flex items-center justify-end gap-1">
+          <main className="flex items-center grid grid-cols-2 gap-1">
             <AlertDialogCancel className="my-btn">
               Keep my account
             </AlertDialogCancel>

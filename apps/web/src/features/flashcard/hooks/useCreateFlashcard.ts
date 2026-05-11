@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
-  closeEndedFlashcardSchema,
-  openEndedFlashcardSchema,
+  CloseEndedFlashcardFormSchema,
+  OpenEndedFlashcardFormSchema,
   type CloseEndedFlashcardForm,
   type Flashcard,
   type OpenEndedFlashcardForm,
@@ -23,10 +23,10 @@ export const useCreateFlashcard = () => {
       answer: "",
       choices: [],
       question: "",
-      isAnswerCaseSensitive: false
+      isAnswerCaseSensitive: false,
     },
-    mode: "onChange" ,
-    resolver: zodResolver(closeEndedFlashcardSchema),
+    mode: "onChange",
+    resolver: zodResolver(CloseEndedFlashcardFormSchema),
   });
 
   const openEndedForm = useForm<OpenEndedFlashcardForm>({
@@ -35,18 +35,18 @@ export const useCreateFlashcard = () => {
       answer: "",
       choices: null,
       question: "",
-      isAnswerCaseSensitive: false
+      isAnswerCaseSensitive: false,
     },
-    resolver: zodResolver(openEndedFlashcardSchema),
+    resolver: zodResolver(OpenEndedFlashcardFormSchema),
   });
 
   const onSubmitCloseEnded = closeEndedForm.handleSubmit(async (data) => {
     await createFlashcard({ flashcardForm: data, deckId });
   });
 
-  const onSubmitOpenEnded = openEndedForm.handleSubmit(async(data) => {
+  const onSubmitOpenEnded = openEndedForm.handleSubmit(async (data) => {
     await createFlashcard({ flashcardForm: data, deckId });
-  })
+  });
 
   return {
     type,
@@ -56,9 +56,13 @@ export const useCreateFlashcard = () => {
     onSubmitCloseEnded,
     onSubmitOpenEnded,
     isCreatingFlashcard,
-    setType
+    setType,
   };
 };
 
-export type CreateCloseEndedForm = ReturnType<typeof useCreateFlashcard>['closeEndedForm'];
-export type CreateOpenEndedForm = ReturnType<typeof useCreateFlashcard>['openEndedForm'];
+export type CreateCloseEndedForm = ReturnType<
+  typeof useCreateFlashcard
+>["closeEndedForm"];
+export type CreateOpenEndedForm = ReturnType<
+  typeof useCreateFlashcard
+>["openEndedForm"];

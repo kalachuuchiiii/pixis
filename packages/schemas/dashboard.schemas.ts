@@ -1,27 +1,28 @@
 import z from "zod";
-import { idSchema } from "./user.schemas";
-import { timestampSchema } from "./timestamp.schemas";
+import { PercentageSchema, IDSchema } from "./common.schemas";
+import { TimestampSchema } from "./common.schemas";
+import { DeckTitleSchema } from "./deck.schemas";
 
-export const deckAccuracySchema = z.object({
-  deckId: idSchema,
-  title: z.string(),
-  averageAccuracy: z.float64().min(0).max(100),
-  totalAttempts: z.number().int().nonnegative(),
+export const DeckProgressSchema = z.object({
+  deckId: IDSchema,
+  title: DeckTitleSchema,
+  averageAccuracy: PercentageSchema,
+  totalAttempts: z.number().nonnegative(),
 });
 
-export const progressTrendSchema = z.object({
-  date: timestampSchema, // YYYY-MM-DD
-  averageAccuracy: z.float64().min(0).max(100),
+export const ProgressTrendSchema = z.object({
+  date: TimestampSchema, // YYYY-MM-DD
+  averageAccuracy: PercentageSchema,
 });
 
-export const dashboardSchema = z.object({
-  deckAccuracies: z.array(deckAccuracySchema),
-  retentionRate: z.float64().min(0).max(100),
-  progressTrends: z.array(progressTrendSchema),
-  totalSessions: z.number().int().nonnegative(),
-  totalFlashcardsReviewed: z.number().int().nonnegative(),
+export const DashboardSchema = z.object({
+  deckAccuracies: z.array(DeckProgressSchema),
+  retentionRate: PercentageSchema,
+  progressTrends: z.array(ProgressTrendSchema),
+  totalSessions: z.number().nonnegative(),
+  totalFlashcardsReviewed: z.number().nonnegative(),
 });
 
-export type Dashboard = z.infer<typeof dashboardSchema>;
-export type DeckAccuracy = z.infer<typeof deckAccuracySchema>;
-export type ProgressTrend = z.infer<typeof progressTrendSchema>;
+export type Dashboard = z.infer<typeof DashboardSchema>;
+export type DeckAccuracy = z.infer<typeof DeckProgressSchema>;
+export type ProgressTrend = z.infer<typeof ProgressTrendSchema>;

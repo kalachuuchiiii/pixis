@@ -2,9 +2,9 @@ import clsx from "clsx";
 import pixis from "/pixis.gif";
 import { Zap } from "lucide-react";
 
-export const PixisAvatar = ({ size = 28 }: { size?: number }) => (
+export const PixisAvatar = ({ size = 20 }: { size?: number }) => (
   <div
-    className="rounded-lg bg-zinc-900 flex items-center justify-center flex-shrink-0"
+    className="rounded-lg flex items-center justify-center flex-shrink-0"
     style={{ width: size, height: size }}
   >
     <img src={pixis} className={` h-full w-full`} />
@@ -14,7 +14,7 @@ export const PixisAvatar = ({ size = 28 }: { size?: number }) => (
 export const Pixis = ({
   size = "lg",
 }: {
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 }) => {
-  return <div className={clsx(" ", `text-${size}`)}>pixis</div>;
+  return <div className={clsx("tracking-tighter ", `text-${size}`)}>pixis</div>;
 };

@@ -25,7 +25,7 @@ export const DeleteDeckDialog = ({ deckId }: { deckId: number }) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
+      <AlertDialogTrigger>
         <Tooltip>
           <TooltipTrigger>
             <Button variant={"destructive"} className="my-btn">
@@ -44,15 +44,19 @@ export const DeleteDeckDialog = ({ deckId }: { deckId: number }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <main className="flex items-center justify-end gap-2">
+          <AlertDialogCancel variant={"outline"} className="my-btn">
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
+            variant={"destructive"}
+            className="my-btn"
             disabled={isDeletingDeck}
             onClick={() => deleteDeck(deckId)}
           >
             Delete
           </AlertDialogAction>
-        </AlertDialogFooter>
+        </main>
       </AlertDialogContent>
     </AlertDialog>
   );

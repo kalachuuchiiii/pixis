@@ -22,5 +22,18 @@ export const usePopup = () => {
   };
 };
 
-export const pop = (display?: PopupDisplay) =>
-  externalSetState({ open: true, display });
+export const pop = (display?: PopupDisplay) => {
+  if (!externalSetState) return;
+  externalSetState({
+    open: true,
+    display,
+  });
+};
+
+export const closePopup = () => {
+  if (!externalSetState) return;
+  externalSetState({
+    open: false,
+    display: undefined,
+  });
+};

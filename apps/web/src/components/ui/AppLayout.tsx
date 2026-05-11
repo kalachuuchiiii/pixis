@@ -8,13 +8,16 @@ import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 import { AppSidebar } from "./AppSidebar";
 import { Separator } from "./separator";
 import streak from "/streak-fire.gif";
+import { PopupProvider } from "./PopupProvider";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import point from "/point.gif";
 
 export const Topbar = () => {
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
 
   return (
     <header
-      className="h-[60px] border-b border-zinc-100 dark:border-zinc-800 s backdrop-blur-md flex items-center justify-between px-5 gap-4 sticky top-0 z-40"
+      className="h-[60px] border-b border-zinc-100 dark:border-zinc-800 s backdrop-blur-md flex items-center justify-between px-5 gap-4 sticky  top-0 z-40"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       <div className="flex items-center gap-3">
@@ -24,22 +27,20 @@ export const Topbar = () => {
       <motion.div layout className="flex items-center gap-6">
         {/* Streak */}
 
-        <div className="flex items-center">
-          <div className="py-2 px-6 flex items-center space-x-2 ">
-            <img src={streak} />
-            <p className="font-bold text-xl leading-0">
-              <span className="text-amber-500">
+        <div className="flex items-center gap-4">
+          <div className=" flex items-center gap-1 ">
+            <img src={streak} className="lg:size-8 mb-1" />
+            <p>
+              <span className="lg:text-base c text-xs tracking-tighter text-zinc-700 dark:text-neutral-100">
                 {user.streak.currentStreak}
               </span>{" "}
             </p>
           </div>
 
-          <div className="outline-2 rounded-xl space-x-2 py-2 px-6">
-            <span className="text-[13px] font-semibold text-zinc-700 dark:text-neutral-100">
+          <div className=" flex items-center gap-1">
+            <img src={point} className="lg:size-8" />
+            <span className="lg:text-base text-xs  tracking-tighter text-zinc-700 dark:text-neutral-100">
               {user.point.currentPoints}
-            </span>
-            <span className="text-[11px] text-zinc-400 hidden md:inline">
-              pts
             </span>
           </div>
         </div>
@@ -51,18 +52,15 @@ export const Topbar = () => {
 };
 
 const AppLayout = () => {
-  const { isPending } = useProfileDetails();
+  const { isPending } = useAuthUser();
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div
-        className="flex min-h-screen  w-full"
-        style={{ fontFamily: "'DM Sans', sans-serif" }}
-      >
+    <SidebarProvider open={true} defaultOpen={true}>
+      <div className="flex min-h-screen h-full w-full">
         <AppSidebar />
 
         {/* Main column */}
-        <div className="flex flex-col flex-1 min-w-0 overflow">
+        <div className=" w-full min-h-screen min-w-0 ">
           <Topbar />
 
           {/* Page content */}

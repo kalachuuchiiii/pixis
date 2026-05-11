@@ -8,31 +8,35 @@ import { AuthModule } from './modules/auth/auth.module';
 import { DeckModule } from './modules/deck/deck.module';
 import { FlashcardModule } from './modules/flashcard/flashcard.module';
 import { SessionModule } from './modules/session/session.module';
-import { AttemptModule } from './modules/attempt/attempt.module';
 import { CollectionsModule } from './modules/collections/collections.module';
 import { CollectionDeckModule } from './modules/collection-deck/collection-deck.module';
 import { UserSavedDeckModule } from './modules/user-saved-deck/user-saved-deck.module';
 import { UserSavedCollectionsModule } from './modules/user-saved-collections/user-saved-collections.module';
 import { FlashcardProgressModule } from './modules/flashcard-progress/flashcard-progress.module';
-import { LeaderboardsService } from './modules/leaderboards/leaderboards.service';
-import { LeaderboardsController } from './modules/leaderboards/leaderboards.controller';
 import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
 import { AssistantModule } from './modules/assistant/assistant.module';
+import { UploadsModule } from './modules/uploads/uploads.module';
 import env from './config/env';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+
+const isProd = env.NODE_ENV === 'production';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: env.DB_HOST,
-      port: env.DB_PORT,
-      username: env.DB_USER,
-      password: env.DB_PASS,
-      database: env.DB_NAME,
-      synchronize: true,
+      host: isProd ? env.PROD_DB_HOST : env.DB_HOST,
+      port: isProd ? env.PROD_DB_PORT : env.DB_PORT,
+      username: isProd ? env.PROD_DB_USER : env.DB_USER,
+      password: isProd ? env.PROD_DB_PASS : env.DB_PASS,
+      database: isProd ? env.PROD_DB_NAME : env.DB_NAME,
+      synchronize: false,
       autoLoadEntities: true,
-      logging: env.NODE_ENV !== 'production',
+      logging: !isProd,
+      ssl: isProd ? { rejectUnauthorized: true } : false,
     }),
     UsersModule,
     LoggerModule,
@@ -40,7 +44,6 @@ import env from './config/env';
     DeckModule,
     FlashcardModule,
     SessionModule,
-    AttemptModule,
     CollectionsModule,
     CollectionDeckModule,
     UserSavedDeckModule,
@@ -49,8 +52,9 @@ import env from './config/env';
     LeaderboardsModule,
     DashboardsModule,
     AssistantModule,
+    UploadsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

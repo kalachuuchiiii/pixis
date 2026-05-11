@@ -119,7 +119,8 @@ export class CollectionsService {
       'usc.id',
       'user.username',
       'user.nickname',
-      'user.avatarPublicUrl',
+      'user.avatarUrl',
+      'user.id',
     ]);
 
     const result = await qb.getOne();
@@ -131,6 +132,47 @@ export class CollectionsService {
     }
 
     return result;
+  }
+
+  async findAccessibleCollectionsByUserId({
+    query,
+    user,
+    userId,
+  }: {
+    user: AuthUser;
+    query: PaginateQuery;
+    userId: number;
+  }) {
+    const qb = this.collectionRepo
+      .createQueryBuilder('collection')
+      .leftJoinAndSelect('collection.user', 'user')
+      .where(
+        'user.id = :userId AND (collection.visibility != :visibility OR user.id = :myId)',
+        { userId, myId: user.id, visibility: 'private' },
+      );
+
+    const finalQb = withCollectionStats(qb).select([
+      'collection',
+      'user.username',
+      'user.id',
+      'user.nickname',
+      'user.avatarUrl',
+    ]);
+
+    const result = await paginate(
+      query,
+      finalQb,
+      user.id === userId
+        ? collectionPaginationConfig
+        : {
+            ...collectionPaginationConfig,
+            filterableColumns: {
+              ...collectionPaginationConfig.filterableColumns,
+              visibility: [],
+            },
+          },
+    );
+    return getPaginationData(result);
   }
 
   async findAccessibleCollections({
@@ -157,8 +199,9 @@ export class CollectionsService {
     const qb = withCollectionStats(baseQb).select([
       'collection',
       'user.username',
+      'user.id',
       'user.nickname',
-      'user.avatarPublicUrl',
+      'user.avatarUrl',
     ]);
 
     const result = await paginate(

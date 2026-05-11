@@ -8,15 +8,6 @@ const Layout = () => {
       {/* Left Sidebar - Marketing */}
       <div className="hidden lg:flex w-[52%] flex-col justify-between px-16 py-14 border-r border-zinc-200 dark:border-zinc-800 relative overflow-hidden">
         {/* Background Pattern */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, #d6d3d1 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-            opacity: 0.45,
-          }}
-        />
 
         {/* Decorative Blobs */}
         <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-amber-100 dark:bg-amber-950 blur-3xl opacity-70 pointer-events-none" />
@@ -30,15 +21,8 @@ const Layout = () => {
 
         {/* Main Content */}
         <div className="relative space-y-10">
-          <div className="space-y-6">
-            <p className="text-xs font-medium tracking-[0.2em] uppercase text-zinc-500 dark:text-zinc-400">
-              AI-powered flashcards
-            </p>
-
-            <h1
-              className="text-[52px] font-bold leading-[1.08] tracking-tight text-zinc-900 dark:text-white"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
+          <div className="space-y-6 tracking-tighter font-bold">
+            <h1 className="text-5xl leading-[1.08] tracking-tighter text-zinc-900 dark:text-white">
               Learn faster.
               <br />
               <span className="text-zinc-400 dark:text-zinc-500">
@@ -84,9 +68,8 @@ const Layout = () => {
         <div className="relative flex flex-wrap gap-2">
           {[
             "AI generation",
-            "Spaced repetition",
             "Progress tracking",
-            "PDF import",
+            "PDF import (coming soon)",
           ].map((feature) => (
             <span
               key={feature}
@@ -101,13 +84,9 @@ const Layout = () => {
       {/* Right Panel - Auth / Forms */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative overflow-auto">
         {/* Mobile Logo */}
-        <div className="lg:hidden flex items-center gap-3 mb-10">
-          <div className="w-8 h-8 rounded-xl bg-zinc-900 dark:bg-white flex items-center justify-center">
-            <Bolt className="w-4 h-4 text-white dark:text-zinc-900" />
-          </div>
-          <span className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-            pixis
-          </span>
+        <div className="lg:hidden flex items-center gap-2 mb-10">
+          <PixisAvatar size={40} />
+          <Pixis size="3xl" />
         </div>
 
         <div className="w-full max-w-sm">

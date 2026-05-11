@@ -4,9 +4,8 @@ import {
   getSuccessMessage,
 } from "@/utils/message-extractor.utils";
 import {
-  closeEndedFlashcardSchema,
-  flashcardFormSchema,
-  idSchema,
+  FlashcardFormSchema,
+  IDSchema,
   type Flashcard,
   type FlashcardForm,
 } from "@pixis/schemas";
@@ -21,7 +20,6 @@ import type { AxiosResponse } from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
 
 export const useFlashcard = () => {
   const nav = useNavigate();
@@ -48,8 +46,8 @@ export const useFlashcard = () => {
           >
         >((resolve, reject) => {
           try {
-            const cleanForm = flashcardFormSchema.parse(flashcardForm);
-            const cleanDeckId = idSchema.parse(deckId);
+            const cleanForm = FlashcardFormSchema.parse(flashcardForm);
+            const cleanDeckId = IDSchema.parse(deckId);
             const p = api.post<{ flashcard: Flashcard }>(
               `/flashcards/decks/${cleanDeckId}`,
               {
@@ -70,11 +68,8 @@ export const useFlashcard = () => {
         return await promise;
       },
       onSuccess: (result) => {
-        queryClient.invalidateQueries({ queryKey: ['flashcards'] })
-      
-  
+        queryClient.invalidateQueries({ queryKey: ["flashcards"] });
       },
-
     });
 
   const { mutate: updateFlashcard, isPending: isUpdatingFlashcard } =
@@ -88,8 +83,8 @@ export const useFlashcard = () => {
       }) => {
         const promise = new Promise((resolve, reject) => {
           try {
-            const cleanForm = flashcardFormSchema.parse(updateForm);
-            const cleanId = idSchema.parse(flashcardId);
+            const cleanForm = FlashcardFormSchema.parse(updateForm);
+            const cleanId = IDSchema.parse(flashcardId);
             return resolve(api.patch(`/flashcards/${cleanId}`, cleanForm));
           } catch (e) {
             return reject(e);
@@ -102,12 +97,11 @@ export const useFlashcard = () => {
           error: getErrorMessage,
         });
         return await promise;
-      },  
+      },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['flashcards']})
-      }
+        queryClient.invalidateQueries({ queryKey: ["flashcards"] });
+      },
     });
-
 
   const { mutate: deleteFlashcard, isPending: isDeletingFlashcard } =
     useMutation({
@@ -128,7 +122,7 @@ export const useFlashcard = () => {
         return await promise;
       },
       onSuccess: (_res, { deckId }) => {
-         queryClient.invalidateQueries({ queryKey: ['flashcards']})
+        queryClient.invalidateQueries({ queryKey: ["flashcards"] });
       },
     });
 

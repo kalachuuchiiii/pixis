@@ -1,7 +1,7 @@
 import { DialogClose, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { RawDeckForm } from "@pixis/schemas";
+import type { DeckForm as DF } from "@pixis/schemas";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { QUICK_TOPICS } from "../data/quickTopics";
 import { Pipette, Tag } from "lucide-react";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { VISIBILITY_OPTIONS } from "@/data/visibility";
 
 type DeckFormProps = {
-  deckForm: UseFormReturn<RawDeckForm>;
+  deckForm: UseFormReturn<DF>;
   header?: React.ReactNode;
   footer?: React.ReactNode;
 };

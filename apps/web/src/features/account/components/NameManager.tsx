@@ -1,20 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
-import { updateUserFormSchema, type UpdateUserForm } from "@pixis/schemas";
+import { UpdateUserFormSchema, type UpdateUserForm } from "@pixis/schemas";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldTitle } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useProfileDetails } from "../hooks/useProfileDetails";
 import { useProfile } from "../hooks/useProfile";
-import { SidebarGroupLabel } from "@/components/ui/sidebar";
-import { UserBadge } from "./ui/UserBadge";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 export const NameManager = () => {
-  const { data: user } = useProfileDetails();
+  const { data: user } = useAuthUser();
 
   const form = useForm<UpdateUserForm>({
-    resolver: zodResolver(updateUserFormSchema),
+    resolver: zodResolver(UpdateUserFormSchema),
     defaultValues: {
       username: user.username || "",
       nickname: user.nickname || "",
@@ -28,30 +26,21 @@ export const NameManager = () => {
   });
 
   return (
-    <div>
-      <p className="opacity-75 my-8 text-sm">Profile Information</p>
+    <div className="w-full">
+      <p className="opacity-75 w-fit my-8 text-sm">Profile Information</p>
       <div className="  border-zinc-100 rounded-3xl">
         <div className="flex flex-col sm:flex-row gap-8">
-          {/* Avatar */}
-
-          <div className="flex flex-col items-center gap-6">
-            <UserBadge user={user}>
-              <UserBadge.Avatar className="size-50 outline-4 outline-blue-400 outline-offset-4" />
-            </UserBadge>
-
-            <Button variant={"outline"} className="my-btn">
-              Upload Avatar
-            </Button>
-          </div>
           {/* Form Fields */}
           <form onSubmit={onSubmit} className="flex-1 space-y-6">
-            <div className="flex w-full gap-2 flex-col items-end">
+            <div className="flex w-full gap-6 flex-col items-end">
               <Controller
                 control={form.control}
                 name="nickname"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldTitle>Nickname</FieldTitle>
+                    <FieldTitle>
+                      <p className="w-fit">Nickname</p>
+                    </FieldTitle>
                     <Input
                       {...field}
                       className="p-5"
@@ -68,7 +57,9 @@ export const NameManager = () => {
                 name="username"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldTitle>Username</FieldTitle>
+                    <FieldTitle>
+                      <p className="w-fit">Username</p>
+                    </FieldTitle>
                     <Input
                       {...field}
                       className="p-5"

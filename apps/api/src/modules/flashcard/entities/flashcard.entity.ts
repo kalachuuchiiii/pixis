@@ -10,13 +10,13 @@ import {
   RelationId,
 } from 'typeorm';
 import { Deck } from '@/modules/deck/entities/deck.entity';
-import { TYPE_ENUM, type FlashcardType } from '@pixis/constants';
+import { FLASHCARD_TYPES, type FlashcardType } from '@pixis/constants';
 import { User } from '@/modules/users/entities/user.entity';
-import { FlashcardProgress } from '../../flashcard-progress/entities/flashcard-progress.entity.ts';
+import { FlashcardProgress } from '../../flashcard-progress/entities/flashcard-progress.entity';
 
 @Entity('flashcard')
 export class Flashcard {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
   @ManyToOne(() => Deck, (d) => d.flashcards, {
@@ -28,7 +28,7 @@ export class Flashcard {
   @RelationId((f: Flashcard) => f.deck)
   deckId!: Number;
 
-  @ManyToOne(() => User, (u) => u.flashcards)
+  @ManyToOne(() => User, (u) => u.flashcards, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
@@ -43,7 +43,7 @@ export class Flashcard {
 
   @Column({
     nullable: false,
-    enum: TYPE_ENUM,
+    enum: FLASHCARD_TYPES,
     type: 'enum',
     default: 'close_ended',
   })

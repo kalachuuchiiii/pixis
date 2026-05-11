@@ -9,17 +9,18 @@ import {
 } from '@nestjs/common';
 import { AssistantService } from './assistant.service';
 import { AccessGuard } from '../auth/guards/access.guard.js';
-import { authUserSchema } from '../auth/schemas/auth.schemas.js';
+import { AuthUserSchema } from '../auth/schemas/auth.schemas.js';
 import type { Request } from 'express';
 import {
-  ChatMessageSchema,
+  MessageSchema,
   ConversationSchema,
   GeneratedSetSchema,
-  idSchema,
+  IDSchema,
 } from '@pixis/schemas';
 import { GENERATE_CHAT_SYSTEM_PROMPT } from './constants/assistant.constant.js';
 import z from 'zod';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('assistant')
 export class AssistantController {
@@ -28,7 +29,7 @@ export class AssistantController {
   @Get('/conversations')
   @UseGuards(AccessGuard)
   async getConversations(@Req() request: Request) {
-    const user = authUserSchema.parse(request.user);
+    const user = AuthUserSchema.parse(request.user);
     const result = await this.assistantService.getConversations({ user });
     const conversations = z.array(ConversationSchema).parse(result);
     return {
@@ -36,11 +37,12 @@ export class AssistantController {
     };
   }
 
+  @Throttle({ default: { limit: 6, ttl: 60_000 } })
   @Delete('/conversations/:conversationId')
   @UseGuards(AccessGuard)
   async deleteConversation(@Req() request: Request) {
-    const user = authUserSchema.parse(request.user);
-    const conversationId = idSchema.parse(request.params.conversationId);
+    const user = AuthUserSchema.parse(request.user);
+    const conversationId = IDSchema.parse(request.params.conversationId);
     await this.assistantService.deleteConversationById({
       conversationId,
       user,
@@ -53,15 +55,15 @@ export class AssistantController {
   @Get('/messages/:messageId/set')
   @UseGuards(AccessGuard)
   async getDeckSet(@Req() request: Request) {
-    const user = authUserSchema.parse(request.user);
-    const messageId = idSchema.parse(request.params.messageId);
+    const user = AuthUserSchema.parse(request.user);
+    const messageId = IDSchema.parse(request.params.messageId);
     const set = await this.assistantService.getDeckSetByMessageId({
       messageId,
       user,
     });
-    console.log(set);
+
     const cleanSet = GeneratedSetSchema.parse(set);
-    console.log(cleanSet);
+
     return {
       set: cleanSet,
     };
@@ -73,13 +75,13 @@ export class AssistantController {
     @Req() request: Request,
     @Paginate() query: PaginateQuery,
   ) {
-    const beforeCursor = idSchema.optional().parse(request.query.beforeCursor);
-    const afterCursor = idSchema.optional().parse(request.query.afterCursor);
+    const beforeCursor = IDSchema.optional().parse(request.query.beforeCursor);
+    const afterCursor = IDSchema.optional().parse(request.query.afterCursor);
 
-    const user = authUserSchema.parse(request.user);
-    const conversationId = idSchema
-      .catch(0)
-      .parse(request.params.conversationId);
+    const user = AuthUserSchema.parse(request.user);
+    const conversationId = IDSchema.catch(0).parse(
+      request.params.conversationId,
+    );
     const result = await this.assistantService.getConversationById({
       conversationId,
       user,
@@ -87,18 +89,20 @@ export class AssistantController {
       afterCursor,
       query,
     });
-    const cleanMessages = z.array(ChatMessageSchema).parse(result.data);
+
+    const cleanMessages = z.array(MessageSchema).parse(result.data);
     return {
       messages: cleanMessages,
       ...result,
     };
   }
 
+  @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Post('/generate')
   @UseGuards(AccessGuard)
   async generateSet(@Req() request: Request) {
     const generatedSet = GeneratedSetSchema.parse(request.body.generatedSet);
-    const user = authUserSchema.parse(request.user);
+    const user = AuthUserSchema.parse(request.user);
     const result = await this.assistantService.createGeneratedSet({
       set: generatedSet,
       user,
@@ -108,13 +112,15 @@ export class AssistantController {
     };
   }
 
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
   @Post('/chat/:conversationId')
   @UseGuards(AccessGuard)
   async chat(@Req() request: Request) {
-    const conversationId = idSchema
-      .catch(0)
-      .parse(request.params.conversationId);
-    const user = authUserSchema.parse(request.user);
+    const conversationId = IDSchema.catch(0).parse(
+      request.params.conversationId,
+    );
+
+    const user = AuthUserSchema.parse(request.user);
     const prompt = z.string().parse(request.body.prompt);
 
     const response = await this.assistantService.chat({

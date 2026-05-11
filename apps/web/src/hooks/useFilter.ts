@@ -30,7 +30,13 @@ export const useFilter = <T extends FieldValues, K extends FieldValues>({
       queries.push(`search=${search}`);
     }
     for (const [field, value] of Object.entries(filter)) {
-      if (!value || value?.value === '*' || !value?.value || blacklistedFields.includes(field)) continue;
+      if (
+        !value ||
+        value?.value === "*" ||
+        !value?.value ||
+        blacklistedFields.includes(field)
+      )
+        continue;
       queries.push(`filter.${field}=$${value.op}:${value.value}`);
     }
     setQuery(queries.join("&"));
@@ -53,7 +59,7 @@ export const useFilter = <T extends FieldValues, K extends FieldValues>({
     filterForm,
     updateQueryOnEnter,
     updateQuery,
-    blacklistedFields
+    blacklistedFields,
   };
 };
 

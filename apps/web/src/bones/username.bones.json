@@ -1,0 +1,95 @@
+{
+  "breakpoints": {
+    "375": {
+      "name": "username",
+      "viewportWidth": 12,
+      "width": 12,
+      "height": 16,
+      "bones": [
+        [
+          0,
+          0,
+          100,
+          16,
+          8
+        ]
+      ]
+    },
+    "640": {
+      "name": "username",
+      "viewportWidth": 12,
+      "width": 12,
+      "height": 16,
+      "bones": [
+        [
+          0,
+          0,
+          100,
+          16,
+          8
+        ]
+      ]
+    },
+    "768": {
+      "name": "username",
+      "viewportWidth": 183,
+      "width": 183,
+      "height": 16,
+      "bones": [
+        [
+          0,
+          0,
+          6.6598,
+          16,
+          8
+        ]
+      ]
+    },
+    "1024": {
+      "name": "username",
+      "viewportWidth": 183,
+      "width": 183,
+      "height": 20,
+      "bones": [
+        [
+          0,
+          0,
+          7.7698,
+          20,
+          8
+        ]
+      ]
+    },
+    "1280": {
+      "name": "username",
+      "viewportWidth": 183,
+      "width": 183,
+      "height": 20,
+      "bones": [
+        [
+          0,
+          0,
+          7.7698,
+          20,
+          8
+        ]
+      ]
+    },
+    "1536": {
+      "name": "username",
+      "viewportWidth": 183,
+      "width": 183,
+      "height": 20,
+      "bones": [
+        [
+          0,
+          0,
+          7.7698,
+          20,
+          8
+        ]
+      ]
+    }
+  },
+  "_hash": "b527df88b7e8a9ef9931aa0a142a498b"
+}

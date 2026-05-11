@@ -11,8 +11,6 @@ import { DataSource, type Repository } from 'typeorm';
 import {
   AssistantResponseSchema,
   BaseMessageSchema,
-  ChatMessageSchema,
-  type ChatMessage,
   type GeneratedSet,
 } from '@pixis/schemas';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -96,6 +94,7 @@ export class AssistantService {
         'message.id',
         'message.role',
         'message.content',
+
         'message.type',
       ]);
 
@@ -176,13 +175,6 @@ export class AssistantService {
     conversationId?: number;
     user: AuthUser;
   }) {
-    const conversationMessages = await this.messageRepo.find({
-      where: { conversation: { id: conversationId }, user: { id: user.id } },
-      take: 20,
-      select: { role: true, content: true, type: true, id: true },
-    });
-    const messages = z.array(BaseMessageSchema).parse(conversationMessages);
-
     const result = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
       {
@@ -192,26 +184,91 @@ export class AssistantService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'openai/gpt-oss-120b',
+          model: 'meta-llama/llama-4-scout-17b-16e-instruct',
           messages: [
             { role: 'system', content: systemPrompt },
-            ...messages,
-            {
-              role: 'user',
-              content: prompt,
-            },
+
+            { role: 'user', content: prompt },
           ],
+          response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: 'assistant_response',
+              strict: true,
+              schema: {
+                type: 'object',
+                properties: {
+                  content: { type: 'string' },
+                  conversationTitle: { type: 'string' },
+                  type: { type: 'string', enum: ['generate', 'text'] },
+                  set: {
+                    anyOf: [
+                      {
+                        type: 'object',
+                        properties: {
+                          title: { type: 'string' },
+                          color: { type: 'string' },
+                          topic: { type: 'string' },
+                          flashcards: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                type: {
+                                  type: 'string',
+                                  enum: ['close_ended', 'open_ended'],
+                                },
+                                question: { type: 'string' },
+                                answer: { type: 'string' },
+                                choices: {
+                                  anyOf: [
+                                    {
+                                      type: 'array',
+                                      items: { type: 'string' },
+                                    },
+                                    {
+                                      type: 'null',
+                                    },
+                                  ],
+                                },
+                                isAnswerCaseSensitive: { type: 'boolean' },
+                              },
+                              required: [
+                                'type',
+                                'question',
+                                'answer',
+                                'choices',
+                                'isAnswerCaseSensitive',
+                              ],
+                              additionalProperties: false,
+                            },
+                          },
+                        },
+                        required: ['title', 'color', 'topic', 'flashcards'],
+                        additionalProperties: false,
+                      },
+                      {
+                        type: 'null',
+                      },
+                    ],
+                  },
+                },
+                required: ['content', 'conversationTitle', 'type', 'set'],
+                additionalProperties: false,
+              },
+            },
+          },
         }),
       },
     );
-
     const data = await result.json();
     const jsonResponse = data.choices[0].message.content;
     const assistantResponse = AssistantResponseSchema.parse({
       role: 'assistant',
+      visibility: 'public',
       ...JSON.parse(jsonResponse),
     });
-    const { role, content, set, type, conversationTitle } = assistantResponse;
+    const { role, content, type, conversationTitle } = assistantResponse;
     return await this.dataSource.transaction(async (m) => {
       let conversation = await m.findOne(Conversation, {
         where: { user: { id: user.id }, id: conversationId },
@@ -240,7 +297,10 @@ export class AssistantService {
       let message = m.create(Message, {
         role,
         content,
-        set,
+        set:
+          assistantResponse.type === 'generate'
+            ? assistantResponse.set
+            : undefined,
         user: { id: user.id },
         type,
         conversation: { id: conversation.id },

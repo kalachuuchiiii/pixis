@@ -7,7 +7,7 @@
 
 
 .my-btn {
-  @apply lg:px-6 p-4 lg:h-8 lg:py-5 lg:h-12 rounded-lg lg:rounded-xl
+  @apply lg:px-6 p-4 h-8 lg:py-5 lg:h-12 rounded-lg lg:rounded-xl cursor-pointer
 }
 
 @keyframes fade-in-down {
@@ -22,14 +22,30 @@
 }
 
 .page-container {
-  @apply py-12 dark:bg-zinc-950 px-3 max-w-7xl w-full min-h-screen 
+  @apply  py-6 lg:py-12 dark:bg-zinc-950  max-w-7xl w-full min-h-screen 
 }
 
 /* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #78716c transparent; /* zinc-500 */
+:root {
+  --scrollbar-thumb: #18181b; /* zinc-900 (light mode) */
 }
+
+.active-route {
+  @apply border-b-2 dark:border-b-neutral-100 border-b-zinc-900
+}
+
+.dark {
+  --scrollbar-thumb: #f5f5f5; /* neutral-100 (dark mode) */
+}
+
+.stat-card {
+  @apply bg-neutral-50 dark:bg-zinc-900  flex flex-col justify-between border h-40 lg:h-70 w-full border-neutral-300 dark:border-zinc-800 rounded-3xl p-4 lg:p-8 transition-colors 
+}
+
+.stat-card-description {
+  @apply opacity-75 lg:text-lg text-xs dark:text-neutral-100 text-zinc-900 font-normal
+}
+
 
 /* Chrome, Edge, Safari */
 *::-webkit-scrollbar {
@@ -53,7 +69,7 @@
 }
 
 .heading {
-  @apply font-normal leading-tight font-[DM_Serif_Display] text-zinc-900 dark:text-zinc-100;
+  @apply font-medium leading-tight tracking-tighter font-bold text-zinc-900 dark:text-zinc-100;
 }
 
 @keyframes fade-in-down {

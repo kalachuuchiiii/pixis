@@ -1,6 +1,6 @@
 import api from "@/lib/api.ts";
 import { getSuccessMessage } from "@/utils/message-extractor.utils";
-import type { ChatMessage, Deck, GeneratedSet } from "@pixis/schemas";
+import type { GeneratedSet } from "@pixis/schemas";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getErrorMessage } from "react-error-boundary";
 import { useNavigate, useParams } from "react-router-dom";

@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   OneToMany,
   OneToOne,
@@ -15,7 +16,7 @@ import { Deck } from '@/modules/deck/entities/deck.entity';
 import { Collection } from '@/modules/collections/entities/collection.entity';
 import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
 import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
-import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity.ts';
+import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity';
 import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
 import { UserSavedCollection } from '@/modules/user-saved-collections/entities/user-saved-collection.entity';
 import { Session } from '@/modules/session/entities/session.entity';
@@ -24,7 +25,7 @@ import { Conversation } from '@/modules/assistant/entities/conversation.entity';
 
 @Entity('user')
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: number;
 
   @OneToMany(() => Conversation, (c) => c.user, { onDelete: 'CASCADE' })
@@ -33,6 +34,7 @@ export class User {
   @OneToMany(() => Message, (m) => m.user, { onDelete: 'CASCADE' })
   messages?: Message[];
 
+  @Index()
   @Column({ unique: true, length: 26 })
   username!: string;
 
@@ -71,8 +73,11 @@ export class User {
   @CreateDateColumn({ type: 'timestamptz', name: 'last_nickname_update' })
   lastNicknameUpdate!: Date;
 
-  @Column({ name: 'avatar_public_url', default: null, nullable: true })
-  avatarPublicUrl?: string;
+  @Column({ name: 'avatar_public_id', default: undefined, nullable: true })
+  avatarPublicId?: string;
+
+  @Column({ name: 'avatar_url', default: undefined, nullable: true })
+  avatarUrl?: string;
 
   @Column({ nullable: true, name: 'is_private', default: false })
   isPrivate!: boolean;

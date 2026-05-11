@@ -1,6 +1,6 @@
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 import api from "@/lib/api";
-import type { ChatMessage } from "@pixis/schemas";
+import type { Message } from "@pixis/schemas";
 import {
   useInfiniteQuery,
   useMutation,
@@ -20,7 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { uuid } from "zod";
 
 type ChatResponse = {
-  messages: ChatMessage[];
+  messages: Message[];
   beforeCursor: number | null;
   afterCursor: number | null;
   nextPage: number | null;
@@ -35,9 +35,7 @@ type PageParam = {
 export const useAssistantChat = () => {
   const { conversationId } = useParams();
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
-
   const [prompt, setPrompt] = useState("");
 
   const messagesQuery = useInfiniteQuery({
@@ -100,7 +98,7 @@ export const useAssistantChat = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const appendMessage = useCallback(
-    (message: ChatMessage) => {
+    (message: Message) => {
       queryClient.setQueryData(
         ["conversation", conversationId],
         (oldData: InfiniteData<ChatResponse, unknown> | undefined) => {
@@ -139,9 +137,9 @@ export const useAssistantChat = () => {
       setPrompt("");
       const res = await api.post<{
         response: {
-          response: ChatMessage;
+          response: Message;
           conversationId: number;
-          request: ChatMessage;
+          request: Message;
         };
       }>(`/assistant/chat/${conversationId}`, {
         prompt,
@@ -149,7 +147,9 @@ export const useAssistantChat = () => {
 
       return res.data;
     },
+    retry: 3,
     onSuccess: ({ response: { conversationId, response, request } }) => {
+      navigate(`/app/chat/${conversationId}`, { replace: true });
       appendMessage(response);
     },
   });

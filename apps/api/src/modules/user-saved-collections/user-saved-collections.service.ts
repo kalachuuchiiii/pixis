@@ -101,7 +101,8 @@ export class UserSavedCollectionsService {
       'collection',
       'user.nickname',
       'user.username',
-      'user.avatarPublicUrl',
+      'user.id',
+      'user.avatarUrl',
     ]);
     const result = await paginate(query, qb, collectionPaginationConfig);
     return getPaginationData(result);
