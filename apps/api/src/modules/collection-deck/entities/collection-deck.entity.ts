@@ -16,7 +16,7 @@ import { Deck } from '@/modules/deck/entities/deck.entity';
 
 @Entity('collection_deck')
 export class CollectionDeck {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @ManyToOne(() => User, (u) => u.collectionDecks, { onDelete: 'CASCADE' })

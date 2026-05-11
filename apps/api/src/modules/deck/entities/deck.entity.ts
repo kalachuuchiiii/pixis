@@ -36,7 +36,7 @@ export class Deck {
   })
   progresses?: FlashcardProgress[];
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @ManyToOne(() => User, (u) => u.decks, { onDelete: 'CASCADE' })

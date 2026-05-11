@@ -15,7 +15,7 @@ export class Message {
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @ManyToOne(() => User, (u) => u.messages, { onDelete: 'CASCADE' })

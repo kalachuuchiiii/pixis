@@ -15,7 +15,7 @@ import { Deck } from '@/modules/deck/entities/deck.entity';
 
 @Entity('flashcard_progress')
 export class FlashcardProgress {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @ManyToOne(() => Session, (s) => s.progresses, { onDelete: 'CASCADE' })

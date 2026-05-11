@@ -14,7 +14,7 @@ import {
 
 @Entity()
 export class Credential {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @OneToOne(() => User, (user) => user.credential, { onDelete: 'CASCADE' })

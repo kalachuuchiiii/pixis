@@ -20,7 +20,7 @@ import { UserSavedCollection } from '@/modules/user-saved-collections/entities/u
 
 @Entity('collection')
 export class Collection {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ nullable: true, default: '' })

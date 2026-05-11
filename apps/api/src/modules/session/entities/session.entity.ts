@@ -22,7 +22,7 @@ import {
 
 @Entity('session')
 export class Session {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @RelationId((s: Session) => s.user)
