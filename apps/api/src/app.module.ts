@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
-import { LoggerModule } from './common/logger.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { DeckModule } from './modules/deck/deck.module';
@@ -39,7 +38,6 @@ const isProd = env.NODE_ENV === 'production';
       ssl: isProd ? { rejectUnauthorized: true } : false,
     }),
     UsersModule,
-    LoggerModule,
     AuthModule,
     DeckModule,
     FlashcardModule,

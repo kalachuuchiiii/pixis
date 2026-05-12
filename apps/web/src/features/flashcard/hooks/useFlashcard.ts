@@ -12,10 +12,12 @@ import {
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useFlashcard = () => {
   const queryClient = useQueryClient();
+  const { deckId } = useParams();
 
   const { mutate: createFlashcard, isPending: isCreatingFlashcard } =
     useMutation({

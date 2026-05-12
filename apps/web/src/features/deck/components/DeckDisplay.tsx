@@ -7,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Deck } from "@pixis/schemas";
 import { formatDistanceToNow } from "date-fns";
-import { Calendar, Eye, User } from "lucide-react";
+import { Bookmark, Calendar, Eye, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { clsx } from "clsx";
 import { hexToRgb } from "react-beautiful-color";
@@ -146,7 +146,12 @@ const Title = ({ title, color, flashcardCount }: TitleProps) => {
       <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
         {(deck?.participantsCount ?? 0) > 0 && (
           <div className="flex items-center gap-1">
-            {deck?.participantsCount ?? 0} <User className="size-4" />
+            {deck?.participantsCount ?? 0} <User className="size-4 " />
+          </div>
+        )}
+        {(deck?.userSavedDeckCount ?? 0) > 0 && (
+          <div className="flex items-center gap-1">
+            {deck?.userSavedDeckCount} <Bookmark className="size-4" />
           </div>
         )}
         {finalFlashcardCount > 0 && (
@@ -157,9 +162,6 @@ const Title = ({ title, color, flashcardCount }: TitleProps) => {
           <div className="flex items-center gap-1">
             {(deck?.averageAccuracy ?? 0).toFixed(2)}% accuracy
           </div>
-        )}
-        {(deck?.userSavedDeckCount ?? 0) > 0 && (
-          <span>{deck?.userSavedDeckCount} saved</span>
         )}
       </div>
     </div>

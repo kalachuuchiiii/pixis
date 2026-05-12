@@ -1,14 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { EmptyResource } from "@/components/ui/EmptyResource";
 import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
 import { Spinner } from "@/components/ui/spinner";
-import { FlashcardCreator } from "@/features/flashcard/components/FlashcardCreator";
 import { FlashcardFilter } from "@/features/flashcard/components/FlashcardFilter";
 import { FlashcardCard } from "@/features/flashcard/components/ui/FlashcardCard";
 import { useDeckFlashcards } from "@/features/flashcard/hooks/useDeckFlashcards";
-import { Plus } from "lucide-react";
 import { useDeckDetails } from "../hooks/useDeckDetails";
+import { Switch } from "@/components/ui/switch";
 
 const DeckFlashcards = () => {
   const { data: deck, isPending } = useDeckDetails();
@@ -20,6 +17,8 @@ const DeckFlashcards = () => {
     ref,
     isFetching: isDeckFlashcardsFetching,
     isPending: isDeckFlashcardsPending,
+    showAllAnswer,
+    toggleShowAllAnswer,
   } = useDeckFlashcards();
 
   if (isPending || !deck) {
@@ -27,17 +26,28 @@ const DeckFlashcards = () => {
   }
 
   return (
-    <>
+    <div>
       <main>
         <header className="flex items-center gap-20">
-          <div className="flex w-full gap-3 justify-end h-11">
+          <div className="flex w-full gap-3 justify-end h-8 lg:h-12">
             <FlashcardFilter deck={deck} flashcardFilter={flashcardFilter} />
           </div>
         </header>
-
-        <main className="grid grid-cols-1 lg:grid-cols-3  mt-10 gap-4 ">
+        <div className=" mt-15 mb-5 lg:my-5 flex items-center lg:gap-4 lg:justify-start justify-between ">
+          Show all answers immediately{" "}
+          <Switch
+            checked={showAllAnswer}
+            onCheckedChange={toggleShowAllAnswer}
+          />
+        </div>
+        <main className="grid grid-cols-1 lg:grid-cols-3   gap-4 ">
           {flashcards.map((f) => (
-            <FlashcardCard color={deck.color} flashcard={f} key={f.id} />
+            <FlashcardCard
+              showAnswerImmediately={showAllAnswer}
+              color={deck.color}
+              flashcard={f}
+              key={f.id}
+            />
           ))}
         </main>
         <footer className="mt-20">
@@ -59,7 +69,7 @@ const DeckFlashcards = () => {
         </footer>
         <div ref={ref} />
       </main>
-    </>
+    </div>
   );
 };
 

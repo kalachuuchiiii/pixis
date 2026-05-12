@@ -17,7 +17,7 @@ export const CloseEndedAnswerChoices = memo(
       <main className="grid grid-cols-2 h-full gap-1 w-full">
         {choices.map((c) => (
           <Button
-            className="whitespace-normal break-words min-h-8 wrap h-full text"
+            className="whitespace-normal break-words min-h-8 wrap h-full"
             onClick={() => setAnswer(c)}
             variant={answer?.answer === c ? "default" : "outline"}
           >

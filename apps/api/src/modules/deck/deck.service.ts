@@ -6,13 +6,14 @@ import { In, IsNull, Not, type Repository } from 'typeorm';
 import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { DataSource } from 'typeorm';
-import type { SelectQueryBuilder } from 'typeorm';
+
 import { deckPaginationConfig } from '@/config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { withDeckSavedInfo } from './query/withDeckSavedInfo';
 import { withDeckStats } from './query/withDeckStats';
-import { Flashcard } from '../flashcard/entities/flashcard.entity.js';
+import { Flashcard } from '../flashcard/entities/flashcard.entity';
 import nestql from 'nestql';
+import { UserSavedDeck } from '../user-saved-deck/entities/user-saved-deck.entity';
 type DeckIdWithUser = { deckId: number; user: AuthUser };
 
 @Injectable()
@@ -20,6 +21,9 @@ export class DeckService {
   constructor(
     @InjectRepository(Deck) public deckRepo: Repository<Deck>,
     @InjectRepository(Flashcard) public flashcardRepo: Repository<Deck>,
+    @InjectRepository(UserSavedDeck)
+    public userSavedDeckRepo: Repository<UserSavedDeck>,
+
     public dataSource: DataSource,
   ) {}
 
@@ -167,6 +171,7 @@ export class DeckService {
       .createQueryBuilder('deck')
       .leftJoinAndSelect('deck.user', 'user')
       .leftJoin('deck.flashcards', 'flashcard')
+      .leftJoin('deck.userSavedDecks', 'usd')
       .where('deck.id = :deckId', { deckId })
       .withDeleted()
       .andWhere('(deck.visibility != :visibility OR user.id = :userId)', {
@@ -174,14 +179,12 @@ export class DeckService {
         userId: user.id,
       });
 
-    const finalQb = withDeckSavedInfo({
-      qb: withDeckStats(qb),
-      userId: user.id,
-    })
+    const finalQb = withDeckStats(qb)
       .leftJoin('deck.sessions', 'session')
       .leftJoin('session.user', 'suser')
       .select([
         'deck',
+        'usd',
         'user.username',
         'user.nickname',
         'user.avatarUrl',
@@ -190,15 +193,28 @@ export class DeckService {
       .addSelect('AVG(session.accuracy)::float', 'deck_average_accuracy')
       .addSelect('COUNT(DISTINCT suser.id)::int', 'deck_participants_count')
       .addSelect('COUNT(DISTINCT flashcard.id)::int', 'deck_flashcard_count')
+      .addSelect('COUNT(DISTINCT usd.id)::int', 'deck_user_saved_deck_count')
       .groupBy('deck.id')
       .addGroupBy('usd.id')
       .addGroupBy('user.id');
 
     const deck = await finalQb.getRawOne();
+    console.log(deck);
+    const savedByMe = await this.userSavedDeckRepo.exists({
+      where: {
+        user: { id: user.id },
+        deck: [
+          { id: deckId, visibility: 'public' },
+          { id: deckId, user: { id: user.id } },
+        ],
+      },
+    });
     const nestedDeck = {
       ...nestql(deck, { prefix: 'deck' }),
       user: nestql(deck, { prefix: 'user' }),
+      savedByMe: savedByMe,
     };
+    console.log(nestedDeck);
 
     if (!deck && throwOnNotFound) {
       throw new NotFoundException({

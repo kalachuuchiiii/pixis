@@ -23,6 +23,7 @@ export const useCollections = (blacklistedFields?: ["visibility"]) => {
         totalItems: number;
       }>(`/collections/${cleanId}/list/?${queries}`);
 
+      console.log(res.data.collections);
       return res.data;
     },
     queryKey: ["collections", userId, query],

@@ -3,21 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { AuthUser } from '../auth/schemas/auth.schemas.js';
-import env from '../../config/env.js';
-import { GENERATE_CHAT_SYSTEM_PROMPT } from './constants/assistant.constant.js';
-import { Deck } from '../deck/entities/deck.entity.js';
+import type { AuthUser } from '../auth/schemas/auth.schemas';
+import env from '../../config/env';
+import { Deck } from '../deck/entities/deck.entity';
 import { DataSource, type Repository } from 'typeorm';
-import {
-  AssistantResponseSchema,
-  BaseMessageSchema,
-  type GeneratedSet,
-} from '@pixis/schemas';
+import { AssistantResponseSchema, type GeneratedSet } from '@pixis/schemas';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation } from './entities/conversation.entity';
 import { User } from '../users/entities/user.entity';
 import { Message } from './entities/message.entity';
-import z from 'zod';
 import { type PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
@@ -187,7 +181,6 @@ export class AssistantService {
           model: 'meta-llama/llama-4-scout-17b-16e-instruct',
           messages: [
             { role: 'system', content: systemPrompt },
-
             { role: 'user', content: prompt },
           ],
           response_format: {
@@ -262,6 +255,7 @@ export class AssistantService {
       },
     );
     const data = await result.json();
+    console.log(data);
     const jsonResponse = data.choices[0].message.content;
     const assistantResponse = AssistantResponseSchema.parse({
       role: 'assistant',

@@ -23,7 +23,7 @@ const DeckHistory = () => {
         </span>
       </div>
       {(!user.isPrivate || me.id === user.id) && (
-        <main className="grid gap-4  grid-cols-1 lg:grid-cols-2  ">
+        <main className="grid gap-4 grid-cols-1 lg:grid-cols-2  ">
           {decks.map((d, i) => (
             <div
               key={d.id}

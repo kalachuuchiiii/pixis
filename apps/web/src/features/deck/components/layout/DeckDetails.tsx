@@ -35,17 +35,19 @@ const DeckDetails = () => {
             <DeckDisplay.Title />
           </DeckDisplay>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={() => copy(window.location.href)}
-                variant={"outline"}
-                className="my-btn"
-              >
-                <Link2 />
-              </Button>
-              <AddToCollectionDialog deckId={deckId} />
-              <SaveOrUnsaveDeckButton deck={deck} />
-            </div>
+            {!deck.deletedAt && (
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => copy(window.location.href)}
+                  variant={"outline"}
+                  className="my-btn"
+                >
+                  <Link2 />
+                </Button>
+                <AddToCollectionDialog deckId={deckId} />
+                <SaveOrUnsaveDeckButton deck={deck} />
+              </div>
+            )}
             {user.id === deck.userId && (
               <div className="flex items-center gap-2">
                 <UpdateDeckDialog deck={deck} />
@@ -106,7 +108,7 @@ const DeckDetails = () => {
           <Outlet />
         </div>
       </div>
-      <StartAndSelectExamMode deck={deck} />
+      {!deck.deletedAt && <StartAndSelectExamMode deck={deck} />}
     </>
   );
 };

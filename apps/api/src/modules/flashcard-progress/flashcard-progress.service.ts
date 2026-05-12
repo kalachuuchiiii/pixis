@@ -16,9 +16,9 @@ import { POINT_PER_CORRECT, POINT_PER_MISTAKE } from '@pixis/constants';
 import { User } from '../users/entities/user.entity';
 import { Point } from '../users/entities/point.entity';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
-import { flashcardProgressValuesSchema } from './schemas/flashcard-progress.schemas.js';
+import { flashcardProgressValuesSchema } from './schemas/flashcard-progress.schemas';
 import z, { date } from 'zod';
-import { Streak } from '../users/entities/streak.entity.js';
+import { Streak } from '../users/entities/streak.entity';
 
 type StreakDetail = {
   increment: boolean;

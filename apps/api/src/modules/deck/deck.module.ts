@@ -5,7 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Deck } from './entities/deck.entity';
 import { UserSavedDeck } from '../user-saved-deck/entities/user-saved-deck.entity';
 import { SessionModule } from '../session/session.module';
-import { Flashcard } from '../flashcard/entities/flashcard.entity.js';
+import { Flashcard } from '../flashcard/entities/flashcard.entity';
+import { UserSavedDeckModule } from '../user-saved-deck/user-saved-deck.module';
 
 @Module({
   controllers: [DeckController],

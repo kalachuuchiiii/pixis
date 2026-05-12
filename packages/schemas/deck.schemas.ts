@@ -54,12 +54,7 @@ export const DeckSchema = DeckFormSchema.extend({
   averageAccuracy: PercentageSchema.catch(0),
   userSavedDeckCount: z.number().positive().default(0).catch(0),
   deletedAt: TimestampSchema.nullable().optional(),
-  savedByMe: z
-    .object({
-      id: IDSchema,
-    })
-    .nullable()
-    .optional(),
+  savedByMe: z.boolean().optional(),
 }).strip();
 
 export type Deck = z.infer<typeof DeckSchema>;

@@ -12,7 +12,7 @@ export const SaveOrUnsaveDeckButton = ({ deck }: { deck: Deck }) => {
   const { saveDeck, unsaveDeck, isUnsavingDeck, isSavingDeck } =
     useUserSavedDeck();
 
-  return deck.savedByMe?.id ? (
+  return deck.savedByMe ? (
     <Tooltip>
       <TooltipTrigger>
         <Button

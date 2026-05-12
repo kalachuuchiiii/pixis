@@ -38,7 +38,7 @@ export const CollectionCreatorDialog = ({
         <Tooltip>
           <TooltipTrigger asChild {...props}>
             <Button className="my-btn">
-              <Plus />
+              <Plus /> Create
             </Button>
           </TooltipTrigger>
           <TooltipContent>Create collection</TooltipContent>

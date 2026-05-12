@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
-import logger from './logger';
-import ms, { type StringValue } from 'ms';
+import { type StringValue } from 'ms';
 
 dotenv.config();
 
@@ -15,7 +14,7 @@ const getEnvVariable = <T>(
   const value = process.env[key] || options.default;
 
   if (!value && options.required) {
-    logger.error(`ENVIRONMENT_VARIABLE: ${key} not found.`);
+    console.error(`ENVIRONMENT_VARIABLE: ${key} not found.`);
     return process.exit(1);
   }
 

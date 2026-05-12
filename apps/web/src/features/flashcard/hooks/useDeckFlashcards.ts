@@ -4,11 +4,14 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import type { Flashcard } from "@pixis/schemas";
 import api from "@/lib/api";
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
+import { useState } from "react";
 
 export const useDeckFlashcards = () => {
   const { deckId } = useParams();
   const flashcardFilter = useFlashcardFilter();
   const { query } = flashcardFilter;
+  const [showAllAnswer, setShowAllAnswer] = useState(false);
+  const toggleShowAllAnswer = () => setShowAllAnswer((prev) => !prev);
 
   const infiniteDeckFlashcardsQuery = useInfiniteQuery({
     queryKey: ["flashcards", String(deckId), query],
@@ -35,6 +38,8 @@ export const useDeckFlashcards = () => {
 
   return {
     flashcards,
+    showAllAnswer,
+    toggleShowAllAnswer,
     totalFlashcards,
     flashcardFilter,
     ref,

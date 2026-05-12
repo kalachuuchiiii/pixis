@@ -6,30 +6,14 @@ import { DeckFilter } from "@/features/deck/components/DeckFilter";
 import { Link, NavLink, useParams } from "react-router-dom";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { DeckDisplay } from "../components/DeckDisplay";
-import { Archive, Astroid, Bookmark, Plus } from "lucide-react";
+import { Astroid } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { EmptyResource } from "../../../components/ui/EmptyResource";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useForm } from "react-hook-form";
-import { useDeck } from "../hooks/useDeck";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { DeckForm } from "../components/DeckForm";
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 import { useDeckFilter } from "../hooks/useDeckFilter";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { DeckCreatorDialog } from "../components/DeckCreatorDialog";
-import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
 
 const Decks = () => {
   const { data: user } = useAuthUser();
@@ -61,7 +45,7 @@ const Decks = () => {
       <div className="flex items-center h-12   justify-end w-full gap-2">
         <DeckFilter
           deckFilter={deckFilter}
-          additionalActions={[<DeckCreatorDialog />]}
+          additionalActions={[<DeckCreatorDialog ref={createDeckButtonRef} />]}
           menus={
             isMine
               ? [
