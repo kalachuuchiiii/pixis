@@ -50,7 +50,7 @@ export class AuthController {
     });
 
     return {
-      payload,
+      user: payload,
     };
   }
 
