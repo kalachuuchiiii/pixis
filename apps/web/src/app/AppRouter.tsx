@@ -16,7 +16,10 @@ import { GuestGuard } from "@/components/guards/GuestGuard";
 import { AuthGuard } from "@/features/auth/components/guards/AuthGuard";
 import NotFound from "@/pages/NotFound";
 import { GuestLayout } from "@/components/ui/GuestLayout";
-import Documentation from "@/pages/Documentation";
+
+import StudyTechniques from "@/features/guides/pages/StudyTechniques";
+import Documentation from "@/features/guides/pages/Documentation";
+import { GuidesLayout } from "@/features/guides/components/ui/GuidesLayout";
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const Layout = lazy(() => import("@/features/auth/components/Layout"));
@@ -73,13 +76,21 @@ const routes: RouteObject[] = [
         path: "*",
         element: <NotFound />,
       },
+    ],
+  },
+  {
+    element: <GuidesLayout />,
+    children: [
       {
         path: "/documentation",
         element: <Documentation />,
       },
+      {
+        path: "/study",
+        element: <StudyTechniques />,
+      },
     ],
   },
-
   {
     element: (
       <GuestGuard>

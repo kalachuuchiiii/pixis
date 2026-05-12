@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "./dialog";
 import { privacyPolicy } from "@/features/auth/data/auth";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 const Footer = () => (
   <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-10 text-sm text-zinc-500 dark:text-zinc-400">
@@ -36,6 +37,9 @@ const Footer = () => (
         ))}
         <a href="/documentation" target="_blank">
           Documentation
+        </a>
+        <a href="/study" target="_blank">
+          Study guides
         </a>
         <Dialog>
           <DialogTrigger>
@@ -77,12 +81,20 @@ export const GuestLayout = () => {
               {item}
             </a>
           ))}
+
           <a
             href={`/documentation`}
             target="_blank"
             className="hover:text-zinc-900 dark:hover:text-white transition-colors"
           >
             Documentation
+          </a>
+          <a
+            href={`/study`}
+            target="_blank"
+            className="hover:text-zinc-900 dark:hover:text-white transition-colors"
+          >
+            Study guides
           </a>
         </div>
 

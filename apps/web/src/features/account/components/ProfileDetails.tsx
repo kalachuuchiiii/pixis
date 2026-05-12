@@ -16,7 +16,7 @@ const ProfileDetails = () => {
         {/* Profile Header */}
         <div className="flex flex-col lg:flex-row gap-12 items-center lg:items-start mb-20">
           {/* Avatar & Name Section */}
-          <div className="flex-shrink-0 sticky top-0   flex flex-col items-center">
+          <div className="flex-shrink-0 lg:sticky lg:top-0   flex flex-col items-center">
             <div className="relative p-2 mt-20">
               <Skeleton name="avatar" loading={isLoading}>
                 <UserBadge user={user}>

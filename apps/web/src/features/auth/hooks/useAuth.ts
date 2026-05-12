@@ -44,14 +44,16 @@ export const useAuth = () => {
 
   const { mutate: signIn, isPending: isSigningIn } = useMutation({
     mutationFn: async (form: SignInForm) => {
-      const promise = new Promise((resolve, reject) => {
-        try {
-          const validatedForm = SignInFormSchema.parse(form);
-          resolve(api.post("/auth/signin", validatedForm));
-        } catch (e) {
-          reject(e);
+      const promise = new Promise<{ user: { username: string; id: number } }>(
+        (resolve, reject) => {
+          try {
+            const validatedForm = SignInFormSchema.parse(form);
+            resolve(api.post("/auth/signin", validatedForm));
+          } catch (e) {
+            reject(e);
+          }
         }
-      });
+      );
 
       await toast.promise(promise, {
         loading: "Signing you in...",
@@ -60,9 +62,12 @@ export const useAuth = () => {
       });
       return await promise;
     },
-    onSuccess: () => {
-      nav("/app/explore/decks");
+    onSuccess: (result) => {
+      console.log(result);
       queryClient.invalidateQueries();
+      setTimeout(() => {
+        nav(`/app/profile/${result.user.id}/decks`);
+      }, 100);
     },
   });
 

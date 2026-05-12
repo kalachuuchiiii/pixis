@@ -13,6 +13,8 @@ import {
 import {
   BarChart2,
   BookOpen,
+  BookOpenText,
+  BookText,
   ChartArea,
   Layers,
   LibraryBig,
@@ -79,6 +81,10 @@ const NavItem = ({
 
 export const AppSidebar = () => {
   const { data: user } = useAuthUser();
+  const NAV_GUIDES = [
+    { label: "Study Guides", to: "/study", icon: BookOpenText },
+    { label: "Documentation", to: `/documentation`, icon: BookText },
+  ];
   const NAV_SYSTEM = [
     { label: "Profile", to: `/app/profile/${user.id}/stats`, icon: User },
     { label: "Settings", to: "/app/settings", icon: Settings },
@@ -147,6 +153,15 @@ export const AppSidebar = () => {
           <SidebarGroupLabel>Stats</SidebarGroupLabel>
           <SidebarMenu>
             {NAV_STATS.map((item) => (
+              <NavItem key={item.to} item={item} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Guides</SidebarGroupLabel>
+          <SidebarMenu>
+            {NAV_GUIDES.map((item) => (
               <NavItem key={item.to} item={item} />
             ))}
           </SidebarMenu>
