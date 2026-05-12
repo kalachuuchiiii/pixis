@@ -103,7 +103,7 @@ const Info = () => {
 const Default = ({ user }: { user: UB }) => {
   return (
     <Root className="flex items-center gap-4" user={user}>
-      <Avatar className="outline-[2px] outline-offset-3 outline-amber-400" />
+      <Avatar className="outline-[2px] outline-offset-3 avatar-ring" />
       <Info />
     </Root>
   );

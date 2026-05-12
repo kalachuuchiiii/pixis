@@ -33,7 +33,6 @@ export const studyTechniqueOptions = [
   { id: "cornell", name: "Cornell Note-Taking" },
   { id: "pareto", name: "Pareto Principle" },
   { id: "exam-simulation", name: "Exam Simulation" },
-  { id: "teach-back", name: "Teach Back Method" },
 ];
 
 export const studyTechniques: Technique[] = [
@@ -92,7 +91,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "Very High",
     category: "Comprehension",
     icon: Zap,
-    videoId: "tkm0TNFFFpA",
+    videoId: "tkm0TNFzIeg",
     videoTitle: "The Feynman Technique",
     videoNote:
       "Named after Nobel laureate Richard Feynman — this video demonstrates the four-step process clearly.",
@@ -124,7 +123,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "High",
     category: "Recall",
     icon: FileText,
-    videoId: "FznCHMuEFHo",
+    videoId: "CgrCo1J9A44",
     videoTitle: "Blurting Method for Studying",
     videoNote:
       "A simple yet powerful method especially popular among students cramming for exams.",
@@ -148,7 +147,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "Very High",
     category: "Mixed",
     icon: Layers,
-    videoId: "ckTiQqbUpEQ",
+    videoId: "AWTYfzxBwPg",
     videoTitle: "Interleaving: The Counter-Intuitive Study Strategy",
     videoNote:
       "Explains why mixing subjects feels harder but leads to dramatically better test performance.",
@@ -188,7 +187,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "High",
     category: "Recall",
     icon: BookOpen,
-    videoId: "C20M5vFJMHE",
+    videoId: "8Zr-Fn3EXWU",
     videoTitle: "The Leitner Box System",
     videoNote:
       "Demonstrates the physical box system that gave birth to modern spaced repetition software.",
@@ -212,7 +211,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "High",
     category: "Comprehension",
     icon: Eye,
-    videoId: "nwnYgqZFECA",
+    videoId: "0dhcSP_Myjg",
     videoTitle: "SQ3R Reading Method",
     videoNote:
       "Walks through each step of SQ3R with practical examples for textbook-heavy courses.",
@@ -252,7 +251,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "High",
     category: "Comprehension",
     icon: Eye,
-    videoId: "6i3mM7C3Yrc",
+    videoId: "ZFmKYd_vPQc",
     videoTitle: "Dual Coding Theory Explained",
     videoNote:
       "A visual explanation of Allan Paivio's dual coding theory and how to apply it practically.",
@@ -272,7 +271,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "High",
     category: "Organization",
     icon: Puzzle,
-    videoId: "HDSFdlmT0mY",
+    videoId: "hydCdGLAh00",
     videoTitle: "Chunking for Better Memory",
     videoNote:
       "Explains Miller's Law and how chunking can dramatically increase your working memory capacity.",
@@ -292,7 +291,7 @@ export const studyTechniques: Technique[] = [
     effectiveness: "High",
     category: "Comprehension",
     icon: Brain,
-    videoId: "TJgEGhD8bUQ",
+    videoId: "eF7VociLFxQ",
     videoTitle: "Elaborative Interrogation",
     videoNote:
       "Covers how asking 'why does this work?' transforms shallow memorization into deep understanding.",
@@ -356,25 +355,5 @@ export const studyTechniques: Technique[] = [
     videoTitle: "Practice Tests & Exam Simulation",
     videoNote:
       "Why simulated exams are the gold standard for exam preparation and how to set them up properly.",
-  },
-  {
-    id: "teach-back",
-    name: "Teach Back Method",
-    description:
-      "After learning something, teach it to another person (or explain it aloud to yourself). Gaps in understanding become impossible to hide when you're the teacher.",
-    benefits: [
-      "Ultimate comprehension test",
-      "Builds communication skills",
-      "Reveals weak points instantly",
-    ],
-    useCases: ["Study groups", "Peer tutoring", "Self-explanation"],
-    difficulty: "Intermediate",
-    effectiveness: "Very High",
-    category: "Comprehension",
-    icon: Users,
-    videoId: "gXTMZIJpPRY",
-    videoTitle: "The Teach-Back Method",
-    videoNote:
-      "Explores why teaching is one of the most powerful forms of learning and how to use it solo.",
   },
 ];

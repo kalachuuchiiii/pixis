@@ -54,9 +54,13 @@ const Collections = () => {
       </div>
       <main className="grid my-6 lg:grid-cols-2 grid-cols-1 gap-4">
         {collections.map(
-          (c) =>
+          (c, i) =>
             c?.id && (
-              <Link key={c.id} to={`/app/collections/${c.id}`}>
+              <Link
+                className={`${i % 2 !== 0 && "lg:translate-y-8"}`}
+                key={c.id}
+                to={`/app/collections/${c.id}`}
+              >
                 <CollectionCard.Default collection={c} />
               </Link>
             )

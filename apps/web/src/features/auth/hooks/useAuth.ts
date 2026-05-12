@@ -66,7 +66,7 @@ export const useAuth = () => {
       console.log(result);
       queryClient.invalidateQueries();
       setTimeout(() => {
-        nav(`/app/profile/${result.user.id}/decks`);
+        nav(`/app/profile/${result.user.id}/stats`);
       }, 100);
     },
   });

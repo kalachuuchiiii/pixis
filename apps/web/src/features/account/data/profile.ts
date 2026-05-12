@@ -21,7 +21,6 @@ export const initialUserStatData: UserWithStats = {
     id: 0,
     currentStreak: 0,
     highestStreak: 0,
-    totalStreak: 0,
     lastActionTimestamp: new Date().toISOString(),
   },
   createdAt: new Date().toISOString(),

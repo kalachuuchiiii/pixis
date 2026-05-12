@@ -144,6 +144,14 @@ const Title = ({ title, color, flashcardCount }: TitleProps) => {
       </div>
 
       <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
+        {finalFlashcardCount > 0 && (
+          <span>{finalFlashcardCount} flashcard(s)</span>
+        )}
+        {(deck?.averageAccuracy || 0) > 0 && (
+          <div className="flex items-center gap-1">
+            {(deck?.averageAccuracy ?? 0).toFixed(2)}% accuracy
+          </div>
+        )}
         {(deck?.participantsCount ?? 0) > 0 && (
           <div className="flex items-center gap-1">
             {deck?.participantsCount ?? 0} <User className="size-4 " />
@@ -152,15 +160,6 @@ const Title = ({ title, color, flashcardCount }: TitleProps) => {
         {(deck?.userSavedDeckCount ?? 0) > 0 && (
           <div className="flex items-center gap-1">
             {deck?.userSavedDeckCount} <Bookmark className="size-4" />
-          </div>
-        )}
-        {finalFlashcardCount > 0 && (
-          <span>{finalFlashcardCount} flashcard(s)</span>
-        )}
-
-        {(deck?.averageAccuracy || 0) > 0 && (
-          <div className="flex items-center gap-1">
-            {(deck?.averageAccuracy ?? 0).toFixed(2)}% accuracy
           </div>
         )}
       </div>
@@ -183,7 +182,7 @@ const Footer = ({ createdAt, id }: FooterProps) => {
   const finalId = deck?.id ?? id;
 
   return (
-    <div className="pt-5 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs">
+    <div className="pt-5 flex items-center justify-between text-xs">
       <div className="flex items-center gap-1.5 text-zinc-400 dark:text-zinc-500">
         <Calendar size={15} />
         <span>

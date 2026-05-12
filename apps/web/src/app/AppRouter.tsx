@@ -29,7 +29,9 @@ const SignUp = lazy(() => import("@/features/auth/pages/SignUp"));
 const AppLayout = lazy(() => import("@/components/ui/AppLayout"));
 
 const Settings = lazy(() => import("@/features/account/pages/Settings"));
-const Leaderboard = lazy(() => import("@/features/activity/pages/Leaderboard"));
+const Leaderboard = lazy(
+  () => import("@/features/leaderboards/pages/Leaderboard")
+);
 const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"));
 const Assistant = lazy(() => import("@/features/assistant/pages/Assistant"));
 

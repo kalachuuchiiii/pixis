@@ -67,8 +67,13 @@ const Decks = () => {
 
       <div className="w-full">
         <div className=" grid my-6 grid-cols-1 lg:grid-cols-2 gap-6">
-          {decks.map((d) => (
-            <DeckDisplay.Default key={`${d.topic}.${d.id}`} deck={d} />
+          {decks.map((d, i) => (
+            <div
+              key={`${d.topic}.${d.id}`}
+              className={`${i % 2 !== 0 && "lg:translate-y-8"}`}
+            >
+              <DeckDisplay.Default deck={d} />
+            </div>
           ))}
         </div>
         <div className=" h-20 my-20">
