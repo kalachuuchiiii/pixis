@@ -58,14 +58,6 @@ const AssistantPage = () => {
                 </motion.p>
               )}
             </AnimatePresence>
-            {isSendingPrompt && (
-              <div className="flex items-center  gap-2 w-full">
-                <PixisAvatar />{" "}
-                <p className="font-medium opacity-75 animate-pulse">
-                  pixis is thinking...
-                </p>
-              </div>
-            )}
             {messages.map(({ role, type, content, id }) =>
               role === "assistant" ? (
                 <AssistantChatBubble
@@ -102,6 +94,7 @@ const AssistantPage = () => {
           </div>
         </div>
       )}
+
       <PromptInput {...assistantChat} />
     </div>
   );

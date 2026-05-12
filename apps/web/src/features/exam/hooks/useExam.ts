@@ -73,6 +73,14 @@ export const useExam = () => {
           })
         );
       },
+      onSettled: ({ result: { deckId } }) => {
+        queryClient.invalidateQueries({
+          queryKey: ["sessions", String(deckId)],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["leaderboards", String(deckId)],
+        });
+      },
     });
 
   const timerHandlers = useTimer(() => processExamAnswers());

@@ -39,7 +39,7 @@ export const SearchFilterBar = memo(
     const isLoading = !user.id;
 
     return (
-      <div className="flex lg:flex-row flex-col items-center rounded-lg w-full relative gap-2  ">
+      <div className="flex lg:flex-row flex-col lg:items-center  rounded-lg w-full relative gap-2  ">
         <Skeleton
           loading={isLoading}
           name="search-bar"
@@ -49,15 +49,15 @@ export const SearchFilterBar = memo(
             value={search}
             onChange={handleChangeSearch}
             type="text"
-            className={clsx(" h-full h-8 lg:h-12 min-h-full ", className)}
+            className={clsx(" h-8 lg:h-12 ", className)}
             {...prop}
             onKeyDown={updateQueryOnEnter}
           />
         </Skeleton>
-        <div className="flex items-start w-full gap-2">
+        <div className="flex items-center w-full gap-2">
           {menus.length > 0 && (
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <Skeleton loading={isLoading} name="button">
                   <Button variant={"outline"} className="my-btn">
                     <Settings2 />

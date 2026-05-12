@@ -74,6 +74,7 @@ export class FlashcardService {
         { id: flashcardId, user: { id: user.id } },
         { id: flashcardId, deck: { visibility: Not(Equal('private')) } },
       ],
+
       withDeleted: true,
     });
     if (!flashcard) {
@@ -122,6 +123,7 @@ export class FlashcardService {
   }) {
     const qb = this.flashcardRepo
       .createQueryBuilder('flashcard')
+      .withDeleted()
       .leftJoin('flashcard.deck', 'deck')
       .where('deck.id = :deckId', { deckId })
       .andWhere('(deck.visibility != :visibility OR deck.user.id = :userId)', {
@@ -135,6 +137,7 @@ export class FlashcardService {
         type: [FilterOperator.EQ],
         createdAt: [FilterOperator.EQ, FilterOperator.GTE],
       },
+      defaultSortBy: [['createdAt', 'DESC']],
       searchableColumns: [...SEARCHABLE_FLASHCARD_FIELDS],
     });
     return getPaginationData(result);

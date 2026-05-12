@@ -10,7 +10,7 @@ export const withDeckSavedInfo = ({
 }) => {
   return qb
     .leftJoinAndMapOne(
-      'deck.savedByMe',
+      'deck_saved_by_me',
       'deck.userSavedDecks',
       'usd',
       'usd.user.id = :userId',

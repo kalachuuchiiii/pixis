@@ -35,7 +35,11 @@ const Collections = () => {
     <div>
       <div className=" flex items-center h-12 lg:gap-2 w-full">
         <CollectionFilter
-          additionalActions={[isMine ? <CollectionCreatorDialog /> : undefined]}
+          additionalActions={[
+            isMine ? (
+              <CollectionCreatorDialog ref={collectionTriggerRef} />
+            ) : undefined,
+          ]}
           menus={[
             isMine ? (
               <Link to={"/app/saved-collections"}>
@@ -49,11 +53,14 @@ const Collections = () => {
         />
       </div>
       <main className="grid my-6 lg:grid-cols-2 grid-cols-1 gap-4">
-        {collections.map((c) => (
-          <Link key={c.id} to={`/app/collections/${c.id}`}>
-            <CollectionCard.Default collection={c} />
-          </Link>
-        ))}
+        {collections.map(
+          (c) =>
+            c?.id && (
+              <Link key={c.id} to={`/app/collections/${c.id}`}>
+                <CollectionCard.Default collection={c} />
+              </Link>
+            )
+        )}
       </main>
       <div className="my-20">
         {isLoading ? (

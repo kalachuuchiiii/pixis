@@ -8,8 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AssistantService } from './assistant.service';
-import { AccessGuard } from '../auth/guards/access.guard.js';
-import { AuthUserSchema } from '../auth/schemas/auth.schemas.js';
+import { AccessGuard } from '../auth/guards/access.guard';
+import { AuthUserSchema } from '../auth/schemas/auth.schemas';
 import type { Request } from 'express';
 import {
   MessageSchema,
@@ -17,7 +17,7 @@ import {
   GeneratedSetSchema,
   IDSchema,
 } from '@pixis/schemas';
-import { GENERATE_CHAT_SYSTEM_PROMPT } from './constants/assistant.constant.js';
+import { GENERATE_CHAT_SYSTEM_PROMPT } from './constants/assistant.constant';
 import z from 'zod';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 import { Throttle } from '@nestjs/throttler';

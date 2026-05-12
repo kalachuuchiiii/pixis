@@ -4,7 +4,7 @@ import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-prog
 import { User } from '../users/entities/user.entity';
 import { LeaderboardsService } from './leaderboards.service';
 import { LeaderboardsController } from './leaderboards.controller';
-import { DashboardsModule } from '../dashboards/dashboards.module.js';
+import { DashboardsModule } from '../dashboards/dashboards.module';
 
 @Module({
   controllers: [LeaderboardsController],

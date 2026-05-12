@@ -2,7 +2,7 @@ import { type CollectionForm as CF } from "@pixis/schemas";
 import { LoadingDisplay } from "@/components/ui/LoadingDisplay";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { Bookmark, Layers, Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useCollection } from "../hooks/useCollection";
 import { DeckDisplay } from "@/features/deck/components/DeckDisplay";
@@ -27,6 +27,7 @@ import { useCollectionDecks } from "../hooks/useCollectionDecks";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { Separator } from "@/components/ui/separator";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { Link } from "react-router-dom";
 
 const CollectionDetails = () => {
   const { data: user } = useAuthUser();
@@ -115,6 +116,22 @@ const CollectionDetails = () => {
                   </AlertDialog>,
                 ]}
                 deckFilter={deckFilter}
+                additionalActions={
+                  isMine
+                    ? [
+                        <Link to={`/app/profile/${user.id}/decks`}>
+                          <Button className="my-btn" variant="outline">
+                            <Layers /> My decks
+                          </Button>
+                        </Link>,
+                        <Link to={`/app/saved-decks`}>
+                          <Button variant="outline" className="my-btn">
+                            <Bookmark /> Saved decks
+                          </Button>
+                        </Link>,
+                      ]
+                    : []
+                }
               />
             </div>
           ) : undefined,
@@ -122,7 +139,7 @@ const CollectionDetails = () => {
       />
       <main className="grid grid-cols-1 lg:grid-cols-3  gap-4">
         {collectionDecks.map((d) => (
-          <DeckDisplay.Default key={d.id} deck={d} />
+          <DeckDisplay.Default key={d?.id} deck={d} />
         ))}
       </main>
       <div className="my-20">

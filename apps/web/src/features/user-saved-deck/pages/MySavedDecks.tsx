@@ -10,7 +10,7 @@ import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 import api from "@/lib/api";
 import type { Deck } from "@pixis/schemas";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const MySavedDecks = () => {
@@ -46,7 +46,7 @@ const MySavedDecks = () => {
             additionalActions={[
               <Link to={`/app/profile/${user.id}/decks`}>
                 <Button variant={"outline"} className="my-btn">
-                  <ChevronLeft />
+                  <Layers /> My decks
                 </Button>
               </Link>,
             ]}

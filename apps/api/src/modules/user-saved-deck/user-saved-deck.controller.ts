@@ -22,6 +22,7 @@ export class UserSavedDeckController {
       deckId,
       user,
     });
+    console.log(result);
     return {
       result,
       message: 'Saved deck successfully!',

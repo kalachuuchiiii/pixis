@@ -13,13 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  ChevronLeft,
-  CloudBackup,
-  MousePointerClick,
-  Trash,
-  X,
-} from "lucide-react";
+import { ChevronLeft, Layers, MousePointerClick } from "lucide-react";
 import { useArchiveSelector } from "../hooks/useArchiveSelector";
 import clsx from "clsx";
 import { useArchive } from "../hooks/useArchive";
@@ -72,33 +66,34 @@ const ArchivedDecks = () => {
           heading="Archived Decks"
           description="Restore or permanently delete decks"
           beside={
-            <div className="w-full gap-1 flex items-center justify-end">
-              <DeckFilter deckFilter={deckFilterHandlers} />
-
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    onClick={handleToggleIsSelecting}
-                    variant={isSelecting ? "default" : "outline"}
-                    className="my-btn"
-                  >
-                    <MousePointerClick />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Select multiple</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger>
-                  <Link to={"/app/decks"}>
-                    <Button className="my-btn h-full" variant={"outline"}>
-                      <ChevronLeft />
+            <DeckFilter
+              deckFilter={deckFilterHandlers}
+              additionalActions={[
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      disabled={archivedDecks.length === 0}
+                      onClick={handleToggleIsSelecting}
+                      variant={isSelecting ? "default" : "outline"}
+                      className="my-btn"
+                    >
+                      <MousePointerClick />
                     </Button>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>Go back to my decks</TooltipContent>
-              </Tooltip>
-            </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Select multiple</TooltipContent>
+                </Tooltip>,
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Link to={`/app/profile/${user.id}/decks`}>
+                      <Button className="my-btn h-full" variant={"outline"}>
+                        <Layers /> My decks
+                      </Button>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>Go back to my decks</TooltipContent>
+                </Tooltip>,
+              ]}
+            />
           }
         />
         <main className="grid grid-cols-3 gap-4">

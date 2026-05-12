@@ -60,7 +60,7 @@ export const FlashcardFilter = ({
       placeholder="Search flashcard by question or answer"
       actions={[
         <Sheet>
-          <SheetTrigger>
+          <SheetTrigger asChild>
             <Button variant={"outline"} className="my-btn h-full">
               <Filter />
             </Button>
@@ -172,7 +172,7 @@ export const FlashcardFilter = ({
         </Sheet>,
         isMine ? (
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger asChild>
               <Button className="my-btn h-full">
                 {" "}
                 <Plus /> <p className="lg:block hidden"> New Flashcard</p>

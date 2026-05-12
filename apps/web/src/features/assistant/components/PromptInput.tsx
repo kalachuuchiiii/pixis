@@ -3,15 +3,25 @@ import {
   InputGroupButton,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Astroid } from "lucide-react";
+import loading from "/loading.gif";
 import type { UseAssistantChatReturn } from "../hooks/useAssistantChat";
+import { PixisAvatar } from "@/components/ui/PixisAvatar";
 
 export const PromptInput = ({ ...props }: UseAssistantChatReturn) => {
   const { setPrompt, handleChangePrompt, prompt, sendPrompt, isSendingPrompt } =
     props;
   return (
-    <div className="fixed bottom-0 flex flex-col items-center gap-1 my-2">
-      <main className="max-w-7xl lg:w-[75vw]  rounded-4xl w-[88vw] space-y-2 mx-auto bg-background  p-1  z-40 ">
+    <div className="fixed bottom-0 flex flex-col items-start  my-2">
+      {isSendingPrompt && (
+        <div className="flex items-start bg-zinc-950 w-fit px-6 py-2 rounded-t-4xl gap-2 ">
+          <img src={loading} />{" "}
+          <p className="font-medium opacity-75 animate-pulse">
+            pixis is thinking...
+          </p>
+        </div>
+      )}
+      <main className="max-w-7xl lg:w-[75vw] rounded-r-4xl rounded-bl-4xl  w-[88vw] space-y-2 mx-auto bg-zinc-950  p-1  z-40 ">
         <InputGroup className="flex  items-end gap-2 border  border-border/60 rounded-3xl p-2 shadow-xl shadow-black/5 transition-all focus-within:border-primary/30 focus-within:shadow-2xl focus-within:-translate-y-0.5">
           <InputGroupTextarea
             onChange={handleChangePrompt}

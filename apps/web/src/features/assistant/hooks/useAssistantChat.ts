@@ -1,5 +1,6 @@
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 import api from "@/lib/api";
+import { getErrorMessage } from "@/utils/message-extractor.utils";
 import type { Message } from "@pixis/schemas";
 import {
   useInfiniteQuery,
@@ -10,6 +11,7 @@ import {
 import { useCallback, useRef, useState, type ChangeEvent } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 type ChatResponse = {
   messages: Message[];
@@ -139,10 +141,12 @@ export const useAssistantChat = () => {
 
       return res.data;
     },
-    retry: 3,
     onSuccess: ({ response: { conversationId, response } }) => {
       navigate(`/app/chat/${conversationId}`, { replace: true });
       appendMessage(response);
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
     },
   });
 

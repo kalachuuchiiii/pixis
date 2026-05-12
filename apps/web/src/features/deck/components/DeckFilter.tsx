@@ -208,13 +208,7 @@ export const DeckFilter = ({
             </SheetFooter>
           </SheetContent>
         </Sheet>,
-        <Button
-          className="my-btn"
-          variant={"outline"}
-          onClick={() => copy(window.location.href)}
-        >
-          <Link2 />
-        </Button>,
+
         ...(additionalActions ?? []),
       ]}
     />
