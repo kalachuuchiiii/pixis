@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { Crown, Medal, Trophy } from "lucide-react";
 import { useProfileDetails } from "@/features/account/hooks/useProfileDetails";
-import { useLeaderboardDetails } from "../../leaderboards/hooks/useLeaderboardDetails";
+import { useLeaderboardDetails } from "../hooks/useLeaderboardDetails";
 import { LeaderboardHeader } from "@/features/leaderboards/components/LeaderboardHeader";
 import { Leaderboard } from "@/features/leaderboards/components/Leaderboard";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";

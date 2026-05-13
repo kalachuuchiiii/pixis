@@ -3,10 +3,11 @@ import { UserBadge } from "./ui/UserBadge";
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "../hooks/useProfile";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { Skeleton } from "boneyard-js/react";
+import { pkmnTrainers } from "./data/pkmnTrainers";
 
 export const AvatarManager = () => {
   const { data: user } = useAuthUser();
@@ -23,10 +24,15 @@ export const AvatarManager = () => {
     setFile(file);
   };
 
+  const handleSelectPokemonTrainer = (file: File) => {
+    if (!file) return;
+    setFile(file);
+  };
+
   return (
     <div className="flex flex-col lg:p-4 items-center gap-6">
       <UserBadge user={user}>
-        <UserBadge.Avatar className="size-50 outline-4 outline-amber-400 outline-offset-4" />
+        <UserBadge.Avatar className="size-50 outline-4 avatar-ring outline-offset-4" />
       </UserBadge>
 
       <Dialog>
@@ -38,34 +44,54 @@ export const AvatarManager = () => {
           </Skeleton>
         </DialogTrigger>
         <DialogContent>
-          <div className="flex items-center gap-10 p-4">
-            <Avatar className="size-40 lg:size-50 outline outline-4 outline-offset-4 outline-amber-400">
-              <AvatarImage src={filePreview || undefined} />
-            </Avatar>
+          <div className="space-y-5">
+            <div className="flex items-center gap-10 p-4">
+              <Avatar className="size-40 lg:size-50 outline outline-4 outline-offset-4 avatar-ring">
+                <AvatarImage src={filePreview || undefined} />
+              </Avatar>
 
-            <Input
-              ref={fileInputRef}
-              onChange={onFileChange}
-              type="file"
-              className="hidden"
-              accept="/image"
-            />
-            <div className="flex flex-col w-full items-center justify-end gap-2">
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                variant={"outline"}
-                className="my-btn w-full "
-              >
-                Upload
-              </Button>
-              <Button
-                onClick={() => updateAvatar({ file })}
-                disabled={isUpdatingAvatar}
-                className="my-btn w-full"
-              >
-                Save
-              </Button>
+              <Input
+                ref={fileInputRef}
+                onChange={onFileChange}
+                type="file"
+                className="hidden"
+                accept="/image"
+              />
+              <div className="flex flex-col w-full items-center justify-end gap-2">
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  variant={"outline"}
+                  className="my-btn w-full "
+                >
+                  Upload
+                </Button>
+                <Button
+                  onClick={() => updateAvatar({ file })}
+                  disabled={isUpdatingAvatar}
+                  className="my-btn w-full"
+                >
+                  Save
+                </Button>
+              </div>
             </div>
+            <footer className="flex flex-col gap-1">
+              <p className="opacity-75 text-sm text-left w-fit">
+                PKMN trainers
+              </p>
+              <div className="grid  grid-cols-4   w-full ">
+                {pkmnTrainers.map((t) => (
+                  <button
+                    key={t.name}
+                    onClick={() => handleSelectPokemonTrainer(t.file)}
+                  >
+                    <Avatar className="size-19 lg:size-20">
+                      <AvatarImage src={URL.createObjectURL(t.file)} />
+                      <AvatarFallback>{t.name}</AvatarFallback>
+                    </Avatar>
+                  </button>
+                ))}
+              </div>
+            </footer>
           </div>
         </DialogContent>
       </Dialog>

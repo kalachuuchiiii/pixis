@@ -20,7 +20,7 @@ const ProfileDetails = () => {
             <div className="relative p-2 mt-20">
               <Skeleton name="avatar" loading={isLoading}>
                 <UserBadge user={user}>
-                  <UserBadge.Avatar className="size-50 outline-4 outline-amber-400 outline-offset-4" />
+                  <UserBadge.Avatar className="size-50 outline-4 avatar-ring outline-offset-4" />
                 </UserBadge>
               </Skeleton>
             </div>
@@ -60,22 +60,6 @@ const ProfileDetails = () => {
                 className={({ isActive }) =>
                   `${isActive && "active-route"} p-2 lg:p-3`
                 }
-                to={`/app/profile/${user.id}/collections`}
-              >
-                <Skeleton loading={isLoading} name="button">
-                  <Button
-                    className="my-btn text-xs lg:text-base "
-                    variant={"ghost"}
-                  >
-                    <LibraryBig className="lg:size-7 size-5" />{" "}
-                    <span className="lg:block hidden">Collections</span>
-                  </Button>
-                </Skeleton>
-              </NavLink>
-              <NavLink
-                className={({ isActive }) =>
-                  `${isActive && "active-route"} p-2 lg:p-3`
-                }
                 to={`/app/profile/${user.id}/decks`}
               >
                 <Skeleton loading={isLoading} name="button">
@@ -88,6 +72,23 @@ const ProfileDetails = () => {
                   </Button>
                 </Skeleton>
               </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  `${isActive && "active-route"} p-2 lg:p-3`
+                }
+                to={`/app/profile/${user.id}/collections`}
+              >
+                <Skeleton loading={isLoading} name="button">
+                  <Button
+                    className="my-btn text-xs lg:text-base "
+                    variant={"ghost"}
+                  >
+                    <LibraryBig className="lg:size-7 size-5" />{" "}
+                    <span className="lg:block hidden">Collections</span>
+                  </Button>
+                </Skeleton>
+              </NavLink>
+
               <NavLink
                 className={({ isActive }) =>
                   `${isActive && "active-route"} p-2 lg:p-3`

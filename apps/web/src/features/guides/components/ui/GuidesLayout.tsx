@@ -50,14 +50,18 @@ export const GuidesLayout = () => {
             <SidebarGroup>
               <SidebarMenu>
                 <SidebarGroupLabel>App</SidebarGroupLabel>
-                <SidebarMenuItem>
+                <SidebarMenuItem className="">
                   {user.id && user.username ? (
                     <NavLink to={`/app/profile/${user.id}/decks`}>
-                      <SidebarMenuButton>Home</SidebarMenuButton>
+                      <SidebarMenuButton className="px-5">
+                        Home
+                      </SidebarMenuButton>
                     </NavLink>
                   ) : (
                     <NavLink to={"/"}>
-                      <SidebarMenuButton>Pixis</SidebarMenuButton>
+                      <SidebarMenuButton className="px-5">
+                        Pixis
+                      </SidebarMenuButton>
                     </NavLink>
                   )}
                 </SidebarMenuItem>
@@ -70,7 +74,7 @@ export const GuidesLayout = () => {
                 <NavLink
                   to={`/documentation`}
                   className={({ isActive }) =>
-                    `${isActive ? "border-l-yellow-400" : ""} px-3 h-full  border-l-1`
+                    `${isActive ? "border-l-sky-400 dark:border-l-yellow-400" : ""} px-3 h-full  border-l-1`
                   }
                 >
                   <SidebarMenuItem>
@@ -80,7 +84,7 @@ export const GuidesLayout = () => {
                 <NavLink
                   to={`/study`}
                   className={({ isActive }) =>
-                    `${isActive ? "border-l-yellow-400" : ""} px-3 h-full  border-l-1`
+                    `${isActive ? "border-l-sky-400 dark:border-l-yellow-400" : ""} px-3 h-full  border-l-1`
                   }
                 >
                   <SidebarMenuItem>
@@ -90,7 +94,7 @@ export const GuidesLayout = () => {
                         <NavLink
                           to={`/study#${opt.id}`}
                           className={() =>
-                            `${opt.id === id ? "brightness-100 border-l-amber-200/50" : "brightness-50"} border-l-1 px-4  text-sm py-1 `
+                            `${opt.id === id ? "brightness-100 border-l-sky-300 dark:border-l-amber-200/50" : "brightness-50 "} border-l-1 px-4  text-sm py-1 `
                           }
                         >
                           {opt.name}

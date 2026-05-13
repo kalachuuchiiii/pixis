@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils";
-import { Atom } from "lucide-react";
+import { Astroid, Atom } from "lucide-react";
 
 function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   return (
-    <Atom
+    <Astroid
       role="status"
       aria-label="Loading"
       className={cn(
-        "size-14 mx-auto animate-spin [animation-duration:1.5s] text-zinc-900 dark:text-zinc-100",
+        "size-14 mx-auto text-blue-400 dark:text-amber-300 animate-spin [animation-duration:1.5s] ",
         className
       )}
       {...props}

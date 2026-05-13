@@ -20,7 +20,7 @@ const ProfileStats = () => {
             {getRankIcon(user.rank)}
           </div>
 
-          <span className="text-lg lg:text-6xl font-semibold text-amber-400 tracking-tighter">
+          <span className="text-lg lg:text-6xl font-semibold avatar-ring tracking-tighter">
             <div className="flex items-center gap-2">
               {toOrdinal(user.rank)} place
             </div>
