@@ -1,12 +1,33 @@
 {
   "name": "pixis",
   "private": true,
+  "author": {
+    "name": "Paris Liam",
+    "email": "parissrowlet@gmail.com"
+  },
+  "homepage": "https://pixiflash.vercel.app",
+  "keywords": [
+    "study",
+    "flashcards",
+    "ai",
+    "learning",
+    "education"
+  ],
+  "description": "AI-powered study platform with flashcards, leaderboards, and smart learning tools",
+  "license": "MIT",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalachuuchiiii/pixis.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kalachuuchiiii/pixis/issues"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
