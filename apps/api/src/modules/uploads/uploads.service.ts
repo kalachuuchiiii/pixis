@@ -15,4 +15,9 @@ export class UploadsService {
     });
     return result;
   }
+
+  async destroyImage(publicId: string) {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+  }
 }

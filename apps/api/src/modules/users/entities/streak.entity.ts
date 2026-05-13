@@ -15,14 +15,11 @@ export class Streak {
   @OneToOne(() => User, (user) => user.streak, { onDelete: 'CASCADE' })
   user!: User;
 
-  @Column({ default: 0, name: 'current_streak' })
+  @Column({ default: 1, name: 'current_streak' })
   currentStreak!: number;
 
-  @Column({ default: 0, name: 'highest_streak' })
+  @Column({ default: 1, name: 'highest_streak' })
   highestStreak!: number;
-
-  @Column({ default: 0, name: 'total_streak' })
-  totalStreak!: number;
 
   @Column({ default: () => 'now()', name: 'last_action_timestamp' })
   lastActionTimestamp!: Date;

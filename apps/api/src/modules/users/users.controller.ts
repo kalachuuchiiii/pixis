@@ -31,6 +31,7 @@ import {
   UpdateUserFormSchema,
   UserWithStatsSchema,
 } from '@pixis/schemas';
+import { ImageInterceptor } from '../uploads/interceptors/uploads.interceptors';
 
 @Controller('users')
 export class UsersController {
@@ -72,46 +73,13 @@ export class UsersController {
   @Throttle({ default: { limit: 6, ttl: 60_000 } })
   @Post('/avatar')
   @UseGuards(AccessGuard)
-  @UseInterceptors(
-    FileInterceptor('avatar', {
-      storage: diskStorage({
-        destination: './uploads',
-
-        filename: (req, file, cb) => {
-          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
-
-          cb(null, uniqueName + extname(file.originalname));
-        },
-      }),
-
-      fileFilter: (req, file, cb) => {
-        if (!file.mimetype.startsWith('image/')) {
-          return cb(
-            new BadRequestException('Only image files are allowed'),
-            false,
-          );
-        }
-
-        cb(null, true);
-      },
-
-      limits: {
-        fileSize: 5 * 1024 * 1024,
-      },
-    }),
-  )
+  @UseInterceptors(ImageInterceptor('avatar'))
   async updateAvatar(
     @UploadedFile() file: Express.Multer.File,
     @Req() request: Request,
   ) {
     const user = AuthUserSchema.parse(request.user);
-    const result = await this.uploadsService.uploadImage(file);
-    const saved = await this.usersService.saveAvatar({
-      user,
-      uploadResult: result,
-    });
-    await fs.remove(file.path);
-
+    await this.usersService.uploadAndSaveAvatar({ userId: user.id, file });
     return {
       message: 'Avatar uploaded successfully!',
     };
@@ -160,6 +128,7 @@ export class UsersController {
   ) {
     const user = AuthUserSchema.parse(request.user);
     await this.usersService.deleteAccount(user);
+
     response.clearCookie('refreshToken', {
       httpOnly: true,
       sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',

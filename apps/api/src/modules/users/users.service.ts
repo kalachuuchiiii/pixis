@@ -8,6 +8,7 @@ import {
 import { User } from './entities/user.entity';
 import { Repository, type FindOneOptions } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import fs from 'fs-extra';
 
 import { withCooldown } from '@/common/utils/cooldown.util';
 import ms from 'ms';
@@ -19,30 +20,55 @@ import type { UpdateUserForm } from '@pixis/schemas';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private readonly uploadsService: UploadsService,
+  ) {}
+
+  async uploadAndSaveAvatar({
+    userId,
+    file,
+  }: {
+    userId: number;
+    file: Express.Multer.File;
+  }) {
+    const uploadResult = await this.uploadsService.uploadImage(file);
+    const saveResult = await this.saveAvatar({
+      userId,
+      uploadResult,
+    });
+    await fs.remove(file.path);
+    return {
+      uploadResult,
+      saveResult,
+    };
+  }
 
   async saveAvatar({
-    user,
+    userId,
     uploadResult,
   }: {
-    user: AuthUser;
+    userId: number;
     uploadResult: UploadApiResponse;
   }) {
-    const result = await this.userRepo.update(
-      { id: user.id },
-      {
-        avatarPublicId: uploadResult.public_id,
-        avatarUrl: uploadResult.secure_url,
-      },
-    );
-    if (result.affected === 0) {
+    const myUser = await this.userRepo.findOne({ where: { id: userId } });
+    if (!myUser) {
       throw new NotFoundException({
-        message: 'Avatar upload failed',
-        code: 'Avatar upload failed',
+        message: 'User not found',
+        code: 'USER_NOT_FOUND',
       });
     }
 
-    return result;
+    if (!myUser.avatarPublicId) {
+      myUser.avatarPublicId = uploadResult.public_id;
+      myUser.avatarUrl = uploadResult.secure_url;
+      return await this.userRepo.save(myUser);
+    }
+
+    await this.uploadsService.destroyImage(myUser.avatarPublicId);
+    myUser.avatarPublicId = uploadResult.public_id;
+    myUser.avatarUrl = uploadResult.secure_url;
+    return await this.userRepo.save(myUser);
   }
 
   async findByUsername(username: string, options: FindOneOptions<User> = {}) {
@@ -178,14 +204,19 @@ export class UsersService {
   }
 
   async deleteAccount(user: AuthUser) {
-    const result = await this.userRepo.delete({ id: user.id });
-    if (result.affected === 0) {
-      throw new UnauthorizedException({
-        message: 'User not found.',
+    const myUser = await this.userRepo.findOne({ where: { id: user.id } });
+
+    if (!myUser) {
+      throw new NotFoundException({
+        message: 'User not found',
         code: 'USER_NOT_FOUND',
       });
     }
+    if (myUser.avatarPublicId) {
+      await this.uploadsService.destroyImage(myUser.avatarPublicId);
+    }
 
+    const result = await this.userRepo.remove(myUser);
     return result;
   }
 }
