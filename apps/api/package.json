@@ -12,7 +12,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main.js",
     "build": "nest build",
-    "build:prod": "npx @nest/cli build",
+    "build:prod": "npx @nestjs/cli build",
     "migration:generate": "typeorm migration:generate -d dataSource.ts",
     "migration:run": "typeorm migration:run -d dataSource.ts",
     "migration:revert": "typeorm migration:revert -d dataSource.ts",
