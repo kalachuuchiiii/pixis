@@ -272,7 +272,6 @@ export class AssistantService {
       },
     );
     const data = await result.json();
-    console.log(data);
     const jsonResponse = data.choices[0].message.content;
     const assistantResponse = AssistantResponseSchema.parse({
       role: 'assistant',
