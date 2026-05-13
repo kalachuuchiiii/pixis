@@ -40,7 +40,7 @@ export const TopUserRow = ({ user }: { user: TopUser }) => {
       </td>
       <td className="p-1 py-2 lg:p-6 lg:text-base text-xs text-center font-semibold tabular-nums">
         <Skeleton loading={isLoading} name="points">
-          <p className=" min-w-12 "> {user.points.toLocaleString()}</p>
+          <p className=" min-w-12 "> {user.points.toFixed(2)}</p>
         </Skeleton>
       </td>
     </tr>

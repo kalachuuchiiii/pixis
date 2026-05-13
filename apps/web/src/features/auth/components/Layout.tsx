@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
 import { Bolt } from "lucide-react";
 import { Pixis, PixisAvatar } from "@/components/ui/PixisAvatar";
+import { DynamicBackground } from "@/components/ui/DynamicBackground";
 
 const Layout = () => {
   return (
-    <div className="flex h-screen w-full bg-white dark:bg-zinc-950 overflow-hidden">
+    <div className="flex h-screen w-full  overflow-hidden">
       {/* Left Sidebar - Marketing */}
       <div className="hidden lg:flex w-[52%] flex-col justify-between px-16 py-14 border-r border-zinc-200 dark:border-zinc-800 relative overflow-hidden">
         {/* Background Pattern */}
@@ -90,6 +91,7 @@ const Layout = () => {
         </div>
 
         <div className="w-full max-w-sm">
+          <DynamicBackground />
           <Outlet />
         </div>
       </div>

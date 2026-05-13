@@ -5,8 +5,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+.image {
+  @apply  rounded-lg lg:rounded-4xl outline outline-stone-100/20 hover:outline-yellow-100/40 transition-all duration-200 object-cover
+}
+
 .avatar-ring { 
-  @apply dark:outline-amber-400 outline-sky-400
+  @apply outline-amber-400 
 }
 
 .my-btn {

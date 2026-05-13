@@ -23,11 +23,14 @@ const DeckHistory = () => {
         </span>
       </div>
       {(!user.isPrivate || me.id === user.id) && (
-        <main className="grid gap-4 grid-cols-1 lg:grid-cols-2  ">
+        <main className="grid gap-6 grid-cols-1 lg:grid-cols-2  ">
           {decks.map((d, i) => (
             <div
               key={d.id}
-              className={clsx(`translate-y-${2 * i}  opacity-${100 - 20 * i}`)}
+              className={clsx(
+                `translate-y-${2 * i}  opacity-${100 - 10 * i}`,
+                `${i % 2 !== 0 && "translate-y-6"}`
+              )}
             >
               <DeckDisplay.Default deck={d} />
             </div>

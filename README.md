@@ -1,159 +1,90 @@
-# Turborepo starter
+# Pixis - AI-Powered Flashcard Learning Platform
 
-This Turborepo starter is maintained by the Turborepo core team.
+> The smarter way to actually remember.
 
-## Using this example
+AI-powered flashcards that help you learn effectively. From quick reviews to exam simulations — Pixis helps you retain what matters.
 
-Run the following command:
+## About Pixis
 
-```sh
-npx create-turbo@latest
-```
+Pixis is an intelligent, full-featured flashcard application designed to help users learn more effectively. Whether you're a student preparing for exams, a professional learning new skills, or a lifelong learner, Pixis provides intuitive tools for creating, studying, and sharing flashcard decks.
 
-## What's inside?
+The platform features an AI-powered assistant to help generate decks and discuss topics, plus community-driven learning with leaderboards, progress tracking, and shareable decks. Study with multiple modes, organize with collections, access study techniques guides, and track your progress with detailed analytics.
 
-This Turborepo includes the following packages/apps:
+## Key Features
 
-### Apps and Packages
+### AI-Powered Assistant
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- **Flashcard Generation** - Ask the AI to create flashcard decks from topics or notes
+- **Topic Discussion** - Get explanations and clarifications on any subject
+- **Study Support** - Ask questions and get help understanding difficult concepts
+- **Note to Deck Conversion** - Paste your notes and the AI structures them into flashcards
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Deck & Content Management
 
-### Utilities
+- **Create & Manage Decks** - Build custom flashcard decks from scratch or generate with Pixis
+- **Shared Decks Library** - Browse hundreds of community-created decks across diverse topics
+- **Save Decks & Collections** - Save existing decks and continue where you left off
+- **Collections** - Organize multiple decks into curated collections for structured learning paths
 
-This Turborepo has some additional tools already setup for you:
+### Study Modes
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- **Classic Mode** - Go through cards at your own pace with no time pressure
+- **Timed Mode** - Simulate real exam conditions with time-limited study sessions (perfect for exam prep)
 
-### Build
+### Learning Guides
 
-To build all apps and packages, run the following command:
+- **Study Techniques Guide** - Learn proven methods for effective studying and retention strategies
+- **Documentation** - Comprehensive guides on how to use Pixis features effectively
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Gamification & Community
 
-```sh
-cd my-turborepo
-turbo build
-```
+- **Global Leaderboards** - Compete with users worldwide and see where you rank
+- **Deck leaderboards** - see who ranks highest in each deck and compare your performance with other users
+- **Points System** - Accumulate points through studying and unlock rewards
+- **Share Progress** - Show off your learning achievements on social media
 
-Without global `turbo`, use your package manager:
+### Learning Analytics
 
-```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+- **Personalized Dashboard** - Overview of your learning statistics at a glance
+- **Progress Tracking** - Monitor cards learned, retention rates, and accuracy progress
+- **Performance Metrics** - Track your performance across different decks
+- **Study Streaks** - Monitor consecutive days of studying
+- **Time Analytics** - See how much time you've spent on each deck and topic - (via deck history)
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### User Experience
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+- **Responsive Design** - Seamlessly study on desktop, tablet, or mobile devices
+- **Dark Mode** - Easy on the eyes with a carefully designed dark theme
+- **Offline Support** - Download decks for offline studying (coming soon)
 
-```sh
-turbo build --filter=docs
-```
+## Tech Stack
 
-Without global `turbo`:
+### Frontend Architecture
 
-```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+- **React 19** - Latest React with hooks and concurrent features
+- **TypeScript** - Static typing for robust code
+- **Vite** - Lightning-fast build tool with HMR
+- **Tailwind CSS v4** - Utility-first styling with JIT compilation
+- **Shadcn/ui** - High-quality React components built on Radix
+- **Recharts** - Beautiful, composable charts and graphs
+- **Lucide React** - Consistent icon library
+- **Axios** - HTTP client for API requests
 
-### Develop
+### Backend Architecture
 
-To develop all apps and packages, run the following command:
+- **NestJS 11** - Progressive Node.js framework
+- **TypeScript** - Type-safe server code
+- **PostgreSQL** - Reliable relational database
+- **TypeORM** - Powerful ORM with migration system
+- **Cloudinary** - Cloud image storage and optimization
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Monorepo Setup
 
-```sh
-cd my-turborepo
-turbo dev
-```
+- **Turborepo** - Build system for monorepos with caching
+- **pnpm** - Fast, disk space-efficient package manager v9.0.0+
+- **Workspaces** - Shared packages across apps
 
-Without global `turbo`, use your package manager:
+### DevOps & Infrastructure
 
-```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- **GitHub Actions** - CI/CD automation
+- **Database Migrations** - TypeORM migrations for schema management

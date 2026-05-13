@@ -36,7 +36,6 @@ export class DeckService {
   }) {
     const qb = this.deckRepo
       .createQueryBuilder('deck')
-      .distinctOn(['deck.id'])
       .leftJoin('deck.sessions', 'session')
       .leftJoin('session.user', 'user')
       .where(
@@ -47,7 +46,6 @@ export class DeckService {
           visibility: 'private',
         },
       )
-      .orderBy('deck.id')
       .addOrderBy('session.startedAt', 'DESC');
 
     const decks = await withDeckStats(qb).limit(3).getMany();
