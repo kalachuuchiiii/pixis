@@ -30,16 +30,12 @@ const env = {
   DB_PORT: Number(getEnvVariable('DB_PORT')),
   DB_USER: getEnvVariable('DB_USER') as string,
   DB_HOST: getEnvVariable('DB_HOST') as string,
-  PROD_DB_HOST: getEnvVariable('PROD_DB_HOST') as string,
-  PROD_DB_PASS: getEnvVariable('PROD_DB_PASS') as string,
-  PROD_DB_USER: getEnvVariable('PROD_DB_USER') as string,
-  PROD_DB_NAME: getEnvVariable('PROD_DB_NAME') as string,
-  PROD_DB_PORT: Number(getEnvVariable('PROD_DB_PORT')) as number,
-  NODE_ENV: getEnvVariable('NODE_ENV') as
+  NODE_ENV: getEnvVariable('NODE_ENV', { required: false }) as
     | 'production'
     | 'development'
     | 'testing',
   ACCESS_TOKEN_SECRET: getEnvVariable('ACCESS_TOKEN_SECRET') as string,
+  SSLMODE: getEnvVariable('SSLMODE', { required: false }) as string,
   ACCESS_TOKEN_TTL: getEnvVariable('ACCESS_TOKEN_TTL') as StringValue,
   REFRESH_TOKEN_SECRET: getEnvVariable('REFRESH_TOKEN_SECRET') as string,
   REFRESH_TOKEN_TTL: getEnvVariable('REFRESH_TOKEN_TTL') as StringValue,
