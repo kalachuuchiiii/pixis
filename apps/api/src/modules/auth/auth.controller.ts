@@ -23,6 +23,7 @@ import { AuthUserSchema } from './schemas/auth.schemas';
 import { Throttle } from '@nestjs/throttler';
 import { ImageInterceptor } from '../uploads/interceptors/uploads.interceptors';
 import { UsersService } from '../users/users.service';
+import z from 'zod';
 
 @Controller('auth')
 export class AuthController {
@@ -74,7 +75,13 @@ export class AuthController {
   @UseGuards(RefreshGuard)
   async refresh(@Req() request: Request) {
     const user = AuthUserSchema.parse(request.user);
-    return this.authService.refresh(user);
+    const result = await this.authService.refresh(user);
+    const accessToken = z
+      .string('Invalid Access Token')
+      .parse(result.accessToken);
+    return {
+      accessToken,
+    };
   }
 
   @Throttle({ default: { limit: 6, ttl: 60_000 } })
@@ -98,7 +105,7 @@ export class AuthController {
   async updatePassword(@Req() request: Request) {
     const user = AuthUserSchema.parse(request.user);
     const form = UpdatePasswordFormSchema.parse(request.body);
-    const result = await this.authService.updatePassword(user, form);
+    await this.authService.updatePassword(user, form);
 
     return {
       message: 'Successfully updated your password!',

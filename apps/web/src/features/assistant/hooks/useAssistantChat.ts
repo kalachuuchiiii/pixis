@@ -130,10 +130,9 @@ export const useAssistantChat = () => {
       });
       setPrompt("");
       const res = await api.post<{
-        response: {
+        result: {
           response: Message;
           conversationId: number;
-          request: Message;
         };
       }>(`/assistant/chat/${conversationId}`, {
         prompt,
@@ -141,7 +140,7 @@ export const useAssistantChat = () => {
 
       return res.data;
     },
-    onSuccess: ({ response: { conversationId, response } }) => {
+    onSuccess: ({ result: { conversationId, response } }) => {
       navigate(`/app/chat/${conversationId}`, { replace: true });
       appendMessage(response);
     },
