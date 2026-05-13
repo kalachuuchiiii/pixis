@@ -64,6 +64,7 @@ const AppLayout = () => {
           <AppErrorBoundary>
             <main className="flex-1  max-w-7xl w-full p-6">
               {!isPending && <Outlet />}
+
               <Separator orientation="vertical" />
             </main>
           </AppErrorBoundary>

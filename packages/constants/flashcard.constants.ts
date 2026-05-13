@@ -1,4 +1,4 @@
-export const QUESTION_MIN = 6;
+export const QUESTION_MIN = 1;
 export const QUESTION_MAX = 300;
 
 export const ANSWER_MIN = 1;

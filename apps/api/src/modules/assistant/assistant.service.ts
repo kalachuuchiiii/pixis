@@ -7,12 +7,17 @@ import type { AuthUser } from '../auth/schemas/auth.schemas';
 import env from '../../config/env';
 import { Deck } from '../deck/entities/deck.entity';
 import { DataSource, type Repository } from 'typeorm';
-import { AssistantResponseSchema, type GeneratedSet } from '@pixis/schemas';
+import {
+  AssistantResponseSchema,
+  BaseMessageSchema,
+  type GeneratedSet,
+} from '@pixis/schemas';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation } from './entities/conversation.entity';
 import { User } from '../users/entities/user.entity';
 import { Message } from './entities/message.entity';
 import { type PaginateQuery } from 'nestjs-paginate';
+import z from 'zod';
 
 @Injectable()
 export class AssistantService {
@@ -169,6 +174,17 @@ export class AssistantService {
     conversationId?: number;
     user: AuthUser;
   }) {
+    const messages = await this.messageRepo.find({
+      where: { user: { id: user.id }, conversation: { id: conversationId } },
+      take: 6,
+      select: {
+        role: true,
+        content: true,
+        id: true,
+      },
+    });
+    const previousMessages = z.array(BaseMessageSchema).parse(messages);
+
     const result = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
       {
@@ -181,6 +197,7 @@ export class AssistantService {
           model: 'meta-llama/llama-4-scout-17b-16e-instruct',
           messages: [
             { role: 'system', content: systemPrompt },
+            ...previousMessages,
             { role: 'user', content: prompt },
           ],
           response_format: {

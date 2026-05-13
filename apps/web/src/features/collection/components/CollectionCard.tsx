@@ -27,7 +27,7 @@ const Root = ({
       <div
         className={clsx(
           "group relative min-h-fit overflow-x-hidden rounded-2xl",
-          "hover:border-zinc-700 border border-zinc-800   transition-colors duration-200",
+          "hover:border-zinc-700 border pl-2 border-zinc-800   transition-colors duration-200",
           ` shadow-[${collection.color}]`
         )}
       >

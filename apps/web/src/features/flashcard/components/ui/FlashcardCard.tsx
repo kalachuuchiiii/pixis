@@ -65,14 +65,14 @@ export const FlashcardCard = memo(
             </div>
           </Card>
         </DialogTrigger>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg overflow-x-auto">
           <div className="space-y-6">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 mb-3">
                 {capitalize(flashcard.type.replaceAll("_", " "))}
               </div>
 
-              <h2 className="text-2xl font-medium text-zinc-900 dark:text-white leading-tight">
+              <h2 className="text-2xl font-medium text-zinc-900 dark:text-white wrap break-all leading-tight">
                 {flashcard.question}
               </h2>
             </div>

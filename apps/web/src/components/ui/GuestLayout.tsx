@@ -14,8 +14,8 @@ import { privacyPolicy } from "@/features/auth/data/auth";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 const Footer = () => (
-  <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-10 text-sm text-zinc-500 dark:text-zinc-400">
-    <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+  <footer className="border-t border-zinc-200 dark:border-zinc-800 lg:px-6  py-10 text-sm text-zinc-500 dark:text-zinc-400">
+    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex items-center gap-1">
         <div className="flex items-center gap-2">
           <PixisAvatar />
@@ -25,7 +25,7 @@ const Footer = () => (
         <span className=" text-xs"> Free AI flashcards</span>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex lg:gap-6 gap-2  lg:text-base text-xs flex-wrap">
         {["Features"].map((link) => (
           <a
             key={link}
@@ -66,7 +66,7 @@ export const GuestLayout = () => {
   return (
     <main className="w-full flex flex-col justify-between min-h-screen h-full">
       <DynamicBackground />
-      <nav className="sticky top-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 h-16 px-6 md:px-8 flex items-center justify-between">
+      <nav className="sticky  top-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 h-16 px-6 md:px-8 flex items-center justify-between">
         <div className="flex tracking-widest items-center gap-3">
           <PixisAvatar /> <Pixis />
         </div>

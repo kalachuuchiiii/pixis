@@ -6,6 +6,7 @@ import { TopUserRow } from "./TopUserRow";
 import { initialTopUserData } from "../data/leaderboard";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { Spinner } from "@/components/ui/spinner";
+import { POINT_PER_CORRECT, POINT_PER_MISTAKE } from "@pixis/constants";
 
 export const getRankIcon = (rank: number) => {
   if (rank === 1)
@@ -44,9 +45,13 @@ export const Leaderboard = ({ topUsers }: { topUsers: TopUser[] }) => {
               </tbody>
             </table>
           </div>
-          <p className="text-xs lg:text-base opacity-75 text-center my-6 ">
-            Leaderboards are based on the total points users have accumulated
-            over their entire time using the app.
+
+          <p className="flex flex-col my-10 opacity-75 ">
+            <span>Point per correct = {POINT_PER_CORRECT}</span>
+            <span>Point per mistake = {POINT_PER_MISTAKE}</span>
+            <span>
+              If not all questions are answered, total points are reduced by 25%
+            </span>
           </p>
         </div>
       ) : (
