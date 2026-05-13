@@ -40,6 +40,7 @@ const env = {
     | 'development'
     | 'testing',
   ACCESS_TOKEN_SECRET: getEnvVariable('ACCESS_TOKEN_SECRET') as string,
+  SSLMODE: getEnvVariable('SSLMODE', { required: false }) as string,
   ACCESS_TOKEN_TTL: getEnvVariable('ACCESS_TOKEN_TTL') as StringValue,
   REFRESH_TOKEN_SECRET: getEnvVariable('REFRESH_TOKEN_SECRET') as string,
   REFRESH_TOKEN_TTL: getEnvVariable('REFRESH_TOKEN_TTL') as StringValue,
