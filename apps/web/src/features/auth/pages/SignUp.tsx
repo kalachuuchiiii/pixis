@@ -30,7 +30,7 @@ const SignUp = () => {
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await signUp(data);
+    signUp({ form: data });
   });
 
   return (

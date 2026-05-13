@@ -1,3 +1,4 @@
+import { pkmnTrainers } from "@/features/account/components/data/pkmnTrainers";
 import api from "@/lib/api";
 import {
   getErrorMessage,
@@ -20,11 +21,19 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
 
   const { mutate: signUp, isPending: isSigningUp } = useMutation({
-    mutationFn: async (form: SignUpForm) => {
+    mutationFn: async ({ form }: { form: SignUpForm }) => {
       const promise = new Promise((resolve, reject) => {
         try {
           const validatedForm = SignUpFormSchema.parse(form);
-          return resolve(api.post("/auth/signup", validatedForm));
+          const randomAvatar =
+            pkmnTrainers[Math.floor(Math.random() * pkmnTrainers.length)];
+          const formData = new FormData();
+
+          for (const [key, value] of Object.entries(validatedForm)) {
+            formData.append(key, String(value));
+          }
+          formData.append("avatar", randomAvatar.file);
+          return resolve(api.post("/auth/signup", formData));
         } catch (e) {
           return reject(e);
         }

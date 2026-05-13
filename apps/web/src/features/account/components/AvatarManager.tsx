@@ -78,13 +78,13 @@ export const AvatarManager = () => {
               <p className="opacity-75 text-sm text-left w-fit">
                 PKMN trainers
               </p>
-              <div className="flex items-center justify-start w-full gap-2">
+              <div className="grid  grid-cols-4   w-full ">
                 {pkmnTrainers.map((t) => (
                   <button
                     key={t.name}
                     onClick={() => handleSelectPokemonTrainer(t.file)}
                   >
-                    <Avatar className="size-24 lg:size-26">
+                    <Avatar className="size-19 lg:size-20">
                       <AvatarImage src={URL.createObjectURL(t.file)} />
                       <AvatarFallback>{t.name}</AvatarFallback>
                     </Avatar>
