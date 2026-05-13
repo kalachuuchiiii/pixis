@@ -35,7 +35,7 @@ const isProd = env.NODE_ENV === 'production';
       synchronize: false,
       autoLoadEntities: true,
       logging: !isProd,
-      ssl: isProd ? { rejectUnauthorized: true } : false,
+      ssl: env.SSLMODE === 'require' ? { rejectUnauthorized: true } : false,
     }),
     UsersModule,
     AuthModule,
