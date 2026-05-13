@@ -19,7 +19,7 @@ export const SignUpFormSchema = z
     username: UsernameSchema,
     password: PasswordSchema,
     confirmPassword: PasswordSchema,
-    hasAgreedToPrivacyPolicy: z.boolean(),
+    hasAgreedToPrivacyPolicy: z.coerce.boolean<boolean>(),
   })
   .refine(
     (data) => data.confirmPassword === data.password,

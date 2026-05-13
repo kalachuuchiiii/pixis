@@ -56,9 +56,6 @@ export const streakSchema = z.object({
   highestStreak: z
     .int("Highest streak must be an integer")
     .nonnegative("Highest streak cannot be negative"),
-  totalStreak: z
-    .int("Total streak must be an integer")
-    .nonnegative("Total streak cannot be negative"),
   lastActionTimestamp: TimestampSchema,
 });
 
