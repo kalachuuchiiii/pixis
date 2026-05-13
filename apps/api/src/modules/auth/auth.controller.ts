@@ -6,7 +6,9 @@ import {
   Post,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -19,17 +21,30 @@ import { AccessGuard } from './guards/access.guard';
 import type { Request, Response } from 'express';
 import { AuthUserSchema } from './schemas/auth.schemas';
 import { Throttle } from '@nestjs/throttler';
+import { ImageInterceptor } from '../uploads/interceptors/uploads.interceptors';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Post('/signup')
-  async signUp(@Req() req) {
+  @UseInterceptors(ImageInterceptor('avatar'))
+  async signUp(@Req() req, @UploadedFile() file: Express.Multer.File) {
     const form = SignUpFormSchema.parse(req.body);
-    const value = await this.authService.signUp(form);
-    return value;
+    const result = await this.authService.signUp(form);
+
+    await this.usersService.uploadAndSaveAvatar({
+      userId: result.user.id,
+      file,
+    });
+    return {
+      message: 'Created your account successfully!',
+    };
   }
 
   @Throttle({ default: { limit: 12, ttl: 60_000 } })
