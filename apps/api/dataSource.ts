@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import 'dotenv/config';
 
 const isProd = process.env.NODE_ENV === 'production';
+const requireSSL = process.env.SSLMODE === 'require';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -15,6 +16,7 @@ const AppDataSource = new DataSource({
   migrations: ['dist/src/migrations/*.js'],
   entities: [`dist/src/modules/**/entities/*.entity.js`],
   synchronize: false,
+  ssl: requireSSL ? { rejectUnauthorized: true } : false,
   logging: !isProd,
 });
 
