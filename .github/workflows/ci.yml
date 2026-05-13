@@ -36,6 +36,22 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
 
+    # Postgres Service Container
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: lucrecia
+          POSTGRES_DB: pixisdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -54,3 +70,9 @@ jobs:
 
       - name: Run migrations
         run: pnpm --filter api migration:run
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASS: lucrecia
+          DB_NAME: pixisdb
