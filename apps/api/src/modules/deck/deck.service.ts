@@ -197,7 +197,6 @@ export class DeckService {
       .addGroupBy('user.id');
 
     const deck = await finalQb.getRawOne();
-    console.log(deck);
     const savedByMe = await this.userSavedDeckRepo.exists({
       where: {
         user: { id: user.id },
@@ -212,7 +211,6 @@ export class DeckService {
       user: nestql(deck, { prefix: 'user' }),
       savedByMe: savedByMe,
     };
-    console.log(nestedDeck);
 
     if (!deck && throwOnNotFound) {
       throw new NotFoundException({
