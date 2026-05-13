@@ -23,7 +23,6 @@ export class UserSavedDeckController {
       user,
     });
     return {
-      result,
       message: 'Saved deck successfully!',
     };
   }
@@ -39,7 +38,6 @@ export class UserSavedDeckController {
       user,
     });
     return {
-      result,
       message: 'Unsaved deck successfully!',
     };
   }

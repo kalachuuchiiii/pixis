@@ -38,7 +38,6 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly decksService: DeckService,
-    private readonly uploadsService: UploadsService,
   ) {}
 
   @Throttle({ default: { limit: 3, ttl: 60_000 } })

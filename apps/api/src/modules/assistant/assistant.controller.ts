@@ -123,15 +123,20 @@ export class AssistantController {
     const user = AuthUserSchema.parse(request.user);
     const prompt = z.string().parse(request.body.prompt);
 
-    const response = await this.assistantService.chat({
+    const data = await this.assistantService.chat({
       prompt,
       conversationId: Number(conversationId),
       systemPrompt: GENERATE_CHAT_SYSTEM_PROMPT,
       user,
     });
 
+    const result = {
+      response: MessageSchema.parse(data.response),
+      conversationId: IDSchema.parse(data.conversationId),
+    };
+
     return {
-      response,
+      result,
     };
   }
 }

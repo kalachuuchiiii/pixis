@@ -2,7 +2,7 @@ import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { SessionService } from './session.service';
 import { AccessGuard } from '../auth/guards/access.guard';
 import type { Request } from 'express';
-import { ExamModeSchema, IDSchema } from '@pixis/schemas';
+import { ExamModeSchema, IDSchema, SessionSchema } from '@pixis/schemas';
 import { AuthUserSchema } from '../auth/schemas/auth.schemas';
 import { Throttle } from '@nestjs/throttler';
 
@@ -29,11 +29,12 @@ export class SessionController {
     const user = AuthUserSchema.parse(request.user);
     const sessionId = IDSchema.parse(request.params.sessionId);
     const mode = ExamModeSchema.parse(request.query.mode);
-    const session = await this.sessionService.findAccessibleSessionById({
+    const data = await this.sessionService.findAccessibleSessionById({
       sessionId,
       mode,
       user,
     });
+    const session = SessionSchema.parse(data);
     return {
       session,
     };

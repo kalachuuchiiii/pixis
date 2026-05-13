@@ -63,12 +63,7 @@ const Hero = () => (
       <div className="flex flex-col lg:flex-row items-end justify-center gap-2 lg:gap-4">
         <Link to="/sign-up">
           <Button variant="default" className="my-btn">
-            Start studying free →
-          </Button>
-        </Link>
-        <Link to="/demo">
-          <Button variant="outline" className="my-btn">
-            Watch 45s demo
+            Start studying free
           </Button>
         </Link>
       </div>
