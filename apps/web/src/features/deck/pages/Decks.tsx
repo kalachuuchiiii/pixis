@@ -42,7 +42,7 @@ const Decks = () => {
 
   return (
     <div className=" w-full ">
-      <div className="flex items-center h-12   justify-end w-full gap-2">
+      <div className="flex mb-16  items-center h-12   justify-end w-full gap-2">
         <DeckFilter
           deckFilter={deckFilter}
           additionalActions={[<DeckCreatorDialog ref={createDeckButtonRef} />]}

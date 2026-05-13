@@ -40,11 +40,11 @@ export const ResultDetailsPopup = ({
       <div className="flex flex-col md:flex-row gap-6">
         {/* Left Side - Visual Header */}
         <header className="flex flex-col items-center justify-center md:w-5/12 text-center">
-          <span className="text-7xl sm:text-8xl drop-shadow-md">
+          <span className="text-6xl lg:text-8xl drop-shadow-md">
             {getResultIcon()}
           </span>
 
-          <h1 className="mt-3 text-2xl sm:text-3xl font-semibold tracking-tight text-white">
+          <h1 className="mt-3 text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-white">
             {feedback}
           </h1>
 
@@ -58,23 +58,27 @@ export const ResultDetailsPopup = ({
         {/* Right Side - Stats */}
         <main className="flex flex-col gap-4 md:w-7/12">
           {/* Points Card */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 sm:p-8 text-center">
+          <div className="rounded-2xl border border-zinc-800 dark:bg-zinc-900/70 p-6 sm:p-8 text-center">
             <div className="mb-2 text-xs sm:text-sm uppercase tracking-widest text-zinc-500">
               {isSuccess ? "Points Earned" : "Points"}
             </div>
-            <div className="text-3xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
+            <div className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white tracking-tighter tabular-nums">
               {isSuccess ? `+${totalPointsGained.toLocaleString()}` : "0"}
             </div>
           </div>
 
           {/* Accuracy Stats */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 sm:p-8">
+          <div className="rounded-2xl border border-zinc-800 dark:bg-zinc-900/70 p-6 sm:p-8">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <div className="text-sm text-zinc-400">Correct</div>
-                <div className="text-2xl font-semibold text-white tabular-nums">
+                <div className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Correct
+                </div>
+                <div className="text-2xl font-semibold text-zinc-900 dark:text-white tabular-nums">
                   {correctCount}{" "}
-                  <span className="text-zinc-500">/ {totalFlashcards}</span>
+                  <span className="dark:text-zinc-400 text-zinc-500">
+                    / {totalFlashcards}
+                  </span>
                 </div>
               </div>
               <div className="text-right">
@@ -88,7 +92,7 @@ export const ResultDetailsPopup = ({
             </div>
 
             {/* Simple progress bar */}
-            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-neutral-200 dark:bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-emerald-500 transition-all duration-700"
                 style={{ width: `${accuracy}%` }}

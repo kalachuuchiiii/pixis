@@ -12,7 +12,7 @@ const ZoomImageOnClick = memo(
         <DialogTrigger>{children}</DialogTrigger>
         <DialogContent
           onCloseAutoFocus={(e) => e.preventDefault()}
-          className=" min-w-[70vw] "
+          className=" p-0 rounded-4xl overflow-hidden min-w-[70vw] "
         >
           <div className="w-full h-full">
             <img src={src} />
