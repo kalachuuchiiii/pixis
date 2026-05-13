@@ -63,7 +63,7 @@ export const UpdateDeckDialog = memo(({ deck }: { deck: Deck | Deck }) => {
             </header>
           }
           footer={
-            <footer className="flex gap-2 items-center justify-end">
+            <footer className="flex gap-2 flex-wrap items-center justify-end">
               <DialogClose>
                 <Button className="my-btn" variant={"ghost"}>
                   Cancel

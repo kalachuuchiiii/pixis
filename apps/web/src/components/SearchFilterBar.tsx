@@ -54,10 +54,10 @@ export const SearchFilterBar = memo(
             onKeyDown={updateQueryOnEnter}
           />
         </Skeleton>
-        <div className="flex items-center w-full gap-2">
+        <div className="flex flex-wrap items-center w-full gap-2">
           {menus.length > 0 && (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger>
                 <Skeleton loading={isLoading} name="button">
                   <Button variant={"outline"} className="my-btn">
                     <Settings2 />

@@ -14,8 +14,8 @@ export const Timer = ({
       {/* Timer Card */}
       <div className=" rounded-3xl w-full">
         {/* Display */}
-        <div className="relative flex items-center justify-center">
-          <div className="text-[5.5rem] md:text-[6.5rem] font-mono font-bold tracking-tighter  tabular-nums">
+        <div className="relative lg:my-0 my-5 flex items-center justify-center">
+          <div className="lg:text-7xl text-5xl font-mono font-bold tracking-tighter  tabular-nums">
             {formatMs(time)}
           </div>
 
@@ -24,9 +24,9 @@ export const Timer = ({
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-3 w-full">
-          <div className="flex gap-3 flex-1">
-            <div className="space-x-1">
+        <div className="flex flex-col sm:flex-row lg:gap-3 w-full">
+          <div className="flex lg:gap-3 flex-1">
+            <div className="flex items-center">
               <Button
                 disabled={isRunning}
                 onClick={() => addSeconds(10)}
@@ -45,7 +45,7 @@ export const Timer = ({
               </Button>
             </div>
 
-            <div className="space-x-1">
+            <div className="flex items-center">
               <Button
                 disabled={isRunning}
                 onClick={() => addSeconds(60)}
@@ -71,7 +71,7 @@ export const Timer = ({
       </div>
 
       {/* Optional hint */}
-      <p className="text-zinc-500 text-sm mt-6 text-center">
+      <p className="text-zinc-500 text-sm mb-6 mt-3 lg:mb-0 lg:mt-6 text-center">
         Click Start to begin • Add time anytime
       </p>
     </div>

@@ -33,7 +33,7 @@ const Collections = () => {
 
   return (
     <div>
-      <div className=" flex items-center h-12 lg:gap-2 w-full">
+      <div className=" flex mb-16 items-center h-12 lg:gap-2 w-full">
         <CollectionFilter
           additionalActions={[
             isMine ? (
