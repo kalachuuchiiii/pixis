@@ -38,16 +38,21 @@ const Documentation = () => {
             Pixis allows you to generate flashcards in two simple ways:
           </p>
 
+          <p className="text-zinc-700 mb-2 dark:text-zinc-300">
+            Create decks and flashcard manually for more control
+          </p>
+
           <p className="text-zinc-700 dark:text-zinc-300">
-            You can either enter a topic such as “Photosynthesis” or “World War
-            II”, or paste your own notes. The system will then extract key
-            ideas, definitions, and concepts to build structured flashcards
-            automatically.
+            or use Pixis and just paste topic such as “Photosynthesis” or “World
+            War II”, or paste your own notes. You can also import a PDF (New!)
+            The system will then extract key ideas, definitions, and concepts to
+            build structured flashcards automatically.
           </p>
 
           <p className="mt-3 text-zinc-600 dark:text-zinc-400 text-sm">
             The quality of the generated deck depends on the clarity and depth
-            of the input material.
+            of the input material. For PDF ( Pixis can only analyze 1 pdf, and 3
+            pages at most )
           </p>
         </section>
 
