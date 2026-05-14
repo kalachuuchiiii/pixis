@@ -21,7 +21,7 @@ export const AssistantLayout = () => {
           <Topbar />
 
           <AppErrorBoundary>
-            <main className="flex-1  max-w-7xl w-full p-6">
+            <main className="flex-1  max-w-7xl w-full p-2 lg:p-6">
               {!isPending && <Outlet />}
             </main>
           </AppErrorBoundary>

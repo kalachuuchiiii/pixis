@@ -1,4 +1,4 @@
-import { Card, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import type { Message } from "@pixis/schemas";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
@@ -22,6 +22,11 @@ export const UserChatBubble = memo(
             </header>
             <Card className="w-full dark:bg-white dark:text-zinc-900 flex flex-col items-start px-3">
               <CardTitle>{message.content}</CardTitle>
+              {message.pdfName && (
+                <CardDescription className="line-clamp-2 ml-2">
+                  {message.pdfName}
+                </CardDescription>
+              )}
             </Card>
           </div>
         </div>{" "}

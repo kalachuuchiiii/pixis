@@ -31,6 +31,14 @@ export const useAssistantChat = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState("");
+  const [pdf, setPdf] = useState<File | undefined>(undefined);
+
+  const clearPdf = () => setPdf(undefined);
+  const handleChangePdf = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPdf(file);
+  };
 
   const messagesQuery = useInfiniteQuery({
     queryKey: ["conversation", String(conversationId)],
@@ -49,7 +57,7 @@ export const useAssistantChat = () => {
         );
       }
       const res = await api.get<ChatResponse>(
-        `/assistant/conversations/${conversationId}/messages/`,
+        `/assistant/conversations/${conversationId}/messages`,
         { params }
       );
       return res.data;
@@ -127,16 +135,22 @@ export const useAssistantChat = () => {
         content: prompt,
         id: tempId,
         type: "text",
+        pdfName: pdf.name,
       });
+
+      const formData = new FormData();
+      formData.append("prompt", prompt);
+      if (pdf) {
+        formData.append("pdf", pdf);
+      }
       setPrompt("");
+      setPdf(undefined);
       const res = await api.post<{
         result: {
           response: Message;
           conversationId: number;
         };
-      }>(`/assistant/chat/${conversationId}`, {
-        prompt,
-      });
+      }>(`/assistant/chat/${conversationId}`, formData);
 
       return res.data;
     },
@@ -158,15 +172,18 @@ export const useAssistantChat = () => {
 
   return {
     sendPrompt,
+    pdf,
     isSendingPrompt,
     prompt,
     handleChangePrompt,
     setPrompt,
     messages,
+    clearPdf,
     ...messagesQuery,
     hasNoMoreData,
     containerRef,
     hasNoData,
+    handleChangePdf,
     bottomRef,
     previousRef,
     nextRef,

@@ -72,7 +72,6 @@ export const useAuth = () => {
       return await promise;
     },
     onSuccess: (result) => {
-      console.log(result);
       queryClient.invalidateQueries();
       setTimeout(() => {
         nav(`/app/profile/${result.user.id}/stats`);

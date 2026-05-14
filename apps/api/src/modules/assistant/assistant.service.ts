@@ -18,6 +18,9 @@ import { User } from '../users/entities/user.entity';
 import { Message } from './entities/message.entity';
 import { type PaginateQuery } from 'nestjs-paginate';
 import z from 'zod';
+import { UploadsService } from '../uploads/uploads.service';
+import { responseFormat } from './data/responseFormat';
+import { withRetry } from '@/common/utils/retry.util';
 
 @Injectable()
 export class AssistantService {
@@ -25,10 +28,9 @@ export class AssistantService {
     private readonly dataSource: DataSource,
     @InjectRepository(Conversation)
     private readonly conversationRepo: Repository<Conversation>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
     @InjectRepository(Message)
     private readonly messageRepo: Repository<Message>,
+    private readonly uploadsService: UploadsService,
   ) {}
 
   async getConversations({ user }: { user: AuthUser }) {
@@ -80,7 +82,7 @@ export class AssistantService {
     conversationId: number;
     query: PaginateQuery;
   }) {
-    const limit = Number(query.limit ?? 6) || 6;
+    const limit = 10;
     const fetchLimit = limit + 1;
 
     const qb = this.messageRepo
@@ -93,8 +95,8 @@ export class AssistantService {
         'message.id',
         'message.role',
         'message.content',
-
         'message.type',
+        'message.pdfName',
       ]);
 
     if (beforeCursor) {
@@ -163,17 +165,14 @@ export class AssistantService {
     return await this.conversationRepo.save(newConversation);
   }
 
-  async chat({
-    prompt,
-    systemPrompt,
+  async getChatContext({
     user,
     conversationId,
   }: {
-    prompt: string;
-    systemPrompt: string;
-    conversationId?: number;
     user: AuthUser;
+    conversationId?: number;
   }) {
+    if (!conversationId) return [];
     const messages = await this.messageRepo.find({
       where: { user: { id: user.id }, conversation: { id: conversationId } },
       take: 6,
@@ -181,98 +180,61 @@ export class AssistantService {
         role: true,
         content: true,
         id: true,
+        pdfName: true,
       },
     });
     const previousMessages = z.array(BaseMessageSchema).parse(messages);
+    return previousMessages;
+  }
 
-    const result = await fetch(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
+  async chat({
+    prompt,
+    pdf,
+    systemPrompt,
+    user,
+    conversationId,
+  }: {
+    prompt: string;
+    pdf?: Express.Multer.File;
+    systemPrompt: string;
+    conversationId?: number;
+    user: AuthUser;
+  }) {
+    const previousMessages = await this.getChatContext({
+      user,
+      conversationId,
+    });
+
+    let finalPrompt = prompt;
+
+    if (pdf) {
+      const pdfText = await this.uploadsService.extractPdfText(pdf);
+      finalPrompt = `${prompt} -- MORE CONTEXT = ${pdfText.text}`;
+    }
+
+    const result = await withRetry(async () => {
+      return await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${env.GROQ_API_KEY}`,
           'Content-Type': 'application/json',
         },
+
         body: JSON.stringify({
           model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+          temperature: 0.2,
           messages: [
             { role: 'system', content: systemPrompt },
             ...previousMessages,
-            { role: 'user', content: prompt },
+            { role: 'user', content: finalPrompt },
           ],
-          response_format: {
-            type: 'json_schema',
-            json_schema: {
-              name: 'assistant_response',
-              strict: true,
-              schema: {
-                type: 'object',
-                properties: {
-                  content: { type: 'string' },
-                  conversationTitle: { type: 'string' },
-                  type: { type: 'string', enum: ['generate', 'text'] },
-                  set: {
-                    anyOf: [
-                      {
-                        type: 'object',
-                        properties: {
-                          title: { type: 'string' },
-                          color: { type: 'string' },
-                          topic: { type: 'string' },
-                          flashcards: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                type: {
-                                  type: 'string',
-                                  enum: ['close_ended', 'open_ended'],
-                                },
-                                question: { type: 'string' },
-                                answer: { type: 'string' },
-                                choices: {
-                                  anyOf: [
-                                    {
-                                      type: 'array',
-                                      items: { type: 'string' },
-                                    },
-                                    {
-                                      type: 'null',
-                                    },
-                                  ],
-                                },
-                                isAnswerCaseSensitive: { type: 'boolean' },
-                              },
-                              required: [
-                                'type',
-                                'question',
-                                'answer',
-                                'choices',
-                                'isAnswerCaseSensitive',
-                              ],
-                              additionalProperties: false,
-                            },
-                          },
-                        },
-                        required: ['title', 'color', 'topic', 'flashcards'],
-                        additionalProperties: false,
-                      },
-                      {
-                        type: 'null',
-                      },
-                    ],
-                  },
-                },
-                required: ['content', 'conversationTitle', 'type', 'set'],
-                additionalProperties: false,
-              },
-            },
-          },
+          response_format: responseFormat,
         }),
-      },
-    );
+      });
+    });
     const data = await result.json();
     const jsonResponse = data.choices[0].message.content;
+
     const assistantResponse = AssistantResponseSchema.parse({
       role: 'assistant',
       visibility: 'public',
@@ -296,11 +258,14 @@ export class AssistantService {
         await m.save(conversation);
       }
 
+      console.log(pdf);
+
       const userPrompt = m.create(Message, {
         role: 'user',
         content: prompt,
         user: { id: user.id },
         type: 'text',
+        pdfName: pdf?.filename,
         conversation: { id: conversation.id },
       });
       await m.save(userPrompt);
@@ -323,6 +288,7 @@ export class AssistantService {
           content: prompt,
           type: 'text',
           id: userPrompt.id,
+          pdfName: pdf?.filename,
         },
         response: {
           role: 'assistant',

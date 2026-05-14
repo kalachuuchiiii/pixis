@@ -116,22 +116,22 @@ const Exam = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 lg:flex-row flex flex-col lg:items-center   lg:gap-30 justify-center p-6">
+      <div className="flex-1 lg:flex-col flex flex-col items-center gap-2  justify-center p-6">
         {mode === "timed" && <Timer {...timerHandlers} />}
         <div
           className={clsx(
-            `${!timerHandlers.isRunning && "opacity-50"} max-w-2xl w-full`
+            `${!timerHandlers.isRunning && "opacity-50"} max-w-5xl w-full`
           )}
         >
           {/* Flashcard Area */}
 
-          <div className="bg-white dark:bg-zinc-900 w-full border border-border rounded-3xl shadow-xl min-h-[420px] flex flex-col items-center justify-center p-12 relative">
+          <div className="bg-white dark:bg-zinc-900 w-full border border-border rounded-3xl shadow-xl min-h-[420px] flex flex-col items-center justify-center p-4 lg:p-12 relative">
             <div className="text-center w-full">
               <div className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
                 QUESTION {currentFlashcardIdx + 1}
               </div>
 
-              <h2 className="text-3xl leading-tight wrap break-all font-medium text-foreground mb-12">
+              <h2 className="text-base lg:text-2xl leading-tight wrap break-all font-medium text-foreground mb-12">
                 {flashcard?.question}
               </h2>
               <div>

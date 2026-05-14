@@ -16,7 +16,6 @@ const AssistantPage = () => {
   const {
     isSendingPrompt,
     bottomRef,
-
     messages,
     previousRef,
     nextRef,
@@ -35,67 +34,71 @@ const AssistantPage = () => {
   }
 
   return (
-    <div className="relative w-full max-w-7xl">
-      <DynamicBackground />
-      {messages.reverse().length > 0 ? (
-        <div>
-          <div
-            ref={containerRef}
-            className=" flex flex-col  flex-col-reverse h-[70vh] overflow-y-auto px-2 py-6 lg:px-2 lg:p-2"
-          >
-            <div ref={bottomRef} className="p-2" />
-            <div ref={nextRef} />
-            <AnimatePresence>
-              {isFetchingNextPage && (
-                <motion.p
-                  variants={collapse}
-                  initial="hidden"
-                  exit="hidden"
-                  animate="visible"
-                  className="opacity-75 font-medium text-center w-full"
-                >
-                  Loading new messages...
-                </motion.p>
+    <div className="relative overflow-hidden h-[80vh] w-full  max-w-7xl">
+      <div className="flex flex-col h-full w-full flex-col-reverse overflow-y-scroll">
+        <DynamicBackground />
+        {messages.length > 0 ? (
+          <div className="py-10">
+            <div
+              ref={containerRef}
+              className=" flex flex-col  flex-col-reverse overflow-scroll h-max lg:px-2 py-6 lg:px-2"
+            >
+              <div ref={bottomRef} className="p-2" />
+              <div ref={nextRef} />
+              <AnimatePresence>
+                {isFetchingNextPage && (
+                  <motion.p
+                    variants={collapse}
+                    initial="hidden"
+                    exit="hidden"
+                    animate="visible"
+                    className="opacity-75 font-medium text-center w-full"
+                  >
+                    Loading new messages...
+                  </motion.p>
+                )}
+              </AnimatePresence>
+              {messages
+                .reverse()
+                .map(({ role, type, content, id, pdfName }) =>
+                  role === "assistant" ? (
+                    <AssistantChatBubble
+                      message={{ role, content, type, pdfName, id }}
+                      key={id}
+                    />
+                  ) : (
+                    <UserChatBubble
+                      message={{ role, content, type, id, pdfName }}
+                      key={id}
+                    />
+                  )
+                )}{" "}
+              {isFetchingPreviousPage && (
+                <p className="py-8 text-center w-full opacity-75 font-medium">
+                  Loading messages...
+                </p>
               )}
-            </AnimatePresence>
-            {messages.map(({ role, type, content, id }) =>
-              role === "assistant" ? (
-                <AssistantChatBubble
-                  message={{ role, content, type, id }}
-                  key={id}
-                />
-              ) : (
-                <UserChatBubble
-                  message={{ role, content, type, id }}
-                  key={id}
-                />
-              )
-            )}{" "}
-            {isFetchingPreviousPage && (
-              <p className="py-8 text-center w-full opacity-75 font-medium">
-                Loading messages...
-              </p>
-            )}
-            <div ref={previousRef} />
+              <div ref={previousRef} />
+            </div>
           </div>
-        </div>
-      ) : (
-        <div>
-          <div className="w-full relative">
-            {/* Header */}
-            <header className="text-center space-y-3 mt-40  ">
-              <h1 className="text-6xl font-bold tracking-tighter ">
-                Hello, {user.nickname || user.username}!
-              </h1>
-              <p className="text-xl text-muted-foreground font-light">
-                How can I help you today?
-              </p>
-            </header>
+        ) : (
+          <div>
+            <div className="w-full relative">
+              {/* Header */}
+              <header className="text-center space-y-3 mb-70  ">
+                <h1 className="text-6xl font-bold tracking-tighter ">
+                  Hello, {user.nickname || user.username}!
+                </h1>
+                <p className="text-xl text-muted-foreground font-light">
+                  How can I help you today?
+                </p>
+              </header>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <PromptInput {...assistantChat} />
+        <PromptInput {...assistantChat} />
+      </div>
     </div>
   );
 };
