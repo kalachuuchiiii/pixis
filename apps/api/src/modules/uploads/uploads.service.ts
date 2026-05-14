@@ -15,8 +15,14 @@ export class UploadsService {
     const parser = new PDFParse({ data: fileBuffer });
     try {
       const result = await parser.getText();
-      return result;
+      const texts = [
+        result.getPageText(1),
+        result.getPageText(2),
+        result.getPageText(3),
+      ];
+      return texts.join('_');
     } catch (e) {
+      await fs.remove(file.path);
       await parser.destroy();
       throw new InternalServerErrorException({
         message: 'Failed to parse PDF',
@@ -35,6 +41,7 @@ export class UploadsService {
     const result = await cloudinary.uploader.upload(file.path, {
       folder: 'avatars',
     });
+    await fs.remove(file.path);
     return result;
   }
 

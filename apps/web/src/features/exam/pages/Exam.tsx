@@ -120,7 +120,7 @@ const Exam = () => {
         {mode === "timed" && <Timer {...timerHandlers} />}
         <div
           className={clsx(
-            `${!timerHandlers.isRunning && "opacity-50"} max-w-5xl w-full`
+            `${!timerHandlers.isRunning && mode === "timed" && "opacity-50"} max-w-5xl w-full`
           )}
         >
           {/* Flashcard Area */}

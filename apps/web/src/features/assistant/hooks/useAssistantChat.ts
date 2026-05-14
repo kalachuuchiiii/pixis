@@ -31,13 +31,15 @@ export const useAssistantChat = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState("");
-  const [pdf, setPdf] = useState<File | undefined>(undefined);
+  const [pdf, setPdf] = useState<File | null>(null);
 
-  const clearPdf = () => setPdf(undefined);
+  const clearPdf = () => setPdf(null);
   const handleChangePdf = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
     if (!file) return;
+
     setPdf(file);
+    e.target.value = "";
   };
 
   const messagesQuery = useInfiniteQuery({
@@ -135,7 +137,7 @@ export const useAssistantChat = () => {
         content: prompt,
         id: tempId,
         type: "text",
-        pdfName: pdf.name,
+        pdfName: pdf?.name,
       });
 
       const formData = new FormData();
