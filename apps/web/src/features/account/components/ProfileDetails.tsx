@@ -5,19 +5,24 @@ import { useProfileDetails } from "../hooks/useProfileDetails";
 import { Button } from "@/components/ui/button";
 import { BookOpen, ChartArea, Clock, Layers, LibraryBig } from "lucide-react";
 import { Skeleton } from "boneyard-js/react";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { useProfile } from "../hooks/useProfile";
 
 const ProfileDetails = () => {
-  const { data: user, isPending, isFetching } = useProfileDetails();
-
+  const { data: authUser } = useAuthUser();
+  const { data: user } = useProfileDetails();
+  const { follow, isFollowing, unfollow, isUnfollowing } = useProfile();
   const isLoading = !user.id;
+  const isMine = authUser.id === user.id;
+
   return (
-    <div className="page-container">
+    <div className="">
       <div className="max-w-7xl mx-auto px-2 lg:px-8 ">
         {/* Profile Header */}
         <div className="flex flex-col lg:flex-row gap-12 items-center lg:items-start mb-20">
           {/* Avatar & Name Section */}
           <div className="flex-shrink-0 lg:sticky lg:top-0   flex flex-col items-center">
-            <div className="relative p-2 mt-20">
+            <div className="relative p-2 mt-26">
               <Skeleton name="avatar" loading={isLoading}>
                 <UserBadge user={user}>
                   <UserBadge.Avatar className="size-50 outline-4 avatar-ring outline-offset-4" />
@@ -36,6 +41,47 @@ const ProfileDetails = () => {
                   @{user.username}
                 </p>
               </Skeleton>
+            </div>
+            <div className="flex  gap-2 my-3 lg:my-6 items-center">
+              <p>
+                <span>{user.followingCount}</span> <span>Followings</span>{" "}
+              </p>
+              <p>
+                <span>{user.followerCount}</span> <span>Followers</span>{" "}
+              </p>
+            </div>
+            <div className="w-full flex items-center gap-2">
+              {!isMine && (
+                <div className="w-full ">
+                  {!user.isFollowing ? (
+                    <Button
+                      onClick={() => follow(user.id)}
+                      disabled={isMine || isFollowing}
+                      className="my-btn w-full"
+                    >
+                      Follow
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => unfollow(user.id)}
+                      disabled={isMine || isUnfollowing}
+                      className="my-btn w-full"
+                      variant="outline"
+                    >
+                      Following
+                    </Button>
+                  )}
+                </div>
+              )}
+              {isMine && (
+                <div className="w-full ">
+                  <Link to={`/app/settings`}>
+                    <Button variant="outline" className="my-btn w-full">
+                      Update
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
           <main className="flex flex-col w-full items-start gap-6">

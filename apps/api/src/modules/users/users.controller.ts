@@ -29,9 +29,12 @@ import {
   DeckSchema,
   IDSchema,
   UpdateUserFormSchema,
+  UserBadgeWithFollowStats,
+  UserBadgeWithFollowStatsSchema,
   UserWithStatsSchema,
 } from '@pixis/schemas';
 import { ImageInterceptor } from '../uploads/interceptors/uploads.interceptors';
+import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 
 @Controller('users')
 export class UsersController {
@@ -50,6 +53,17 @@ export class UsersController {
     const result = await this.usersService.updateUser({ user, form });
     return {
       message: 'Updated successfully!',
+    };
+  }
+
+  @Get('/list')
+  @UseGuards(AccessGuard)
+  async getUsers(@Paginate() query: PaginateQuery) {
+    const { data, ...result } = await this.usersService.findUsers(query);
+    const profiles = z.array(UserBadgeWithFollowStatsSchema).parse(data);
+    return {
+      profiles,
+      ...result,
     };
   }
 
@@ -88,8 +102,12 @@ export class UsersController {
   @UseGuards(AccessGuard)
   async getMyProfile(@Req() request: Request) {
     const user = AuthUserSchema.parse(request.user);
-    const result = await this.usersService.getUserById(user.id);
+    const result = await this.usersService.getUserById({
+      user: user,
+      userId: user.id,
+    });
     const userWithStats = UserWithStatsSchema.parse(result);
+
     return {
       user: userWithStats,
     };
@@ -99,10 +117,39 @@ export class UsersController {
   @UseGuards(AccessGuard)
   async getProfile(@Req() request: Request) {
     const userId = IDSchema.parse(request.params.userId);
-    const result = await this.usersService.getUserById(userId);
+    const user = AuthUserSchema.parse(request.user);
+    const result = await this.usersService.getUserById({ userId, user });
     const userWithStats = UserWithStatsSchema.parse(result);
     return {
       user: userWithStats,
+    };
+  }
+
+  @Post('/:userId/unfollow')
+  @UseGuards(AccessGuard)
+  async unfollow(@Req() request: Request) {
+    const userId = IDSchema.parse(request.params.userId);
+    const user = AuthUserSchema.parse(request.user);
+    await this.usersService.unfollow({
+      followerId: user.id,
+      followingId: userId,
+    });
+    return {
+      message: 'Unfollowed',
+    };
+  }
+
+  @Post('/:userId/follow')
+  @UseGuards(AccessGuard)
+  async follow(@Req() request: Request) {
+    const userId = IDSchema.parse(request.params.userId);
+    const user = AuthUserSchema.parse(request.user);
+    await this.usersService.follow({
+      followerId: user.id,
+      followingId: userId,
+    });
+    return {
+      message: 'Followed',
     };
   }
 

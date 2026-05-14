@@ -52,7 +52,9 @@ const CollectionDetails = () => {
     ref,
     deckFilter,
     hasNextPage,
-  } = useCollectionDecks();
+  } = useCollectionDecks(
+    collection.user.id === user.id ? undefined : ["visibility"]
+  );
 
   const hasNoMoreData = !hasNextPage && collectionDecks.length > 0;
   const hasNoData = !hasNextPage && collectionDecks.length === 0;
@@ -74,17 +76,17 @@ const CollectionDetails = () => {
         heading={`${collection.name}`}
         description={`${collection.deckCount} Deck(s)`}
         beside={[
-          isMine ? (
-            <div className="w-full text-right flex items-end justify-end gap-2">
-              <DeckFilter
-                menus={[
-                  <SaveOrUnsaveCollection collection={collection} />,
-                  isMine ? (
-                    <UpdateCollectionDialog
-                      collection={collection}
-                      collectionForm={collectionForm}
-                    />
-                  ) : undefined,
+          <div className="w-full text-right flex items-end justify-end gap-2">
+            <DeckFilter
+              menus={[
+                <SaveOrUnsaveCollection collection={collection} />,
+                isMine ? (
+                  <UpdateCollectionDialog
+                    collection={collection}
+                    collectionForm={collectionForm}
+                  />
+                ) : undefined,
+                isMine ? (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant={"destructive"} className="my-btn w-full">
@@ -113,28 +115,28 @@ const CollectionDetails = () => {
                         </AlertDialogCancel>
                       </AlertDialogFooter>
                     </AlertDialogContent>
-                  </AlertDialog>,
-                ]}
-                deckFilter={deckFilter}
-                additionalActions={
-                  isMine
-                    ? [
-                        <Link to={`/app/profile/${user.id}/decks`}>
-                          <Button className="my-btn" variant="outline">
-                            <Layers /> My decks
-                          </Button>
-                        </Link>,
-                        <Link to={`/app/saved-decks`}>
-                          <Button variant="outline" className="my-btn">
-                            <Bookmark /> Saved decks
-                          </Button>
-                        </Link>,
-                      ]
-                    : []
-                }
-              />
-            </div>
-          ) : undefined,
+                  </AlertDialog>
+                ) : undefined,
+              ]}
+              deckFilter={deckFilter}
+              additionalActions={
+                isMine
+                  ? [
+                      <Link to={`/app/profile/${user.id}/decks`}>
+                        <Button className="my-btn" variant="outline">
+                          <Layers /> My decks
+                        </Button>
+                      </Link>,
+                      <Link to={`/app/saved-decks`}>
+                        <Button variant="outline" className="my-btn">
+                          <Bookmark /> Saved decks
+                        </Button>
+                      </Link>,
+                    ]
+                  : []
+              }
+            />
+          </div>,
         ]}
       />
       <main className="grid grid-cols-1 lg:grid-cols-3  gap-4">

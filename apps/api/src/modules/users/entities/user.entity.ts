@@ -22,6 +22,7 @@ import { UserSavedCollection } from '@/modules/user-saved-collections/entities/u
 import { Session } from '@/modules/session/entities/session.entity';
 import { Message } from '@/modules/assistant/entities/message.entity';
 import { Conversation } from '@/modules/assistant/entities/conversation.entity';
+import { Follow } from './follow.entity';
 
 @Entity('user')
 export class User {
@@ -30,6 +31,12 @@ export class User {
 
   @OneToMany(() => Conversation, (c) => c.user, { onDelete: 'CASCADE' })
   conversations?: Conversation[];
+
+  @OneToMany(() => Follow, (f) => f.follower, { onDelete: 'CASCADE' })
+  following!: Follow[];
+
+  @OneToMany(() => Follow, (f) => f.following, { onDelete: 'CASCADE' })
+  followers!: Follow[];
 
   @OneToMany(() => Message, (m) => m.user, { onDelete: 'CASCADE' })
   messages?: Message[];

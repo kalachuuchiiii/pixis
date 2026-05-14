@@ -12,33 +12,21 @@ import { useEffect } from "react";
 import { Skeleton } from "boneyard-js/react";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { DeckCreatorDialog } from "../components/DeckCreatorDialog";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useExploreDecks } from "../hooks/useExploreDecks";
 
 const ExploreDecks = () => {
-  const deckFilter = useDeckFilter(["visibility"]);
-  const { query } = deckFilter;
-  const { data, isPending, isFetching, hasNextPage, fetchNextPage } =
-    useInfiniteQuery({
-      queryKey: ["explore", query],
-      queryFn: async ({ pageParam = 1 }) => {
-        const queries = [`page=${pageParam}&limit=${6}`, query].join("&");
-        const res = await api.get<{
-          decks: Deck[];
-          nextPage: number | null;
-        }>(`/decks/explore?${queries}`);
-        return res.data;
-      },
-      initialPageParam: 1,
-      getNextPageParam: (prev) => prev.nextPage,
-    });
-
-  const decks = data?.pages.flatMap((p) => p.decks) ?? [];
-
-  const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (!inView || !ref || !hasNextPage || isPending || isFetching) return;
-    fetchNextPage();
-  }, [inView]);
+  const { data: user } = useAuthUser();
+  const {
+    ref,
+    deckFilter,
+    hasNoMoreData,
+    hasNoData,
+    decks,
+    isPending,
+    isFetching,
+  } = useExploreDecks();
 
   return (
     <div className="page-container">
@@ -50,7 +38,19 @@ const ExploreDecks = () => {
           <div className="w-full flex justify-end">
             <DeckFilter
               deckFilter={deckFilter}
-              additionalActions={[<DeckCreatorDialog />]}
+              additionalActions={[
+                <Link to={`/app/profile/${user.id}/decks`}>
+                  <Button className="my-btn" variant="outline">
+                    My Decks
+                  </Button>
+                </Link>,
+                <Link to={`/app/saved-decks`}>
+                  <Button className="my-btn" variant="outline">
+                    Saved Decks
+                  </Button>
+                </Link>,
+                <DeckCreatorDialog />,
+              ]}
             />
           </div>
         }
@@ -65,13 +65,13 @@ const ExploreDecks = () => {
       <div className="my-20">
         {isPending || isFetching ? (
           <Spinner />
-        ) : !hasNextPage && decks.length > 0 ? (
+        ) : hasNoMoreData ? (
           <EmptyResource
             title="No more decks"
             description="No more decks to show"
           />
         ) : (
-          !hasNextPage && (
+          hasNoData && (
             <EmptyResource
               title="No decks available"
               description="There is no decks available"

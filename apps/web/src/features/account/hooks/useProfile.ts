@@ -9,6 +9,7 @@ import type { AxiosResponse } from "axios";
 import { toast } from "sonner";
 import { useProfileDetails } from "./useProfileDetails";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { queryClient } from "@/lib/queryClient";
 
 type UpdateUserResponse = Pick<
   User,
@@ -18,6 +19,39 @@ type UpdateUserResponse = Pick<
 export const useProfile = () => {
   const { data: user, refetch } = useAuthUser();
 
+  const { mutate: unfollow, isPending: isUnfollowing } = useMutation({
+    mutationFn: async (followingId: number) => {
+      const p = api.post(`/users/${followingId}/unfollow`);
+      toast.promise(p, {
+        loading: "Unfollowing...",
+        success: getSuccessMessage,
+        error: getErrorMessage,
+      });
+      return await p;
+    },
+    onSuccess: (_, followingId) => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile", String(followingId)],
+      });
+    },
+  });
+
+  const { mutate: follow, isPending: isFollowing } = useMutation({
+    mutationFn: async (followingId: number) => {
+      const p = api.post(`/users/${followingId}/follow`);
+      toast.promise(p, {
+        loading: "Following...",
+        success: getSuccessMessage,
+        error: getErrorMessage,
+      });
+      return await p;
+    },
+    onSuccess: (_, followingId) => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile", String(followingId)],
+      });
+    },
+  });
   const { mutate: updateUser, isPending: isUpdatingUser } = useMutation({
     mutationFn: async (updateUserForm: UpdateUserForm) => {
       const promise = new Promise<AxiosResponse<UpdateUserResponse>>(
@@ -30,7 +64,7 @@ export const useProfile = () => {
         }
       );
 
-      await toast.promise(promise, {
+      toast.promise(promise, {
         loading: "Updating user...",
         success: getSuccessMessage,
         error: getErrorMessage,
@@ -38,7 +72,7 @@ export const useProfile = () => {
       const result = await promise;
       return result.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       refetch();
     },
   });
@@ -48,7 +82,7 @@ export const useProfile = () => {
       const result = await api.patch<{ isPrivate: boolean }>("/users/privacy");
       return result.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       refetch();
     },
   });
@@ -59,7 +93,7 @@ export const useProfile = () => {
       const formData = new FormData();
       formData.append("avatar", file);
       const promise = api.post(`/users/avatar`, formData);
-      await toast.promise(promise, {
+      toast.promise(promise, {
         loading: "Updating avatar...",
         success: getSuccessMessage,
         error: getErrorMessage,
@@ -76,8 +110,12 @@ export const useProfile = () => {
   return {
     updateUser,
     togglePrivacy,
+    follow,
+    isFollowing,
     updateAvatar,
     isUpdatingAvatar,
+    unfollow,
+    isUnfollowing,
     isUpdatingUser,
     isTogglingPrivacy,
   };
