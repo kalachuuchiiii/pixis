@@ -32,7 +32,7 @@ export const SaveOrUnsaveCollection = ({
           disabled={isUnsavingCollection}
           onClick={() => unsaveCollection({ collectionId: collection.id })}
           className="my-btn"
-          variant={"outline"}
+          variant={"ghost"}
         >
           <Bookmark className="text-yellow-500" /> Unsave
         </Button>

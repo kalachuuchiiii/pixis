@@ -6,8 +6,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { EmptyResource } from "@/components/ui/EmptyResource";
 import { useExploreCollections } from "../hooks/useExploreCollections";
 import { CollectionCreatorDialog } from "../components/CollectionCreatorDialog";
+import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { Button } from "@/components/ui/button";
 
 const ExploreCollections = () => {
+  const { data: user } = useAuthUser();
+
   const {
     collections,
     collectionFilter,
@@ -24,7 +28,19 @@ const ExploreCollections = () => {
         description="Discover and browse curated collections"
         beside={
           <CollectionFilter
-            additionalActions={[<CollectionCreatorDialog />]}
+            additionalActions={[
+              <Link to={`/app/profile/${user.id}/collections`}>
+                <Button variant="outline" className="my-btn">
+                  My collections
+                </Button>
+              </Link>,
+              <Link to={`/app/saved-collections`}>
+                <Button variant="outline" className="my-btn">
+                  Saved Collection
+                </Button>
+              </Link>,
+              <CollectionCreatorDialog />,
+            ]}
             collectionFilter={collectionFilter}
           />
         }

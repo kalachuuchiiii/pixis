@@ -9,6 +9,10 @@
  @apply px-4 lg:px-7 space-y-8 py-6
 }
 
+.my-input {
+  @apply lg:px-6 p-4 h-8 lg:py-5 lg:h-12 lg:max-w-7/12
+}
+
 .image {
   @apply  rounded-lg lg:rounded-4xl outline outline-stone-100/20 hover:outline-yellow-100/40 transition-all duration-200 object-cover
 }

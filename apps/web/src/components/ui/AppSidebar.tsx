@@ -18,6 +18,7 @@ import {
   ChartArea,
   Layers,
   LibraryBig,
+  Search,
   Settings,
   Trophy,
   User,
@@ -103,6 +104,11 @@ export const AppSidebar = () => {
       label: "Leaderboard",
       to: "/app/leaderboard",
       icon: Trophy,
+    },
+    {
+      label: "People",
+      to: "/app/people",
+      icon: Search,
     },
   ];
 

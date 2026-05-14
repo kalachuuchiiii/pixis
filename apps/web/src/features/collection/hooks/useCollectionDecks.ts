@@ -5,9 +5,9 @@ import type { Deck } from "@pixis/schemas";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
-export const useCollectionDecks = () => {
+export const useCollectionDecks = (blacklistedFields?: ["visibility"]) => {
   const { collectionId = 0 } = useParams();
-  const deckFilter = useDeckFilter();
+  const deckFilter = useDeckFilter(blacklistedFields);
   const { query } = deckFilter;
 
   const infiniteCollectionDeckQuery = useInfiniteQuery({

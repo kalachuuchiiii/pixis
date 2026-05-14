@@ -21,6 +21,7 @@ import StudyTechniques from "@/features/guides/pages/StudyTechniques";
 import Documentation from "@/features/guides/pages/Documentation";
 import { GuidesLayout } from "@/features/guides/components/ui/GuidesLayout";
 import LandingPage from "@/pages/LandingPage";
+import People from "@/features/account/pages/People";
 const Layout = lazy(() => import("@/features/auth/components/Layout"));
 const SignIn = lazy(() => import("@/features/auth/pages/SignIn"));
 const SignUp = lazy(() => import("@/features/auth/pages/SignUp"));
@@ -142,6 +143,10 @@ const routes: RouteObject[] = [
       {
         element: wrap(<Outlet />),
         children: [
+          {
+            path: "/app/people",
+            element: <People />,
+          },
           {
             path: "/app/saved-collections",
             element: <MySavedCollections />,

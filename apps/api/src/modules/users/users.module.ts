@@ -8,12 +8,13 @@ import { Streak } from './entities/streak.entity';
 import { AccessStrategy } from '../auth/strategies/access.strategy';
 import { DeckModule } from '../deck/deck.module';
 import { UploadsModule } from '../uploads/uploads.module';
+import { Follow } from './entities/follow.entity';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService, AccessStrategy],
   imports: [
-    TypeOrmModule.forFeature([User, Point, Streak]),
+    TypeOrmModule.forFeature([User, Point, Streak, Follow]),
     DeckModule,
     UploadsModule,
   ],

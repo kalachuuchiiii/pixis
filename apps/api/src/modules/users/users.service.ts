@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   HttpException,
   Injectable,
   NotFoundException,
@@ -17,13 +18,70 @@ import nestql from 'nestql';
 import { UploadsService } from '../uploads/uploads.service';
 import type { UploadApiResponse } from 'cloudinary';
 import type { UpdateUserForm } from '@pixis/schemas';
+import { Follow } from './entities/follow.entity';
+import { paginate, type PaginateQuery } from 'nestjs-paginate';
+import { getPaginationData } from '@/common/utils/pagination.util';
+
+type FollowProps = {
+  followerId: number;
+  followingId: number;
+};
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Follow) private followRepo: Repository<Follow>,
     private readonly uploadsService: UploadsService,
   ) {}
+
+  async findUsers(query: PaginateQuery) {
+    const qb = this.userRepo
+      .createQueryBuilder('user')
+      .loadRelationCountAndMap('user.followerCount', 'user.followers')
+      .loadRelationCountAndMap('user.followingCount', 'user.following');
+    const result = await paginate(query, qb, {
+      searchableColumns: ['username', 'nickname'],
+      sortableColumns: ['createdAt'],
+    });
+    return getPaginationData(result);
+  }
+
+  async unfollow({ followerId, followingId }: FollowProps) {
+    const query = {
+      follower: { id: followerId },
+      following: { id: followingId },
+    };
+    const follow = await this.followRepo.findOne({
+      where: query,
+    });
+
+    if (!follow) {
+      throw new ConflictException({
+        message: `You don't follow this person`,
+        code: 'PERSON_NOT_FOLLOWED',
+      });
+    }
+    return await this.followRepo.remove(follow);
+  }
+
+  async follow({ followerId, followingId }: FollowProps) {
+    const query = {
+      follower: { id: followerId },
+      following: { id: followingId },
+    };
+    const isAlreadyFollowed = await this.followRepo.exists({
+      where: query,
+    });
+    if (isAlreadyFollowed) {
+      throw new ConflictException({
+        message: `You've already followed this person`,
+        code: 'PERSON_ALREADY_FOLLOWED',
+      });
+    }
+    const newFollow = await this.followRepo.create(query);
+    return await this.followRepo.save(newFollow);
+  }
 
   async uploadAndSaveAvatar({
     userId,
@@ -75,17 +133,18 @@ export class UsersService {
     return await this.userRepo.findOne({ where: { username }, ...options });
   }
 
-  async getUserById(userId: number) {
+  async getUserById({ userId, user }: { userId: number; user: AuthUser }) {
     //point, streak, averageAccuracy, deckStudiedCount, flashcardAnsweredCount, rank;
 
     const qb = this.userRepo
       .createQueryBuilder('user')
-
       .leftJoinAndSelect('user.point', 'point')
       .leftJoinAndSelect('user.streak', 'streak')
       .leftJoin('user.progresses', 'progress')
       .leftJoin('progress.deck', 'deck')
       .leftJoin('user.sessions', 'session')
+      .leftJoin('user.following', 'following')
+      .leftJoin('user.followers', 'follower')
       .addSelect(
         'COALESCE(AVG(session.accuracy)::float, 0)::float',
         'user_average_accuracy',
@@ -102,6 +161,14 @@ export class UsersService {
         `DENSE_RANK() OVER (ORDER BY COALESCE(SUM(point.currentPoints)::int, 0) DESC, COALESCE(AVG(session.accuracy)::float, 0) DESC )::int`,
         'user_rank',
       )
+      .addSelect(
+        'COALESCE(COUNT(DISTINCT follower.id)::int, 0)',
+        'user_follower_count',
+      )
+      .addSelect(
+        'COALESCE(COUNT(DISTINCT following.id)::int, 0)',
+        'user_following_count',
+      )
       .groupBy('user.id')
       .addGroupBy('point.id')
       .addGroupBy('streak.id');
@@ -112,6 +179,10 @@ export class UsersService {
       .from(`(${qb.getQuery()})`, 'leaderboard')
       .where('leaderboard.user_id = :userId', { userId })
       .getRawOne();
+
+    const isFollowing = await this.followRepo.exists({
+      where: { follower: { id: user.id }, following: { id: userId } },
+    });
 
     if (!userStats) {
       throw new UnauthorizedException({
@@ -124,6 +195,7 @@ export class UsersService {
       ...nestql(userStats, { prefix: 'user' }),
       point: nestql(userStats, { prefix: 'point' }),
       streak: nestql(userStats, { prefix: 'streak' }),
+      isFollowing,
     };
     return mappedResult;
   }

@@ -59,18 +59,27 @@ export const streakSchema = z.object({
   lastActionTimestamp: TimestampSchema,
 });
 
-export const UserSchema = z.object({
-  id: IDSchema,
-  username: UsernameSchema,
-  nickname: NicknameSchema,
-  avatarUrl: AvatarUrlSchema,
-  lastUsernameUpdate: TimestampSchema,
-  isPrivate: z.boolean(),
-  lastNicknameUpdate: TimestampSchema,
-  createdAt: TimestampSchema,
-  point: PointSchema,
-  streak: streakSchema,
+const FollowStatSchema = z.object({
+  followerCount: z.coerce.number().nonnegative(),
+  followingCount: z.coerce.number().nonnegative(),
 });
+
+export const UserSchema = z
+  .object({
+    id: IDSchema,
+    username: UsernameSchema,
+    nickname: NicknameSchema,
+
+    avatarUrl: AvatarUrlSchema,
+    lastUsernameUpdate: TimestampSchema,
+    isPrivate: z.boolean(),
+    isFollowing: z.coerce.boolean<boolean>().catch(false),
+    lastNicknameUpdate: TimestampSchema,
+    createdAt: TimestampSchema,
+    point: PointSchema,
+    streak: streakSchema,
+  })
+  .and(FollowStatSchema);
 
 export const UpdateUserFormSchema = z.object({
   username: UsernameSchema,
@@ -84,6 +93,9 @@ export const UserBadgeSchema = z.object({
   id: IDSchema,
 });
 
+export const UserBadgeWithFollowStatsSchema =
+  UserBadgeSchema.and(FollowStatSchema);
+
 export const UserWithStatsSchema = UserSchema.and(UserStatsSchema);
 
 export type UserWithStats = z.infer<typeof UserWithStatsSchema>;
@@ -92,6 +104,9 @@ export type Username = z.infer<typeof UsernameSchema>;
 export type Nickname = z.infer<typeof NicknameSchema>;
 export type AvatarUrl = z.infer<typeof AvatarUrlSchema>;
 export type UserBadge = z.infer<typeof UserBadgeSchema>;
+export type UserBadgeWithFollowStats = z.infer<
+  typeof UserBadgeWithFollowStatsSchema
+>;
 export type Point = z.infer<typeof PointSchema>;
 export type Streak = z.infer<typeof streakSchema>;
 export type User = z.infer<typeof UserSchema>;
