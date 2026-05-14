@@ -209,7 +209,17 @@ export class AssistantService {
 
     if (pdf) {
       const pdfText = await this.uploadsService.extractPdfText(pdf);
-      finalPrompt = `${prompt} -- MORE CONTEXT = ${pdfText.text}`;
+      finalPrompt = `
+${prompt}
+
+### CONTEXT (PDF EXTRACT)
+Use the following context to improve accuracy.
+- Prioritize relevant parts only
+- Do NOT repeat the context verbatim
+- If irrelevant, ignore it
+
+${pdfText}
+`;
     }
 
     const result = await withRetry(async () => {
@@ -221,7 +231,7 @@ export class AssistantService {
         },
 
         body: JSON.stringify({
-          model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+          model: 'openai/gpt-oss-safeguard-20b',
           temperature: 0.2,
           messages: [
             { role: 'system', content: systemPrompt },
@@ -233,8 +243,9 @@ export class AssistantService {
       });
     });
     const data = await result.json();
+    console.log(data);
     const jsonResponse = data.choices[0].message.content;
-
+    console.log(jsonResponse);
     const assistantResponse = AssistantResponseSchema.parse({
       role: 'assistant',
       visibility: 'public',

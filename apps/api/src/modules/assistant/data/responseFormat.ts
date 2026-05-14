@@ -2,7 +2,7 @@ export const responseFormat = {
   type: 'json_schema',
   json_schema: {
     name: 'assistant_response',
-    strict: true,
+    strict: false,
     schema: {
       type: 'object',
       properties: {

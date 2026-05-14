@@ -70,6 +70,7 @@ export const PromptInput = memo(({ ...props }: UseAssistantChatReturn) => {
               ref={pdfInputRef}
               onChange={handleChangePdf}
               type="file"
+              onAbortCapture={(e) => e.preventDefault()}
               accept="application/pdf"
             />
             <div className="flex items-end lg:gap-1 gap-2">
@@ -84,7 +85,9 @@ export const PromptInput = memo(({ ...props }: UseAssistantChatReturn) => {
                     <PaperclipIcon />
                   </InputGroupButton>
                 </TooltipTrigger>
-                <TooltipContent>PDF import</TooltipContent>
+                <TooltipContent>
+                  PDF import (Can read up to 3 pages only){" "}
+                </TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger>
@@ -103,10 +106,6 @@ export const PromptInput = memo(({ ...props }: UseAssistantChatReturn) => {
           </div>
         </InputGroup>
       </main>
-
-      <p className="text-sm opacity-25 hidden lg:block w-full text-center ">
-        pixis is a firefly, so low iq - she might hallucinate!
-      </p>
     </div>
   );
 });

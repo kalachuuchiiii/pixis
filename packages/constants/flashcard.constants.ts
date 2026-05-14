@@ -2,7 +2,7 @@ export const QUESTION_MIN = 1;
 export const QUESTION_MAX = 300;
 
 export const ANSWER_MIN = 1;
-export const ANSWER_MAX = 300;
+export const ANSWER_MAX = 500;
 
 export const FLASHCARD_TYPES = ["open_ended", "close_ended"] as const;
 
