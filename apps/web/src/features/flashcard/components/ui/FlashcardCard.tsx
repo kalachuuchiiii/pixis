@@ -33,7 +33,6 @@ export const FlashcardCard = memo(
     const { data: user } = useAuthUser();
     const flashcardFormHandler = useFlashcardForm(flashcard);
 
-    console.log(color);
     return (
       <Dialog>
         <DialogTrigger asChild>

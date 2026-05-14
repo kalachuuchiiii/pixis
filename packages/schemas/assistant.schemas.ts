@@ -23,10 +23,14 @@ export const BaseMessageSchema = z.object({
   content: MessageContentSchema,
   role: MessageRoleSchema,
 });
-
 export const MessageSchema = BaseMessageSchema.extend({
   type: MessageTypeSchema,
   id: IDSchema,
+  pdfName: z
+    .string()
+    .max(255, `PDF name must be <= ${255} characters`)
+    .optional()
+    .nullable(),
 });
 
 export const GeneratedSetFlashcardsSchema = z
@@ -51,7 +55,7 @@ export const ConversationTitleSchema = z
   );
 
 export const GenerateTypeResponseSchema = z.object({
-  role: z.literal("assistant"),
+  role: z.literal("assistant").catch("assistant"),
   content: MessageContentSchema,
   conversationTitle: ConversationTitleSchema,
   type: z.literal("generate"),

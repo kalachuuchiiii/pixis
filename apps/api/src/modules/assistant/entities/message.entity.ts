@@ -24,6 +24,9 @@ export class Message {
   @RelationId((m: Message) => m.user)
   userId!: number;
 
+  @Column({ name: 'pdf_name', nullable: true, default: null })
+  pdfName!: string;
+
   @Column({ type: 'enum', enum: ['user', 'assistant'] })
   role!: 'user' | 'assistant';
 

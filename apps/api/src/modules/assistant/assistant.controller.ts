@@ -6,7 +6,9 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import fs from 'fs-extra';
 import { AssistantService } from './assistant.service';
 import { AccessGuard } from '../auth/guards/access.guard';
 import { AuthUserSchema } from '../auth/schemas/auth.schemas';
@@ -21,6 +23,7 @@ import { GENERATE_CHAT_SYSTEM_PROMPT } from './constants/assistant.constant';
 import z from 'zod';
 import { Paginate, type PaginateQuery } from 'nestjs-paginate';
 import { Throttle } from '@nestjs/throttler';
+import { PDFInterceptor } from '../uploads/interceptors/uploads.interceptors';
 
 @Controller('assistant')
 export class AssistantController {
@@ -82,15 +85,17 @@ export class AssistantController {
     const conversationId = IDSchema.catch(0).parse(
       request.params.conversationId,
     );
-    const result = await this.assistantService.getConversationById({
-      conversationId,
-      user,
-      beforeCursor,
-      afterCursor,
-      query,
-    });
+    const { data, ...result } = await this.assistantService.getConversationById(
+      {
+        conversationId,
+        user,
+        beforeCursor,
+        afterCursor,
+        query,
+      },
+    );
 
-    const cleanMessages = z.array(MessageSchema).parse(result.data);
+    const cleanMessages = z.array(MessageSchema).parse(data);
     return {
       messages: cleanMessages,
       ...result,
@@ -115,21 +120,24 @@ export class AssistantController {
   @Throttle({ default: { limit: 30, ttl: 60_000 } })
   @Post('/chat/:conversationId')
   @UseGuards(AccessGuard)
+  @UseInterceptors(PDFInterceptor('pdf'))
   async chat(@Req() request: Request) {
     const conversationId = IDSchema.catch(0).parse(
       request.params.conversationId,
     );
-
+    const pdf = request.file;
     const user = AuthUserSchema.parse(request.user);
     const prompt = z.string().parse(request.body.prompt);
-
     const data = await this.assistantService.chat({
       prompt,
+      pdf,
       conversationId: Number(conversationId),
       systemPrompt: GENERATE_CHAT_SYSTEM_PROMPT,
       user,
     });
-
+    if (pdf) {
+      await fs.remove(pdf.path);
+    }
     const result = {
       response: MessageSchema.parse(data.response),
       conversationId: IDSchema.parse(data.conversationId),

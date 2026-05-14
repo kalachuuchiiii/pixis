@@ -5,10 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
 import { Conversation } from './entities/conversation.entity';
 import { User } from '../users/entities/user.entity';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
   controllers: [AssistantController],
   providers: [AssistantService],
-  imports: [TypeOrmModule.forFeature([Message, Conversation, User])],
+  imports: [
+    TypeOrmModule.forFeature([Message, Conversation, User]),
+    UploadsModule,
+  ],
 })
 export class AssistantModule {}

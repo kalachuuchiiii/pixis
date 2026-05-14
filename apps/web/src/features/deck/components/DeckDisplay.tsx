@@ -98,7 +98,7 @@ const Header = ({ color, topic, visibility }: HeaderProps) => {
         {finalTopic && (
           <span
             style={topicStyle}
-            className="text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full"
+            className="text-[10px] truncate  w-6/12 font-semibold uppercase tracking-widest px-3 py-1 rounded-full"
           >
             {finalTopic}
           </span>
@@ -138,7 +138,7 @@ const Title = ({ title, color, flashcardCount }: TitleProps) => {
           }}
         />
 
-        <h3 className="text-2xl h-full mb-4 font-semibold text-zinc-900 dark:text-white tracking-tight">
+        <h3 className="text-2xl h-full mb-4 line-clamp-2 font-semibold text-zinc-900 dark:text-white tracking-tight">
           {finalTitle || <span className="opacity-40">Untitled Deck</span>}
         </h3>
       </div>
