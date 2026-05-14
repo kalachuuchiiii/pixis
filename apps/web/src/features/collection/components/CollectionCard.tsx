@@ -76,7 +76,7 @@ const Title = () => {
   return (
     <h3
       className={clsx(
-        "px-[22px] mb-5 text-4xl line-clamp-2 max-h-12 h-fit font-bold leading-[1.15] tracking-tight"
+        "px-[22px] mb-5 text-4xl line-clamp-2  font-bold leading-[1.15] tracking-tight"
       )}
     >
       {collection.name ?? "Untitled Collection"}
@@ -90,11 +90,11 @@ const DeckCount = () => {
   return (
     <div className="px-[22px]">
       <div className="flex items-end gap-1.5">
-        <span className="font-mono text-[52px] font-medium leading-none tracking-[-0.04em] text-zinc-50">
+        <span className="font-mono text-[52px] font-medium leading-none tracking-[-0.04em] ">
           {collection.deckCount}
         </span>
       </div>
-      <p className="text-[13px] font-semibold uppercase tracking-[.06em] text-zinc-600 mt-0.5 mb-4">
+      <p className="text-[13px] font-semibold uppercase tracking-[.06em]  mt-0.5 mb-4">
         {collection.deckCount === 1 ? "Deck" : "Decks"}
       </p>
 

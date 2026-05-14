@@ -78,7 +78,7 @@ export const DeckFilter = ({
               </SheetDescription>
             </SheetHeader>
 
-            <main className="px-7 space-y-8 py-6">
+            <main className="sheet-container">
               <div>
                 <label className="label mb-3 block">Creation Date</label>
                 <div className="flex flex-wrap gap-2">
@@ -109,14 +109,14 @@ export const DeckFilter = ({
               </div>
               <div>
                 <label className="label mb-3 block">Sort By</label>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <Select
                     value={sort.field}
                     onValueChange={(val: SortableDeckField) =>
                       sortForm.setValue("field", val)
                     }
                   >
-                    <SelectTrigger className="flex-1">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -139,7 +139,7 @@ export const DeckFilter = ({
                       sortForm.setValue("order", val)
                     }
                   >
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

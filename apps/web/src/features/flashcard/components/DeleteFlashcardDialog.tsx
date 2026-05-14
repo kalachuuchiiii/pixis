@@ -14,7 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import { useFlashcard } from "../hooks/useFlashcard";
 
-export const DeleteFlashcardDialog = ({ flashcardId, deckId }: { flashcardId: number | string; deckId: number | string; }) => {
+export const DeleteFlashcardDialog = ({
+  flashcardId,
+  deckId,
+}: {
+  flashcardId: number | string;
+  deckId: number | string;
+}) => {
   const { deleteFlashcard, isDeletingFlashcard } = useFlashcard();
 
   return (
@@ -28,20 +34,24 @@ export const DeleteFlashcardDialog = ({ flashcardId, deckId }: { flashcardId: nu
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Flashcard</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete this flashcard? This action cannot be
-            undone
+            Are you sure you want to delete this flashcard? This action cannot
+            be undone
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel>No, keep it</AlertDialogCancel>
+        <main className="flex items-center justify-end">
+          <AlertDialogCancel variant="outline" className="my-btn">
+            No, keep it
+          </AlertDialogCancel>
           <AlertDialogAction
+            variant="destructive"
+            className="my-btn"
             disabled={isDeletingFlashcard}
             onClick={() => deleteFlashcard({ flashcardId, deckId })}
           >
             Yes, Delete
           </AlertDialogAction>
-        </AlertDialogFooter>
+        </main>
       </AlertDialogContent>
     </AlertDialog>
   );

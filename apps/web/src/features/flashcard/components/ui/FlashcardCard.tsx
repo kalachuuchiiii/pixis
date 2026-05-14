@@ -33,14 +33,16 @@ export const FlashcardCard = memo(
     const { data: user } = useAuthUser();
     const flashcardFormHandler = useFlashcardForm(flashcard);
 
+    console.log(color);
     return (
       <Dialog>
         <DialogTrigger asChild>
           <Card
             className={clsx(
               "group h-full flex flex-col justify-between p-6 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-zinc-900 outline-1 outline-neutral-300 dark:outline-zinc-700 ",
-              `border-l-10 border-l-[${color}]`
+              `border-l-10 `
             )}
+            style={{ borderLeftColor: color }}
           >
             <div className="space-y-2 w-full  h-full">
               <div className="inline-flex items-center text-zinc-500 text-xs font-medium">
@@ -65,7 +67,7 @@ export const FlashcardCard = memo(
             </div>
           </Card>
         </DialogTrigger>
-        <DialogContent className="max-w-lg overflow-x-auto">
+        <DialogContent className=" overflow-x-auto">
           <div className="space-y-6">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 mb-3">
@@ -95,16 +97,16 @@ export const FlashcardCard = memo(
                 </ul>
               </div>
             )}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex items-center gap-3">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="flex-1 h-11 text-base font-medium gap-2">
+                  <Button className="flex-1 my-btn">
                     <Eye className="w-5 h-5" />
                     Reveal Answer
                   </Button>
                 </DialogTrigger>
 
-                <DialogContent className="max-w-md">
+                <DialogContent>
                   <div className="py-8 text-center">
                     <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2">
                       The answer is
@@ -118,7 +120,7 @@ export const FlashcardCard = memo(
               {flashcard.userId === user?.id && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="h-11 w-11">
+                    <Button variant="outline" size="icon" className="my-btn">
                       <MoreVertical className="w-5 h-5" />
                     </Button>
                   </DropdownMenuTrigger>

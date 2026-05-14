@@ -75,15 +75,15 @@ export const CollectionFilter = ({
           </SheetTrigger>
           <SheetContent>
             <SheetHeader className="mt-4">
-              <SheetTitle className="text-4xl heading">
+              <SheetTitle className="text-3xl   lg:text-4xl heading">
                 Filter & Sort
               </SheetTitle>
-              <SheetDescription className="description">
+              <SheetDescription>
                 Customize how your decks are displayed
               </SheetDescription>
             </SheetHeader>
 
-            <main className="px-7 space-y-8 py-6">
+            <main className="sheet-container">
               {/* Sort Section */}
               <div>
                 <label className="label mb-3 block">Creation Date</label>
@@ -111,14 +111,14 @@ export const CollectionFilter = ({
               </div>
               <div>
                 <label className="label mb-3 block">Sort By</label>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <Select
                     value={sort.field}
                     onValueChange={(val: SortableCollectionField) =>
                       setSortValue("field", val)
                     }
                   >
-                    <SelectTrigger className="flex-1">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -141,7 +141,7 @@ export const CollectionFilter = ({
                       setSortValue("order", val)
                     }
                   >
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

@@ -52,7 +52,7 @@ export const UpdateDeckDialog = memo(({ deck }: { deck: Deck | Deck }) => {
         </Tooltip>
       </DialogTrigger>
       <DialogContent
-        className={`min-w-6/12 h-[84vh] overflow-y-auto  px-10 py-5  rounded-xl`}
+        className={`min-w-6/12 h-[84vh] overflow-y-auto px-4 lg:px-10 py-2 lg:py-5  rounded-xl`}
       >
         <DeckForm
           deckForm={deckForm}
@@ -63,9 +63,9 @@ export const UpdateDeckDialog = memo(({ deck }: { deck: Deck | Deck }) => {
             </header>
           }
           footer={
-            <footer className="flex gap-2 flex-wrap items-center justify-end">
+            <footer className="flex lg:gap-2  items-center justify-end">
               <DialogClose>
-                <Button className="my-btn" variant={"ghost"}>
+                <Button className="my-btn " variant={"ghost"}>
                   Cancel
                 </Button>
               </DialogClose>
