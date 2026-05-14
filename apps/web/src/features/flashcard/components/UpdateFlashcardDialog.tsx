@@ -42,7 +42,7 @@ export const UpdateFlashcardDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className=" min-w-6/12 px-12 py-6"
+        className="w-full lg:min-w-6/12 px-4 lg:px-12 py-6"
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         {flashcard?.type === "open_ended" &&

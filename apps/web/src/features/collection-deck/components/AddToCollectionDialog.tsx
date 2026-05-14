@@ -4,6 +4,7 @@ import {
   SheetClose,
   SheetContent,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CollectionCard } from "@/features/collection/components/CollectionCard";
@@ -48,27 +49,25 @@ export const AddToCollectionDialog = ({
           <TooltipContent>Add to collection</TooltipContent>
         </Tooltip>
       </SheetTrigger>
-      <SheetContent className="px=">
-        <SheetHeader>
-          <div className="my-4 mb-10">
-            <h1 className="heading text-3xl lg:text-4xl ">Add to collection</h1>
-            <p className="description">
+      <SheetContent className="sheet-container w-full">
+        <div className="w-full">
+          <SheetHeader>
+            <SheetTitle className="lg:text-4xl text-3xl heading">
               Which collection you want this deck to add?
-            </p>
-          </div>
-          <header>
+            </SheetTitle>
+          </SheetHeader>
+          <header className="w-full">
             <CollectionFilter collectionFilter={collectionFilterHandlers} />
           </header>
-        </SheetHeader>
-
-        <div className="p-2 space-y-10">
-          <main className="overflow-y-scroll rounded-xl border-1 p-2 h-[65vh] flex items- flex-col gap-1">
+        </div>
+        <div className="lg:p-2 space-y-10">
+          <main className="overflow-y-scroll rounded-xl border-1  lg:p-2 h-[65vh] flex items- flex-col gap-1">
             {collections.map((c) => (
               <CollectionCard collection={c}>
                 <CollectionCard.Header />
                 <CollectionCard.Title />
                 <CollectionCard.DeckCount />
-                <CollectionCard.Author />
+
                 <SheetClose asChild>
                   <Button
                     disabled={isAddingDeckToCollection}
@@ -76,7 +75,6 @@ export const AddToCollectionDialog = ({
                     onClick={() =>
                       addDeckToCollection({ collectionId: c.id, deckId })
                     }
-                    variant={"secondary"}
                   >
                     Add here <Plus />
                   </Button>

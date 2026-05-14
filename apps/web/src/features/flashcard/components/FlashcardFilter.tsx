@@ -67,22 +67,24 @@ export const FlashcardFilter = ({
           </SheetTrigger>
           <SheetContent>
             <SheetHeader className="mt-4">
-              <SheetTitle className="text-4xl title">Filter & Sort</SheetTitle>
-              <SheetDescription className="label">
+              <SheetTitle className="text-3xl   lg:text-4xl heading">
+                Filter & Sort
+              </SheetTitle>
+              <SheetDescription>
                 Customize how your flashcards are displayed
               </SheetDescription>
             </SheetHeader>
-            <main className="px-7 space-y-8 py-6">
+            <main className="sheet-container">
               <div>
                 <label className="label mb-3 block">Sort By</label>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center flex-wrap gap-3">
                   <Select
                     value={sort.field}
                     onValueChange={(val: SortableFlashcardField) =>
                       setSortValue("field", val)
                     }
                   >
-                    <SelectTrigger className="flex-1">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -105,7 +107,7 @@ export const FlashcardFilter = ({
                       setSortValue("order", val)
                     }
                   >
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

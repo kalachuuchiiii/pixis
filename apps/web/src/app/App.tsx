@@ -2,8 +2,9 @@ import { Toaster } from "sonner";
 import AppRouter from "./AppRouter";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PopupProvider } from "@/components/ui/PopupProvider";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { Spinner } from "@/components/ui/spinner";
 
 function App() {
   useAuthUser();
@@ -18,11 +19,19 @@ function App() {
   }, [mode]);
 
   return (
-    <div>
+    <div className="relative">
       <PopupProvider />
       <TooltipProvider>
         <Toaster position="top-center" />
-        <AppRouter />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0  flex items-center justify-center w-full h-full">
+              <Spinner />
+            </div>
+          }
+        >
+          <AppRouter />
+        </Suspense>
       </TooltipProvider>
     </div>
   );

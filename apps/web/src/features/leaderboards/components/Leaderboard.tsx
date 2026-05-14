@@ -46,7 +46,7 @@ export const Leaderboard = ({ topUsers }: { topUsers: TopUser[] }) => {
             </table>
           </div>
 
-          <p className="flex flex-col my-10 opacity-75 ">
+          <p className="flex flex-col lg:text-base text-xs my-10 opacity-75 ">
             <span>Point per correct = {POINT_PER_CORRECT}</span>
             <span>Point per mistake = {POINT_PER_MISTAKE}</span>
             <span>

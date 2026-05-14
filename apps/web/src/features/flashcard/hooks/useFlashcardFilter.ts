@@ -30,7 +30,7 @@ export const useFlashcardFilter = (
   const filterForm = useForm<FilterForm>({
     defaultValues: {
       type: {
-        value: "",
+        value: "*",
         op: "eq",
       },
     },
