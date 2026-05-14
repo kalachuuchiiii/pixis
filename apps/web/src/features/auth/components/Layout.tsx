@@ -67,18 +67,16 @@ const Layout = () => {
 
         {/* Feature Pills */}
         <div className="relative flex flex-wrap gap-2">
-          {[
-            "AI generation",
-            "Progress tracking",
-            "PDF import (coming soon)",
-          ].map((feature) => (
-            <span
-              key={feature}
-              className="text-xs px-4 py-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400"
-            >
-              {feature}
-            </span>
-          ))}
+          {["AI generation", "Progress tracking", "PDF import"].map(
+            (feature) => (
+              <span
+                key={feature}
+                className="text-xs px-4 py-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400"
+              >
+                {feature}
+              </span>
+            )
+          )}
         </div>
       </div>
 

@@ -79,14 +79,14 @@ const features = [
     color: "text-amber-600",
     bg: "bg-amber-100 dark:bg-amber-950",
     title: "AI Deck Generation",
-    desc: "Paste notes or a topic — get a smart, structured deck in seconds.",
+    desc: "Paste notes, a topic, or import a PDF — get a smart, structured deck in seconds.",
   },
   {
     icon: Users,
     color: "text-sky-600",
     bg: "bg-sky-100 dark:bg-sky-950",
-    title: "Share & Clone Decks",
-    desc: "Share decks with a link. Others can study or clone them instantly.",
+    title: "Share & Save Decks",
+    desc: "Share decks with a link. Others can save and study instantly",
   },
   {
     icon: Shuffle,
@@ -226,9 +226,9 @@ const perks = [
   "Unlimited decks",
   "All study modes",
   "AI generation",
+  "PDF import",
   "Deck sharing",
   "Progress tracking",
-  "No email required",
 ];
 
 const FreeCTA = () => (
