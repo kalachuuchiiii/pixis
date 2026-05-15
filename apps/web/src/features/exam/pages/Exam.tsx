@@ -18,6 +18,7 @@ import { OpenEndedAnswerInput } from "../components/OpenEndedAnswerInput";
 import { CloseEndedAnswerChoices } from "../components/CloseEndedAnswerChoices";
 import { Timer } from "../components/Timer";
 import clsx from "clsx";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Exam = () => {
   const {
@@ -36,6 +37,7 @@ const Exam = () => {
     processExamAnswers,
     isProcessingExamAnswers,
   } = useExam();
+  const navigate = useNavigate();
 
   if (isProcessingExamAnswers) {
     return (
@@ -76,8 +78,8 @@ const Exam = () => {
               <AlertDialogHeader>
                 <AlertDialogTitle>Leave Session?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Your progress will not be saved. Are you sure you want to
-                  exit?
+                  Your progress will not be saved (marked as idle). Are you sure
+                  you want to exit?
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <main className="flex items-center justify-end gap-2">
@@ -85,7 +87,9 @@ const Exam = () => {
                   Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => processExamAnswers()}
+                  onClick={() =>
+                    navigate(`/app/decks/${flashcard?.deckId}/flashcards`)
+                  }
                   variant={"destructive"}
                   className="bg-destructive my-btn hover:bg-destructive/90"
                 >
