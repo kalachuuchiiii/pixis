@@ -37,27 +37,6 @@ const DeckDetails = () => {
             <DeckDisplay.Header />
             <DeckDisplay.Title />
           </DeckDisplay>
-          <button
-            onClick={() =>
-              pop(() =>
-                ResultDetailsPopup({
-                  resultDetails: {
-                    feedback: "nice",
-                    accuracy: 10,
-                    totalPointsGained: 100,
-                    correctCount: 100,
-                    deckId: 3,
-                    isCompleted: true,
-                    isIncomplete: false,
-                    isStreakIncremented: false,
-                    totalFlashcards: 4,
-                  },
-                })
-              )
-            }
-          >
-            click
-          </button>
 
           <div className="flex items-center gap-2">
             {!deck.deletedAt && (

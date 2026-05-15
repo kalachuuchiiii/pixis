@@ -12,7 +12,7 @@ export const CloseEndedAnswerChoices = memo(
   }: Pick<UseExamReturn, "answer" | "setAnswer"> & {
     flashcard: Flashcard & { type: "close_ended" };
   }) => {
-    const choices = useMemo(() => shuffle(flashcard.choices), []);
+    const choices = useMemo(() => shuffle(flashcard.choices), [flashcard.id]);
     return (
       <main className="grid grid-cols-2 h-full gap-1 w-full">
         {choices.map((c) => (
