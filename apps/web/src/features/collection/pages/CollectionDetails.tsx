@@ -53,7 +53,7 @@ const CollectionDetails = () => {
     deckFilter,
     hasNextPage,
   } = useCollectionDecks(
-    collection.user.id === user.id ? undefined : ["visibility"]
+    collection?.user?.id === user?.id ? undefined : ["visibility"]
   );
 
   const hasNoMoreData = !hasNextPage && collectionDecks.length > 0;

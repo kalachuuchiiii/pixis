@@ -16,6 +16,9 @@ import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { Button } from "@/components/ui/button";
 import { copy } from "@/utils/copy";
+import { ResultDetailsPopup } from "@/features/exam/components/ResultDetailsPopup";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { pop } from "@/hooks/usePopup";
 
 const DeckDetails = () => {
   const { deckId = 0 } = useParams();
@@ -34,6 +37,28 @@ const DeckDetails = () => {
             <DeckDisplay.Header />
             <DeckDisplay.Title />
           </DeckDisplay>
+          <button
+            onClick={() =>
+              pop(() =>
+                ResultDetailsPopup({
+                  resultDetails: {
+                    feedback: "nice",
+                    accuracy: 10,
+                    totalPointsGained: 100,
+                    correctCount: 100,
+                    deckId: 3,
+                    isCompleted: true,
+                    isIncomplete: false,
+                    isStreakIncremented: false,
+                    totalFlashcards: 4,
+                  },
+                })
+              )
+            }
+          >
+            click
+          </button>
+
           <div className="flex items-center gap-2">
             {!deck.deletedAt && (
               <div className="flex items-center gap-2">

@@ -49,7 +49,7 @@ export const AddToCollectionDialog = ({
           <TooltipContent>Add to collection</TooltipContent>
         </Tooltip>
       </SheetTrigger>
-      <SheetContent className="sheet-container w-full">
+      <SheetContent className="dialog-container w-full">
         <div className="w-full">
           <SheetHeader>
             <SheetTitle className="lg:text-4xl text-3xl heading">

@@ -38,7 +38,7 @@ export const FlashcardCard = memo(
         <DialogTrigger asChild>
           <Card
             className={clsx(
-              "group h-full flex flex-col justify-between p-6 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-zinc-900 outline-1 outline-neutral-300 dark:outline-zinc-700 ",
+              "group h-full flex flex-col justify-between p-6 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-zinc-925 outline-1 outline-neutral-300 dark:outline-zinc-700 ",
               `border-l-10 `
             )}
             style={{ borderLeftColor: color }}
@@ -66,7 +66,7 @@ export const FlashcardCard = memo(
             </div>
           </Card>
         </DialogTrigger>
-        <DialogContent className=" overflow-x-auto">
+        <DialogContent className="dialog-container lg:max-w-5xl w-full lg:w-fit lg:min-w-2xl  overflow-x-auto">
           <div className="space-y-6">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 mb-3">

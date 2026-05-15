@@ -36,14 +36,10 @@ export const ResultDetailsPopup = ({
   const isSuccess = !isIncomplete && isCompleted;
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 sm:p-6">
-      <div className="flex flex-col md:flex-row gap-6">
+    <div className="w-full max-w-3xl mx-auto ">
+      <div className="flex flex-col gap-6">
         {/* Left Side - Visual Header */}
-        <header className="flex flex-col items-center justify-center md:w-5/12 text-center">
-          <span className="text-6xl lg:text-8xl drop-shadow-md">
-            {getResultIcon()}
-          </span>
-
+        <header className="flex flex-col items-center justify-center w-full text-center">
           <h1 className="mt-3 text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-white">
             {feedback}
           </h1>
@@ -56,7 +52,7 @@ export const ResultDetailsPopup = ({
         </header>
 
         {/* Right Side - Stats */}
-        <main className="flex flex-col gap-4 md:w-7/12">
+        <main className="flex flex-col gap-4 w-full">
           {/* Points Card */}
           <div className="rounded-2xl border border-zinc-800 dark:bg-zinc-900/70 p-6 sm:p-8 text-center">
             <div className="mb-2 text-xs sm:text-sm uppercase tracking-widest text-zinc-500">

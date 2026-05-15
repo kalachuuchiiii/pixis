@@ -13,7 +13,7 @@ export const PopupProvider = () => {
 
   return (
     <Dialog open={state.open} onOpenChange={() => handleOpenChange()}>
-      <DialogContent className="w-11/12 lg:min-w-140  h-fit">
+      <DialogContent className="w-11/12 lg:min-w-140 dialog-container  h-fit">
         {state.display && <state.display />}
       </DialogContent>
     </Dialog>

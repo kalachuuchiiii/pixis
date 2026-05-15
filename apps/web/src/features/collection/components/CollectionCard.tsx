@@ -4,6 +4,8 @@ import { formatDistanceToNow } from "date-fns";
 import { clsx } from "clsx";
 import { UserBadge } from "@/features/account/components/ui/UserBadge";
 import { Skeleton } from "boneyard-js/react";
+import { Separator } from "@/components/ui/separator";
+import { Astroid } from "lucide-react";
 
 type CollectionContextType = { collection: Collection };
 
@@ -26,26 +28,20 @@ const Root = ({
     <Skeleton name="collection-card" loading={!collection}>
       <div
         className={clsx(
-          "group relative min-h-fit overflow-x-hidden rounded-2xl",
-          "hover:border-zinc-700 border pl-2 border-zinc-800   transition-colors duration-200",
-          ` shadow-[${collection.color}]`
+          "group relative min-h-fit border border-zinc-800 rounded-2xl",
+          "hover:border-zinc-700   transition-colors duration-200"
         )}
       >
-        {collection.color && (
-          <div
-            className={clsx(
-              "absolute top-0 left-0 w-1 h-full overflow-x-hidden  z-10",
-              `border-l-6 shadow-[0px_0px_16px] shadow-[${collection.color}] border-l-[${collection.color}]`
-            )}
-          />
-        )}
-
+        <Astroid
+          className="absolute -top-4 -left-4 z-20 size-12"
+          style={{
+            color: collection.color,
+          }}
+        />
         <div
           className={clsx(
-            "relative bg-neutral-50 dark:bg-zinc-950 ",
-            "flex flex-col h-full",
-
-            collection.color && "pl-0"
+            "relative bg-neutral-50 dark:bg-zinc-925 ",
+            "flex flex-col h-full"
           )}
         >
           {children}
@@ -60,7 +56,7 @@ const Header = () => {
 
   return (
     <div className="flex items-center gap-2 px-[22px] pt-[22px] ">
-      <span className="uppercase font-bold tracking-tighter opacity-50">
+      <span className="uppercase font-bold lg:text-sm text-xs tracking-tighter opacity-50">
         Collection
       </span>
       <span className="text-[11px] font-semibold uppercase tracking-[.06em] text-zinc-600">
@@ -76,7 +72,7 @@ const Title = () => {
   return (
     <h3
       className={clsx(
-        "px-[22px] mb-5 text-4xl line-clamp-2  font-bold leading-[1.15] tracking-tight"
+        "px-[22px] mb-5 text-2xl lg:text-3xl line-clamp-2  font-bold leading-[1.15] tracking-tight"
       )}
     >
       {collection.name ?? "Untitled Collection"}
@@ -97,8 +93,7 @@ const DeckCount = () => {
       <p className="text-[13px] font-semibold uppercase tracking-[.06em]  mt-0.5 mb-4">
         {collection.deckCount === 1 ? "Deck" : "Decks"}
       </p>
-
-      <div className="h-px bg-zinc-800 mb-[18px]" />
+      <Separator className="mb-4" />
     </div>
   );
 };

@@ -74,7 +74,7 @@ export const FlashcardFilter = ({
                 Customize how your flashcards are displayed
               </SheetDescription>
             </SheetHeader>
-            <main className="sheet-container">
+            <main className="dialog-container">
               <div>
                 <label className="label mb-3 block">Sort By</label>
                 <div className="flex items-center flex-wrap gap-3">

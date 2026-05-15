@@ -45,7 +45,7 @@ export const SetPreviewDialog = ({ messageId }: { messageId: number }) => {
   if (!set) return null;
 
   return (
-    <DialogContent className="min-w-6/12 w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <DialogContent className="min-w-6/12 w-full dialog-container max-h-[90vh] overflow-hidden flex flex-col">
       <DialogHeader className=" pb-4 border-b">
         <div className="flex flex-col items-start mt-2">
           <DeckDisplay.Header
@@ -76,15 +76,14 @@ export const SetPreviewDialog = ({ messageId }: { messageId: number }) => {
           </p>
         )}
       </div>
-      <div>
-        <Button
-          className="my-btn w-full"
-          onClick={() => generateSet(set)}
-          disabled={isGeneratingSet}
-        >
-          Save Set
-        </Button>
-      </div>
+
+      <Button
+        className="my-btn w-full"
+        onClick={() => generateSet(set)}
+        disabled={isGeneratingSet}
+      >
+        Save Set
+      </Button>
     </DialogContent>
   );
 };
