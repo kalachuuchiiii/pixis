@@ -116,66 +116,70 @@ const Exam = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 lg:flex-col flex flex-col items-center gap-2  justify-center p-6">
+      <div className="flex-1 lg:flex-col flex flex-col items-center gap-6  justify-center p-6">
         {mode === "timed" && <Timer {...timerHandlers} />}
-        <div
-          className={clsx(
-            `${!timerHandlers.isRunning && mode === "timed" && "opacity-50"} max-w-5xl w-full`
-          )}
-        >
-          {/* Flashcard Area */}
+        {isFlashcardLoading ? (
+          <Spinner />
+        ) : (
+          <div
+            className={clsx(
+              `${!timerHandlers.isRunning && mode === "timed" && "opacity-50"} lg:max-w-5xl  lg:min-w-3xl`
+            )}
+          >
+            <div className="bg-white dark:bg-zinc-925 w-full border border-border rounded-3xl shadow-xl min-h-[420px] flex flex-col items-center justify-center p-4 lg:p-12 relative">
+              <div className="text-center w-full">
+                <div className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
+                  QUESTION {currentFlashcardIdx + 1}
+                </div>
 
-          <div className="bg-white dark:bg-zinc-900 w-full border border-border rounded-3xl shadow-xl min-h-[420px] flex flex-col items-center justify-center p-4 lg:p-12 relative">
-            <div className="text-center w-full">
-              <div className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-                QUESTION {currentFlashcardIdx + 1}
-              </div>
-
-              <h2 className="text-base lg:text-2xl leading-tight wrap break-all font-medium text-foreground mb-12">
-                {flashcard?.question}
-              </h2>
-              <div>
-                {flashcard?.type === "close_ended" ? (
-                  <CloseEndedAnswerChoices
-                    answer={answer}
-                    setAnswer={setAnswer}
-                    flashcard={flashcard}
-                  />
-                ) : (
-                  <OpenEndedAnswerInput
-                    isCaseSensitive={flashcard?.isAnswerCaseSensitive || false}
-                    currentFlashcardIdx={currentFlashcardIdx}
-                    setAnswer={setAnswer}
-                  />
-                )}
+                <h2 className="text-base lg:text-2xl leading-tight wrap break-all font-medium text-foreground mb-12">
+                  {flashcard?.question}
+                </h2>
+                <div>
+                  {flashcard?.type === "close_ended" ? (
+                    <CloseEndedAnswerChoices
+                      answer={answer}
+                      setAnswer={setAnswer}
+                      flashcard={flashcard}
+                    />
+                  ) : (
+                    <OpenEndedAnswerInput
+                      isCaseSensitive={
+                        flashcard?.isAnswerCaseSensitive || false
+                      }
+                      currentFlashcardIdx={currentFlashcardIdx}
+                      setAnswer={setAnswer}
+                    />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          {/* Navigation Buttons */}
-          <div className="flex justify-between items-center mt-8 px-4">
-            <Button
-              variant="outline"
-              size="lg"
-              disabled={isFlashcardLoading}
-              onClick={onPrevious}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Previous
-            </Button>
+            {/* Navigation Buttons */}
+            <div className="flex justify-between items-center mt-8 px-4">
+              <Button
+                variant="outline"
+                size="lg"
+                disabled={isFlashcardLoading}
+                onClick={onPrevious}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                Previous
+              </Button>
 
-            <Button
-              variant="outline"
-              size="lg"
-              disabled={isFlashcardLoading}
-              onClick={onNext}
-              className="flex items-center gap-2"
-            >
-              Next
-              <ArrowRight className="w-5 h-5" />
-            </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                disabled={isFlashcardLoading}
+                onClick={onNext}
+                className="flex items-center gap-2"
+              >
+                Next
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

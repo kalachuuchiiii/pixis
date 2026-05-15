@@ -10,7 +10,7 @@ export const SessionCard = ({ session }: { session: Session }) => {
   const { info, duration } = getStatusInfo(session);
 
   return (
-    <div className=" border border-zinc-200 bg-neutral-50 dark:bg-zinc-900 dark:border-zinc-700 rounded-2xl p-5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all">
+    <div className=" border border-zinc-200 min-h-40  bg-neutral-50 dark:bg-zinc-925 dark:border-zinc-700 rounded-2xl p-5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all">
       <div className="flex items-start justify-between h-full">
         {/* Left Side */}
         <div className=" flex flex-col   justify-between h-full space-y-4">

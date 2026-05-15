@@ -42,7 +42,7 @@ export const CollectionForm = ({
           )}
         />
 
-        <div className="flex flex-col lg:flex-row items-start gap-6">
+        <div className="flex flex-row items-start gap-6">
           <div>
             <FieldLabel>Color</FieldLabel>
             <ColorPicker
@@ -69,7 +69,7 @@ export const CollectionForm = ({
             render={({ fieldState }) => (
               <Field>
                 <FieldLabel>Visibility</FieldLabel>
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="lg:flex-row flex flex-col gap-2.5">
                   {VISIBILITY_OPTIONS.map((opt) => (
                     <VisibilityOptionButton
                       key={opt.value}

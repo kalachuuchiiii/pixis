@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Pencil } from "lucide-react";
+import { Astroid, Pencil } from "lucide-react";
 import { CollectionForm } from "./CollectionForm";
 import { useCollection } from "../hooks/useCollection";
 import type { UseFormReturn } from "react-hook-form";
@@ -44,9 +44,14 @@ export const UpdateCollectionDialog = ({
           <Pencil /> Edit
         </Button>
       </DialogTrigger>
-      <DialogContent
-        className={`min-w-5/12 rounded-xl space-y-10  p-8 border-l-8 border-l-[${color}]`}
-      >
+      <DialogContent className={`min-w-5/12 rounded-xl space-y-10  p-8`}>
+        {" "}
+        <Astroid
+          className="absolute -top-5 -left-5 z-20 size-12"
+          style={{
+            color: color,
+          }}
+        />
         <CollectionForm
           className="flex flex-col items-start h-full justify-between"
           header={

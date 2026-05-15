@@ -52,14 +52,13 @@ const Card = ({ children }: { children: ReactNode }) => {
   return (
     <div className="relative h-full w-full">
       {/* Stacked Card Layers (Leak Effect) */}
-      <div className="absolute -bottom-2 -right-2 w-full h-full opacity-40 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[3deg]  z-0" />
-      <div className="absolute -bottom-1 -right-1 w-full h-full bg-white opacity-70 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[1.5deg]  z-10" />
+      <div className="absolute -bottom-2 right-0 w-full h-full opacity-40 bg-white dark:bg-zinc-925 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[3deg]  z-0" />
+      <div className="absolute -bottom-1 right-0 w-full h-full bg-white opacity-70 dark:bg-zinc-925 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm rotate-[1.5deg]  z-10" />
 
       {/* Main Card */}
       <div
         className={clsx(
-          "relative bg-white  dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 shadow-sm h-full flex flex-col justify-between overflow-hidden z-20 transition-all group-hover:shadow-xl ",
-          deck?.color && `border-l-8 border-l-[${deck.color}]`
+          "relative bg-white  dark:bg-zinc-925 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 shadow-sm h-full flex flex-col justify-between overflow-hidden z-20 transition-all group-hover:shadow-xl "
         )}
       >
         {children}

@@ -83,7 +83,7 @@ export const CollectionFilter = ({
               </SheetDescription>
             </SheetHeader>
 
-            <main className="sheet-container">
+            <main className="dialog-container">
               {/* Sort Section */}
               <div>
                 <label className="label mb-3 block">Creation Date</label>

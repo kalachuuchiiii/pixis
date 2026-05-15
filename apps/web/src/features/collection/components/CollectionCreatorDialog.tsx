@@ -31,6 +31,7 @@ export const CollectionCreatorDialog = ({
     },
   });
   const collectionValues = collectionForm.watch();
+  const color = collectionForm.watch("color");
 
   return (
     <Dialog>
@@ -45,11 +46,13 @@ export const CollectionCreatorDialog = ({
         </Tooltip>
       </DialogTrigger>
       <DialogContent
+        style={{
+          borderLeft: `8px solid ${color}`,
+          boxShadow: `-4px 0 6px ${color + 75}`,
+        }}
         className={`pl-0 py-0 pr-6 flex rounded-xl overflow-hidden  min-w-5/12`}
       >
-        <div
-          className={`border-l-8  shadow-[0px_0px_16px] shadow-[${collectionValues.color}] border-l-[${collectionValues.color}]`}
-        />
+        <div />
         <CollectionForm
           className="space-y-4 p-6 "
           collectionFormHandlers={collectionForm}

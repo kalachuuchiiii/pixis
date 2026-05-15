@@ -78,7 +78,7 @@ export const DeckFilter = ({
               </SheetDescription>
             </SheetHeader>
 
-            <main className="sheet-container">
+            <main className="dialog-container">
               <div>
                 <label className="label mb-3 block">Creation Date</label>
                 <div className="flex flex-wrap gap-2">
