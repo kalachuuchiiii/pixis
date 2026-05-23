@@ -94,6 +94,9 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.2"
   },
+  "engines": {
+    "node": "22"
+  },
   "jest": {
     "moduleFileExtensions": [
       "js",
