@@ -7,7 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss({ optimize: { minify: true } })],
   preview: {
-    allowedHosts: ["pixis.up.railway.app"],
+    allowedHosts: ["pixis.up.railway.app"], //no dupes
   },
   resolve: {
     alias: {
