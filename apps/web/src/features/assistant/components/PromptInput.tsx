@@ -86,7 +86,7 @@ export const PromptInput = memo(({ ...props }: UseAssistantChatReturn) => {
                   </InputGroupButton>
                 </TooltipTrigger>
                 <TooltipContent>
-                  PDF import (Can read up to 3 pages only){" "}
+                  PDF import (Can read up to 10 pages){" "}
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
