@@ -243,9 +243,7 @@ ${pdfText}
       });
     });
     const data = await result.json();
-    console.log(data);
     const jsonResponse = data.choices[0].message.content;
-    console.log(jsonResponse);
     const assistantResponse = AssistantResponseSchema.parse({
       role: 'assistant',
       visibility: 'public',
@@ -268,8 +266,6 @@ ${pdfText}
         conversation.title = conversationTitle;
         await m.save(conversation);
       }
-
-      console.log(pdf);
 
       const userPrompt = m.create(Message, {
         role: 'user',

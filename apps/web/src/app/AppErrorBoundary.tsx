@@ -6,6 +6,7 @@ import { AlertTriangle, X, RefreshCw, Home, ChevronLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { logger } from "@/utils/logger";
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   const {
@@ -132,7 +133,7 @@ const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onError={(error, info) => {
-        console.error("ErrorBoundary caught an error:", error, info);
+        logger.error("ErrorBoundary caught an error:", error, info);
         // You can send to error reporting service here (Sentry, etc.)
       }}
     >
