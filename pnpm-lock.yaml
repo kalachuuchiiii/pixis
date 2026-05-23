@@ -22,7 +22,7 @@ importers:
     dependencies:
       '@langchain/community':
         specifier: ^1.1.28
-        version: 1.1.28(@browserbasehq/sdk@2.12.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@17.4.2)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3))(@ibm-cloud/watsonx-ai@1.7.12)(@langchain/core@1.1.48(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(ws@8.20.1))(ibm-cloud-sdk-core@5.4.20)(ignore@7.0.5)(jsonwebtoken@9.0.3)(lodash@4.18.1)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(pdf-parse@2.4.5)(pg@8.20.0)(playwright@1.60.0)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@types/node@22.19.17)(typescript@5.9.3)))(ws@8.20.1)
+        version: 1.1.28(@browserbasehq/sdk@2.12.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@16.4.5)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3))(@ibm-cloud/watsonx-ai@1.7.12)(@langchain/core@1.1.48(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(ws@8.20.1))(ibm-cloud-sdk-core@5.4.20)(ignore@7.0.5)(jsonwebtoken@9.0.3)(lodash@4.18.1)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(pdf-parse@2.4.5)(pg@8.20.0)(playwright@1.60.0)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@types/node@22.19.17)(typescript@5.9.3)))(ws@8.20.1)
       '@langchain/core':
         specifier: ^1.1.48
         version: 1.1.48(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(ws@8.20.1)
@@ -75,8 +75,8 @@ importers:
         specifier: ^2.8.6
         version: 2.8.6
       dotenv:
-        specifier: ^17.4.2
-        version: 17.4.2
+        specifier: ^16.4.5
+        version: 16.4.5
       fs-extra:
         specifier: ^11.3.5
         version: 11.3.5
@@ -8135,13 +8135,13 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@browserbasehq/stagehand@1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@17.4.2)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3)':
+  '@browserbasehq/stagehand@1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@16.4.5)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3)':
     dependencies:
       '@anthropic-ai/sdk': 0.27.3
       '@browserbasehq/sdk': 2.12.0
       '@playwright/test': 1.60.0
       deepmerge: 4.3.1
-      dotenv: 17.4.2
+      dotenv: 16.4.5
       openai: 6.39.0(ws@8.20.1)(zod@4.4.3)
       ws: 8.20.1
       zod: 4.4.3
@@ -8815,9 +8815,9 @@ snapshots:
       - openai
       - ws
 
-  '@langchain/community@1.1.28(@browserbasehq/sdk@2.12.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@17.4.2)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3))(@ibm-cloud/watsonx-ai@1.7.12)(@langchain/core@1.1.48(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(ws@8.20.1))(ibm-cloud-sdk-core@5.4.20)(ignore@7.0.5)(jsonwebtoken@9.0.3)(lodash@4.18.1)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(pdf-parse@2.4.5)(pg@8.20.0)(playwright@1.60.0)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@types/node@22.19.17)(typescript@5.9.3)))(ws@8.20.1)':
+  '@langchain/community@1.1.28(@browserbasehq/sdk@2.12.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@16.4.5)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3))(@ibm-cloud/watsonx-ai@1.7.12)(@langchain/core@1.1.48(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(ws@8.20.1))(ibm-cloud-sdk-core@5.4.20)(ignore@7.0.5)(jsonwebtoken@9.0.3)(lodash@4.18.1)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(pdf-parse@2.4.5)(pg@8.20.0)(playwright@1.60.0)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@types/node@22.19.17)(typescript@5.9.3)))(ws@8.20.1)':
     dependencies:
-      '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@17.4.2)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3)
+      '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@16.4.5)(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(zod@4.4.3)
       '@ibm-cloud/watsonx-ai': 1.7.12
       '@langchain/classic': 1.0.34(@langchain/core@1.1.48(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(ws@8.20.1))(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@types/node@22.19.17)(typescript@5.9.3)))(ws@8.20.1)
       '@langchain/core': 1.1.48(openai@6.39.0(ws@8.20.1)(zod@4.4.3))(ws@8.20.1)
