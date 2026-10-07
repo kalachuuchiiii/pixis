@@ -25,7 +25,7 @@ const AppDataSource = new DataSource({
   schema: 'public',
   url: process.env.DATABASE_URL!,
   port: Number(process.env.PORT),
-  migrations: ['src/migrations/*.ts'],
+  migrations: [isProd ? 'dist/src/migrations/*.js' : 'src/migrations/*.ts'],
   entities: [Message, Streak, Credential, User, Deck, CollectionDeck, Point, Follow, Collection, Flashcard, FlashcardProgress, Session, UserSavedCollection, UserSavedDeck, Conversation],
   synchronize: false,
   logging: !isProd,
