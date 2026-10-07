@@ -1,26 +1,47 @@
-migrate:
-  name: Run database migrations
-  runs-on: ubuntu-latest
-  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  needs: build
-  concurrency:
-    group: production-migrations
-    cancel-in-progress: false
+name: CI
 
-  steps:
-    - uses: actions/checkout@v4
-    - run: corepack enable
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: pnpm
-    - run: pnpm install --frozen-lockfile
+on:
+  pull_request:
+  push:
+    branches: [main]
 
-    - name: Build shared packages
-      run: pnpm build
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm build
 
-    - name: Run migrations
-      run: pnpm --filter api migration:run
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        NODE_ENV: production
+  migrate:
+    name: Run database migrations
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    concurrency:
+      group: production-migrations
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm build
+
+      - name: Run migrations
+        run: pnpm --filter api migration:run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: production
