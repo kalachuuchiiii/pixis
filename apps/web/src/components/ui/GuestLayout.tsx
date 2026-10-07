@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "./dialog";
 import { privacyPolicy } from "@/features/auth/data/auth";
-import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 
 const Footer = () => (
   <footer className="border-t border-zinc-200 dark:border-zinc-800 lg:px-6  py-10 text-sm text-zinc-500 dark:text-zinc-400">
@@ -99,8 +98,11 @@ export const GuestLayout = () => {
         </div>
 
         <Link to="/sign-up">
-          <Button className="my-btn">Get started free</Button>
+          <Button className="my-btn ">Get started free</Button>
         </Link>
+
+
+
       </nav>
       <Outlet />
       <Footer />

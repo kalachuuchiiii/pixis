@@ -17,12 +17,6 @@ import { AccessGuard } from '../auth/guards/access.guard';
 import type { Request, Response } from 'express';
 import { AuthUserSchema } from '../auth/schemas/auth.schemas';
 import { DeckService } from '../deck/deck.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { UploadsService } from '../uploads/uploads.service';
-import fs from 'fs-extra';
-import env from '@/config/env';
 import z from 'zod';
 import { Throttle } from '@nestjs/throttler';
 import {
@@ -41,7 +35,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly decksService: DeckService,
-  ) {}
+  ) { }
 
   @Throttle({ default: { limit: 3, ttl: 60_000 } })
   @Patch()
@@ -50,7 +44,7 @@ export class UsersController {
     const user = AuthUserSchema.parse(request.user);
     const form = UpdateUserFormSchema.parse(request.body);
 
-    const result = await this.usersService.updateUser({ user, form });
+    await this.usersService.updateUser({ user, form });
     return {
       message: 'Updated successfully!',
     };
@@ -177,8 +171,8 @@ export class UsersController {
 
     response.clearCookie('refreshToken', {
       httpOnly: true,
-      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
-      secure: env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
       path: '/',
     });
     return {

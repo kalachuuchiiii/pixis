@@ -31,6 +31,7 @@ const SignUp = () => {
 
   const onSubmit = form.handleSubmit(async (data) => {
     signUp({ form: data });
+    alert('hi')
   });
 
   return (

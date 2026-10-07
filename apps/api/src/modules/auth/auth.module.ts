@@ -5,10 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Credential } from './entities/credential.entity';
 import { User } from '../users/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
-import env from '@/config/env';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategies';
-import { UsersService } from '../users/users.service';
 import { RefreshStrategy } from './strategies/refresh.strategies';
 import { AccessStrategy } from './strategies/access.strategy';
 import { UsersModule } from '../users/users.module';
@@ -25,4 +23,4 @@ import { UsersModule } from '../users/users.module';
   ],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

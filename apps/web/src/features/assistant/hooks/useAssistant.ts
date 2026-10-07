@@ -15,7 +15,7 @@ export const useAssistant = () => {
     useMutation({
       mutationFn: async ({ id }: { id: string | number }) => {
         const p = api.delete(`/assistant/conversations/${id}`);
-        await toast.promise(p, {
+        toast.promise(p, {
           loading: "Deleting conversation...",
           success: getSuccessMessage,
           error: getErrorMessage,
@@ -34,7 +34,7 @@ export const useAssistant = () => {
       const p = api.post<{ deckId: number }>("/assistant/generate", {
         generatedSet,
       });
-      await toast.promise(p, {
+      toast.promise(p, {
         loading: "Saving set...",
         success: getSuccessMessage,
         error: getErrorMessage,
@@ -46,20 +46,8 @@ export const useAssistant = () => {
     },
   });
 
-  const {
-    mutate: sendGenerateChatPrompt,
-    isPending: isSendingGenerateChatPrompt,
-  } = useMutation({
-    mutationFn: async (prompt: string) => {
-      const res = await api.post(`/assistant/chat/generate`, { prompt });
-      return res.data;
-    },
-    onSuccess: () => {},
-  });
 
   return {
-    sendGenerateChatPrompt,
-    isSendingGenerateChatPrompt,
     generateSet,
     isGeneratingSet,
     deleteConversation,

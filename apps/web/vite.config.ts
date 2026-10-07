@@ -10,7 +10,9 @@ export default defineConfig({
     allowedHosts: ["pixis.up.railway.app"], //no dupes
   },
   resolve: {
+    dedupe: ['react', 'react-dom'],
     alias: {
+
       "@": path.resolve(__dirname, "./src"),
     },
   },

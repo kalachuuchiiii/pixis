@@ -3,20 +3,19 @@ import AppRouter from "./AppRouter";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PopupProvider } from "@/components/ui/PopupProvider";
 import { Suspense, useEffect } from "react";
-import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
 import { Spinner } from "@/components/ui/spinner";
+import { useDarkMode } from "@/features/account/hooks/useDarkMode";
 
 function App() {
-  useAuthUser();
-  const mode = localStorage.getItem("theme") === "dark" ? "dark" : "light";
+  const theme = useDarkMode((state) => state.theme);
 
   useEffect(() => {
-    if (mode === "dark") {
-      document.documentElement.classList.add("dark");
-      return;
+    if (theme === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
     }
-    document.documentElement.classList.remove("dark");
-  }, [mode]);
+  }, [theme]);
 
   return (
     <div className="relative">

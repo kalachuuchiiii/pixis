@@ -25,29 +25,32 @@ const Root = ({
   children: React.ReactNode;
 }) => (
   <CollectionContext.Provider value={{ collection }}>
-    <Skeleton name="collection-card" loading={!collection}>
-      <div
-        className={clsx(
-          "group relative min-h-fit border border-zinc-800 rounded-2xl",
-          "hover:border-zinc-700   transition-colors duration-200"
-        )}
-      >
-        <Astroid
-          className="absolute -top-4 -left-4 z-20 size-12"
-          style={{
-            color: collection.color,
-          }}
-        />
+    <div className="relative">
+      <Astroid
+        className="absolute -top-4 rotate-45 -left-4 z-20 size-12"
+        style={{
+          color: collection.color,
+        }}
+      />
+      <Skeleton name="collection-card" loading={!collection}>
         <div
           className={clsx(
-            "relative bg-neutral-50 dark:bg-zinc-925 ",
-            "flex flex-col h-full"
+            "group relative min-h-fit border border-zinc-800 rounded-2xl",
+            "hover:border-zinc-700 overflow-hidden  transition-colors duration-200"
           )}
         >
-          {children}
+
+          <div
+            className={clsx(
+              "relative bg-neutral-50 dark:bg-zinc-925 ",
+              "flex flex-col h-full"
+            )}
+          >
+            {children}
+          </div>
         </div>
-      </div>
-    </Skeleton>
+      </Skeleton>
+    </div>
   </CollectionContext.Provider>
 );
 

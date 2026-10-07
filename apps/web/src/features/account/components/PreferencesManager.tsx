@@ -1,24 +1,14 @@
 import { Switch } from "@/components/ui/switch";
 import { useProfile } from "../hooks/useProfile";
-import { useEffect, useState } from "react";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
+import { useDarkMode } from "../hooks/useDarkMode";
 
 export const PreferencesManager = () => {
   const { data: user } = useAuthUser();
-
+  const theme = useDarkMode((state) => state.theme);
+  const toggleTheme = useDarkMode((state) => state.toggleTheme);
   const { togglePrivacy, isTogglingPrivacy } = useProfile();
-  const [mode, setMode] = useState(
-    localStorage.getItem("theme") === "light" ? "light" : "dark"
-  );
 
-  useEffect(() => {
-    if (mode === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("theme", mode === "dark" ? "dark" : "light");
-  }, [mode]);
 
   return (
     <div>
@@ -35,10 +25,8 @@ export const PreferencesManager = () => {
             </p>
           </div>
           <Switch
-            checked={mode === "dark"}
-            onCheckedChange={() =>
-              setMode((prev) => (prev === "dark" ? "light" : "dark"))
-            }
+            checked={theme === "dark"}
+            onCheckedChange={toggleTheme}
           />
         </div>
 

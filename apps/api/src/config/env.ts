@@ -21,28 +21,3 @@ const getEnvVariable = <T>(
   return value as T;
 };
 
-const env = {
-  CORS_ORIGIN: getEnvVariable('CORS_ORIGIN', {
-    default: 'http://localhost:5173',
-  }),
-  DB_NAME: getEnvVariable('DB_NAME') as string,
-  DB_PASS: getEnvVariable('DB_PASS') as string,
-  DB_PORT: Number(getEnvVariable('DB_PORT')),
-  DB_USER: getEnvVariable('DB_USER') as string,
-  DB_HOST: getEnvVariable('DB_HOST') as string,
-  NODE_ENV: getEnvVariable('NODE_ENV', { required: false }) as
-    | 'production'
-    | 'development'
-    | 'testing',
-  ACCESS_TOKEN_SECRET: getEnvVariable('ACCESS_TOKEN_SECRET') as string,
-  SSLMODE: getEnvVariable('SSLMODE', { required: false }) as string,
-  ACCESS_TOKEN_TTL: getEnvVariable('ACCESS_TOKEN_TTL') as StringValue,
-  REFRESH_TOKEN_SECRET: getEnvVariable('REFRESH_TOKEN_SECRET') as string,
-  REFRESH_TOKEN_TTL: getEnvVariable('REFRESH_TOKEN_TTL') as StringValue,
-  GROQ_API_KEY: getEnvVariable('GROQ_API_KEY') as string,
-  CLOUDINARY_CLOUD_NAME: getEnvVariable('CLOUDINARY_CLOUD_NAME') as string,
-  CLOUDINARY_API_SECRET: getEnvVariable('CLOUDINARY_API_SECRET') as string,
-  CLOUDINARY_API_KEY: getEnvVariable('CLOUDINARY_API_KEY') as string,
-};
-
-export default env;

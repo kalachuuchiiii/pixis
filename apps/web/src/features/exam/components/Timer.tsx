@@ -18,7 +18,7 @@ export const Timer = ({
   return (
     <div className="flex flex-col items-center justify-center max-w-md ">
       {/* Timer Card */}
-      <div className=" rounded-3xl gap-4 lg:gap-10 flex flex-row-reverse items-center w-full">
+      <div className=" rounded-3xl flex-col lg:gap-4 gap-2 flex  items-center w-full">
         {/* Display */}
         <div className="relative lg:my-0 my-5 flex items-center justify-center">
           <div className="lg:text-7xl text-5xl font-mono font-bold tracking-tighter  tabular-nums">
@@ -28,59 +28,52 @@ export const Timer = ({
           {/* Subtle glow effect */}
           <div className="absolute inset-0 bg-white/5 blur-3xl rounded-full -z-10" />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button variant="outline">
-              <TimerIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-fit">
-            <div className="flex flex-col sm:flex-row lg:gap-3 w-full">
-              <div className="flex lg:gap-1 flex-1">
-                <div className="flex gap-1 items-center">
-                  <Button
-                    disabled={isRunning}
-                    onClick={() => addSeconds(10)}
-                    className="my-btn"
-                    variant={"outline"}
-                  >
-                    +10s
-                  </Button>
-                  <Button
-                    disabled={isRunning}
-                    onClick={() => deductSeconds(10)}
-                    className="my-btn"
-                    variant={"outline"}
-                  >
-                    -10s
-                  </Button>
-                </div>
 
-                <div className="flex gap-1 items-center">
-                  <Button
-                    disabled={isRunning}
-                    onClick={() => addSeconds(60)}
-                    className="my-btn"
-                    variant={"outline"}
-                  >
-                    +1m
-                  </Button>
-                  <Button
-                    disabled={isRunning}
-                    onClick={() => deductSeconds(60)}
-                    className="my-btn"
-                    variant={"outline"}
-                  >
-                    -1m
-                  </Button>
-                </div>
-                <Button onClick={start} className="my-btn" disabled={isRunning}>
-                  <span>Start</span>
-                </Button>
-              </div>
+        <div className="flex flex-col sm:flex-row lg:gap-3 w-full">
+          <div className="flex lg:gap-1 flex-1">
+            <div className="flex gap-1 items-center">
+              <Button
+                disabled={isRunning}
+                onClick={() => addSeconds(10)}
+                className="my-btn"
+                variant={"outline"}
+              >
+                +10s
+              </Button>
+              <Button
+                disabled={isRunning}
+                onClick={() => deductSeconds(10)}
+                className="my-btn"
+                variant={"outline"}
+              >
+                -10s
+              </Button>
             </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+            <div className="flex gap-1 items-center">
+              <Button
+                disabled={isRunning}
+                onClick={() => addSeconds(60)}
+                className="my-btn"
+                variant={"outline"}
+              >
+                +1m
+              </Button>
+              <Button
+                disabled={isRunning}
+                onClick={() => deductSeconds(60)}
+                className="my-btn"
+                variant={"outline"}
+              >
+                -1m
+              </Button>
+            </div>
+            <Button onClick={start} className="my-btn" disabled={isRunning}>
+              <span>Start</span>
+            </Button>
+          </div>
+        </div>
+
       </div>
 
       {/* Optional hint */}

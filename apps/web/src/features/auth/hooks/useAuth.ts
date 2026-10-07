@@ -39,7 +39,7 @@ export const useAuth = () => {
         }
       });
 
-      await toast.promise(promise, {
+      toast.promise(promise, {
         loading: "Creating your account.",
         success: getSuccessMessage,
         error: getErrorMessage,
@@ -53,7 +53,7 @@ export const useAuth = () => {
 
   const { mutate: signIn, isPending: isSigningIn } = useMutation({
     mutationFn: async (form: SignInForm) => {
-      const promise = new Promise<{ user: { username: string; id: number } }>(
+      const promise = new Promise<{ data: { user: { username: string; id: number } } }>(
         (resolve, reject) => {
           try {
             const validatedForm = SignInFormSchema.parse(form);
@@ -64,7 +64,7 @@ export const useAuth = () => {
         }
       );
 
-      await toast.promise(promise, {
+      toast.promise(promise, {
         loading: "Signing you in...",
         success: getSuccessMessage,
         error: getErrorMessage,
@@ -72,17 +72,16 @@ export const useAuth = () => {
       return await promise;
     },
     onSuccess: (result) => {
-      queryClient.invalidateQueries();
-      setTimeout(() => {
-        nav(`/app/profile/${result.user.id}/stats`);
-      }, 100);
+      if (result?.data?.user?.id) {
+        nav(`/app/profile/${result.data.user.id}/stats`);
+      }
     },
   });
 
   const { mutate: signOut, isPending: isSigningOut } = useMutation({
     mutationFn: async () => {
       const promise = api.post("/auth/signout");
-      await toast.promise(promise, {
+      toast.promise(promise, {
         loading: "Signing you out...",
         success: getSuccessMessage,
         error: getErrorMessage,
@@ -107,7 +106,7 @@ export const useAuth = () => {
             return reject(e);
           }
         });
-        await toast.promise(promise, {
+        toast.promise(promise, {
           loading: "Updating password...",
           success: getSuccessMessage,
           error: getErrorMessage,
