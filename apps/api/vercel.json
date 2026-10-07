@@ -1,4 +1,3 @@
 {
-  "version": 2,
-  "routes": [{ "src": "/(.*)", "dest": "api/index.ts" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
 }
