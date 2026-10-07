@@ -17,7 +17,7 @@ migrate:
     - run: pnpm install --frozen-lockfile
 
     - name: Build shared packages
-      run: pnpm turbo run build --filter=api^...
+      run: pnpm build
 
     - name: Run migrations
       run: pnpm --filter api migration:run

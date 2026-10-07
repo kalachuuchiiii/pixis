@@ -6,16 +6,12 @@ import {
   JoinColumn,
   CreateDateColumn,
   DeleteDateColumn,
-  OneToOne,
   OneToMany,
   RelationId,
 } from 'typeorm';
 
 import { User } from '@/modules/users/entities/user.entity';
 import {
-  DESCRIPTION_MAX,
-  TITLE_MAX,
-  TITLE_MIN,
   VISIBILITY_ENUM,
   type Visibility,
 } from '@pixis/constants';
