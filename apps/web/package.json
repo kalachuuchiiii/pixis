@@ -45,7 +45,8 @@
     "use-immer": "^0.11.0",
     "uuid": "^13.0.2",
     "web": "link:",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
