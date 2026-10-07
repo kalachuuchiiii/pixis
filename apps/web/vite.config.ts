@@ -9,6 +9,9 @@ export default defineConfig({
   preview: {
     allowedHosts: ["pixis.up.railway.app"], //no dupes
   },
+  optimizeDeps: {
+    include: ['@pixis/constants', '@pixis/schemas'],
+  },
   resolve: {
     dedupe: ['react', 'react-dom'],
     alias: {

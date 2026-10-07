@@ -2,18 +2,13 @@
   "name": "@pixis/constants",
   "version": "0.0.0",
   "private": true,
-  "types": "./dist/index.d.mts",
-  "main": "./dist/index.mjs",
-  "exports": {
-    ".": "./dist/index.mjs"
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "commonjs",
   "scripts": {
-    "build": "tsup"
-  },
-  "devDependencies": {
-    "tsup": "^8.5.1"
-  },
-  "engines": {
-    "node": "22"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
   }
 }
