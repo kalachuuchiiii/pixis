@@ -1,6 +1,5 @@
 import z from "zod";
-import { TimestampSchema, VisibilitySchema } from "./common.schemas";
-import { IDSchema } from "./common.schemas";
+
 import {
   CONVERSATION_TITLE_MAX,
   CONVERSATION_TITLE_MIN,
@@ -12,8 +11,10 @@ import {
   TOTAL_FLASHCARDS_MAX,
   TOTAL_FLASHCARDS_MIN,
 } from "@pixis/constants";
+import { IDSchema, TimestampSchema, VisibilitySchema } from "./common.schemas";
 import { FlashcardFormSchema } from "./flashcard.schemas";
 import { DeckFormSchema } from "./deck.schemas";
+
 
 export const MessageTypeSchema = z.enum(MESSAGE_TYPES);
 export const MessageRoleSchema = z.enum(MESSAGE_ROLES);
