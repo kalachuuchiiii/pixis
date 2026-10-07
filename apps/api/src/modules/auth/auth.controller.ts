@@ -1,7 +1,5 @@
 import {
-  Body,
   Controller,
-  Get,
   Patch,
   Post,
   Req,
@@ -11,12 +9,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
 import { LocalGuard } from './guards/local.guard';
 import { RefreshGuard } from './guards/refresh.guard';
 import { SignUpFormSchema, UpdatePasswordFormSchema } from '@pixis/schemas';
 import ms from 'ms';
-import env from '@/config/env';
 import { AccessGuard } from './guards/access.guard';
 import type { Request, Response } from 'express';
 import { AuthUserSchema } from './schemas/auth.schemas';
@@ -30,7 +26,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
 
   @Throttle({ default: { limit: 12, ttl: 60_000 } })
   @Post('/signup')
@@ -59,9 +55,9 @@ export class AuthController {
     const { refreshToken, payload } = await this.authService.signIn(user);
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
-      secure: env.NODE_ENV === 'production',
-      maxAge: ms(env.REFRESH_TOKEN_TTL),
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: ms(process.env.REFRESH_TOKEN_TTL as ms.StringValue),
       path: '/',
     });
 
@@ -89,8 +85,8 @@ export class AuthController {
   async signOut(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('refreshToken', {
       httpOnly: true,
-      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
-      secure: env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
       path: '/',
     });
 

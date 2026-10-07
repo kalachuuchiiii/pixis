@@ -3,19 +3,18 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-  type HttpExceptionOptions,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Credential } from './entities/credential.entity';
 import { User } from '../users/entities/user.entity';
 import { DataSource, Repository, type FindOneOptions } from 'typeorm';
-import env from '@/config/env';
 import { Point } from '../users/entities/point.entity';
 import { Streak } from '../users/entities/streak.entity';
 import { type SignUpForm, type UpdatePasswordForm } from '@pixis/schemas';
 import { hashPassword } from '@/common/utils/hash.util';
 import type { AuthUser } from './schemas/auth.schemas';
+import type ms from 'ms';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +24,7 @@ export class AuthService {
     private readonly credentialRepo: Repository<Credential>,
     private readonly datasource: DataSource,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async findUserByUsername(
     username: string,
@@ -66,8 +65,8 @@ export class AuthService {
 
   async signIn(payload: AuthUser) {
     const refreshToken = await this.jwtService.signAsync(payload, {
-      expiresIn: env.REFRESH_TOKEN_TTL,
-      secret: env.REFRESH_TOKEN_SECRET,
+      expiresIn: process.env.REFRESH_TOKEN_TTL! as ms.StringValue,
+      secret: process.env.REFRESH_TOKEN_SECRET! as string,
     });
 
     return {
@@ -78,8 +77,8 @@ export class AuthService {
 
   async refresh(authPayload: AuthUser) {
     const accessToken = await this.jwtService.signAsync(authPayload, {
-      expiresIn: env.ACCESS_TOKEN_TTL,
-      secret: env.ACCESS_TOKEN_SECRET,
+      expiresIn: process.env.ACCESS_TOKEN_TTL! as ms.StringValue,
+      secret: process.env.ACCESS_TOKEN_SECRET!,
     });
     return {
       accessToken,

@@ -19,7 +19,7 @@ const SignIn = () => {
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await signIn(data);
+    signIn(data);
   });
 
   return (

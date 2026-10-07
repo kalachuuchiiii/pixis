@@ -6,13 +6,11 @@ import DeckLeaderboards from "@/features/leaderboards/pages/DeckLeaderboards";
 import DeckSessionHistory from "@/features/session/pages/DeckSessionHistory";
 import ExploreCollections from "@/features/collection/pages/ExploreCollections";
 import { AssistantLayout } from "@/features/assistant/components/AssistantLayout";
-
 import ProfileDetails from "@/features/account/components/ProfileDetails";
 import DeckHistory from "@/features/deck/pages/DeckHistory";
 import ProfileStats from "@/features/account/pages/ProfileStats";
 import Decks from "@/features/deck/pages/Decks";
 import Collections from "@/features/collection/pages/Collections";
-import { GuestGuard } from "@/components/guards/GuestGuard";
 import { AuthGuard } from "@/features/auth/components/guards/AuthGuard";
 import NotFound from "@/pages/NotFound";
 import { GuestLayout } from "@/components/ui/GuestLayout";
@@ -91,9 +89,7 @@ const routes: RouteObject[] = [
   },
   {
     element: (
-      <GuestGuard>
-        <Layout />
-      </GuestGuard>
+      <Layout />
     ),
     children: [
       {

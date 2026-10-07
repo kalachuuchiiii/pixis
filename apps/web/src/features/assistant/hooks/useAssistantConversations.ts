@@ -19,5 +19,7 @@ export const useAssistantConversations = () => {
     enabled: user.id !== 0,
   });
 
+
+
   return query;
 };

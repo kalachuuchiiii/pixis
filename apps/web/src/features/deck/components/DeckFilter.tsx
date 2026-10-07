@@ -33,7 +33,6 @@ import { creationDateFilters } from "../data/creationDateFilter";
 import { sortOrdersMap } from "@/data/sort";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
 import type { JSX } from "react";
-import { copy } from "@/utils/copy";
 
 export const sortableFieldsMap: Record<SortableDeckField, string> = {
   createdAt: "Creation Date",
@@ -64,7 +63,7 @@ export const DeckFilter = ({
       actions={[
         <Sheet>
           <SheetTrigger asChild className="my-btn">
-            <Button variant={"outline"} className="my-btn">
+            <Button variant="outline" className="my-btn">
               <Filter />
             </Button>
           </SheetTrigger>

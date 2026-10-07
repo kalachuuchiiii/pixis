@@ -34,7 +34,7 @@ const DeckFlashcards = () => {
           </div>
         </header>
         <div className=" mt-15 mb-5 lg:my-5 flex items-center lg:gap-4 lg:justify-start justify-between ">
-          Show all answers immediately{" "}
+          Show answers{" "}
           <Switch
             checked={showAllAnswer}
             onCheckedChange={toggleShowAllAnswer}

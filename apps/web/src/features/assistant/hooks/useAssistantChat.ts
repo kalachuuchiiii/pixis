@@ -1,7 +1,7 @@
 import { useInViewRefetch } from "@/hooks/useInViewRefetch";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/utils/message-extractor.utils";
-import type { Message } from "@pixis/schemas";
+import type { Conversation, Message } from "@pixis/schemas";
 import {
   useInfiniteQuery,
   useMutation,
@@ -42,8 +42,12 @@ export const useAssistantChat = () => {
     e.target.value = "";
   };
 
+  const queryKey = ["conversation", String(conversationId)];
+
+
   const messagesQuery = useInfiniteQuery({
-    queryKey: ["conversation", String(conversationId)],
+    enabled: !!conversationId,
+    queryKey,
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({
         limit: "6",
@@ -100,34 +104,38 @@ export const useAssistantChat = () => {
   });
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const appendMessage = useCallback(
-    (message: Message) => {
-      queryClient.setQueryData(
-        ["conversation", conversationId],
-        (oldData: InfiniteData<ChatResponse, unknown> | undefined) => {
-          if (!oldData) return oldData;
-
+  const appendMessage = (message: Message) => {
+    queryClient.setQueryData<InfiniteData<ChatResponse, PageParam>>(
+      queryKey,
+      (oldData) => {
+        if (!oldData) {
           return {
-            ...oldData,
-            pages: oldData.pages.map((page: any, i: number) => {
-              if (i === oldData.pages.length - 1) {
-                return {
-                  ...page,
-                  messages: [...page.messages, message],
-                };
-              }
-              return page;
-            }),
+            pages: [
+              {
+                messages: [message],
+                beforeCursor: null,
+                afterCursor: null,
+                nextPage: null,
+                previousPage: null,
+              },
+            ],
+            pageParams: [{ cursor: undefined, direction: "previous" }],
           };
         }
-      );
-      setTimeout(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 0);
-    },
-    [conversationId]
-  );
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page, i) =>
+            i === oldData.pages.length - 1
+              ? { ...page, messages: [...page.messages, message] }
+              : page
+          ),
+        };
+      }
+    );
+    setTimeout(() => {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 0);
+  };
 
   const { mutate: sendPrompt, isPending: isSendingPrompt } = useMutation({
     mutationFn: async () => {
@@ -150,15 +158,18 @@ export const useAssistantChat = () => {
       const res = await api.post<{
         result: {
           response: Message;
-          conversationId: number;
+          conversation: Conversation;
         };
       }>(`/assistant/chat/${conversationId}`, formData);
 
+
+
       return res.data;
     },
-    onSuccess: ({ result: { conversationId, response } }) => {
-      navigate(`/app/chat/${conversationId}`, { replace: true });
+    onSuccess: ({ result: { conversation, response } }) => {
+      navigate(`/app/chat/${conversation.id}`, { replace: true });
       appendMessage(response);
+
     },
     onError: (error) => {
       toast.error(getErrorMessage(error));

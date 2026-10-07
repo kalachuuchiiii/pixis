@@ -5,20 +5,18 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 import { useExam } from "../hooks/useExam";
 import { Spinner } from "@/components/ui/spinner";
 import { OpenEndedAnswerInput } from "../components/OpenEndedAnswerInput";
 import { CloseEndedAnswerChoices } from "../components/CloseEndedAnswerChoices";
 import { Timer } from "../components/Timer";
 import clsx from "clsx";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Exam = () => {
   const {
@@ -34,10 +32,10 @@ const Exam = () => {
     isSessionLoading,
     timerHandlers,
     mode,
-    processExamAnswers,
     isProcessingExamAnswers,
   } = useExam();
   const navigate = useNavigate();
+  console.log('flashcard', flashcard);
 
   if (isProcessingExamAnswers) {
     return (
@@ -87,11 +85,12 @@ const Exam = () => {
                   Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction
+                  disabled={!flashcard?.deckId || isProcessingExamAnswers || isFlashcardLoading}
                   onClick={() =>
-                    navigate(`/app/decks/${flashcard?.deckId}/flashcards`)
+                    navigate(`/app/decks/${flashcard?.deckId}/flashcards`, { replace: true })
                   }
                   variant={"destructive"}
-                  className="bg-destructive my-btn hover:bg-destructive/90"
+                  className="my-btn"
                 >
                   Yes, Leave
                 </AlertDialogAction>

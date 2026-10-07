@@ -4,7 +4,6 @@ import { AssistantChatBubble } from "../components/AssistantChatBubble";
 import { UserChatBubble } from "../components/UserChatBubble";
 
 import { Spinner } from "@/components/ui/spinner";
-import { PixisAvatar } from "@/components/ui/PixisAvatar";
 import { AnimatePresence, motion } from "framer-motion";
 import { collapse } from "@/lib/variants";
 import { useAuthUser } from "@/features/auth/hooks/useAuthUser";
@@ -14,11 +13,11 @@ const AssistantPage = () => {
   const { data: user } = useAuthUser();
   const assistantChat = useAssistantChat();
   const {
-    isSendingPrompt,
     bottomRef,
     messages,
     previousRef,
     nextRef,
+    isSendingPrompt,
     isFetchingNextPage,
     isFetchingPreviousPage,
     containerRef,
@@ -35,13 +34,13 @@ const AssistantPage = () => {
 
   return (
     <div className="relative overflow-hidden h-[80vh] w-full  max-w-7xl">
-      <div className="flex flex-col h-full w-full flex-col-reverse overflow-y-scroll">
+      <div className="flex h-full w-full flex-col-reverse overflow-y-scroll">
         <DynamicBackground />
-        {messages.length > 0 ? (
+        {messages.length > 0 || isSendingPrompt ? (
           <div className="py-10">
             <div
               ref={containerRef}
-              className=" flex flex-col  flex-col-reverse overflow-scroll h-max lg:px-2 py-6 lg:px-2"
+              className=" flex  flex-col-reverse overflow-scroll h-max lg:px-2 py-6"
             >
               <div ref={bottomRef} className="p-2" />
               <div ref={nextRef} />

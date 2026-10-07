@@ -27,7 +27,7 @@ import { PDFInterceptor } from '../uploads/interceptors/uploads.interceptors';
 
 @Controller('assistant')
 export class AssistantController {
-  constructor(private readonly assistantService: AssistantService) {}
+  constructor(private readonly assistantService: AssistantService) { }
 
   @Get('/conversations')
   @UseGuards(AccessGuard)
@@ -140,7 +140,7 @@ export class AssistantController {
     }
     const result = {
       response: MessageSchema.parse(data.response),
-      conversationId: IDSchema.parse(data.conversationId),
+      conversation: ConversationSchema.parse(data.conversation)
     };
 
     return {

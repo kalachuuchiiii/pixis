@@ -1,16 +1,11 @@
 import {
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import api from "@/lib/api";
 import type { GeneratedSet } from "@pixis/schemas";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Eye, Users } from "lucide-react";
 import { DeckDisplay } from "@/features/deck/components/DeckDisplay";
 import { FlashcardView } from "@/features/flashcard/components/ui/FlashcardPreview";
 import { Button } from "@/components/ui/button";

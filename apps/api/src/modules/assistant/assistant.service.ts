@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
-import env from '../../config/env';
 import { Deck } from '../deck/entities/deck.entity';
 import { DataSource, type Repository } from 'typeorm';
 import {
@@ -31,7 +30,7 @@ export class AssistantService {
     @InjectRepository(Message)
     private readonly messageRepo: Repository<Message>,
     private readonly uploadsService: UploadsService,
-  ) {}
+  ) { }
 
   async getConversations({ user }: { user: AuthUser }) {
     const conversations = await this.conversationRepo.find({
@@ -226,12 +225,12 @@ ${pdfText}
       return await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
           'Content-Type': 'application/json',
         },
 
         body: JSON.stringify({
-          model: 'openai/gpt-oss-safeguard-20b',
+          model: 'openai/gpt-oss-20b',
           temperature: 0.2,
           messages: [
             { role: 'system', content: systemPrompt },
@@ -242,6 +241,7 @@ ${pdfText}
         }),
       });
     });
+
     const data = await result.json();
     const jsonResponse = data.choices[0].message.content;
     const assistantResponse = AssistantResponseSchema.parse({
@@ -253,7 +253,7 @@ ${pdfText}
     return await this.dataSource.transaction(async (m) => {
       let conversation = await m.findOne(Conversation, {
         where: { user: { id: user.id }, id: conversationId },
-        select: { id: true },
+        select: { id: true, title: true, updatedAt: true },
       });
 
       if (!conversation) {
@@ -263,7 +263,9 @@ ${pdfText}
         });
         conversation = await m.save(conversationValues);
       } else {
-        conversation.title = conversationTitle;
+        if (!conversation.title) {
+          conversation.title = conversationTitle;
+        }
         await m.save(conversation);
       }
 
@@ -303,7 +305,7 @@ ${pdfText}
           type,
           id: message.id,
         },
-        conversationId: conversation.id,
+        conversation
       };
     });
   }

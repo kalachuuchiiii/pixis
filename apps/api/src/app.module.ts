@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -16,26 +17,23 @@ import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
 import { AssistantModule } from './modules/assistant/assistant.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
-import env from './config/env';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+//hi
 
-const isProd = env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: env.DB_HOST,
-      port: env.DB_PORT,
-      username: env.DB_USER,
-      password: env.DB_PASS,
-      database: env.DB_NAME,
+      url: process.env.DATABASE_URL!,
+      port: Number(process.env.PORT || 3000),
       synchronize: false,
       autoLoadEntities: true,
       logging: !isProd,
-      ssl: env.SSLMODE === 'require' ? { rejectUnauthorized: true } : false,
+      ssl: process.env.SSLMODE === 'require' ? { rejectUnauthorized: true } : false,
     }),
     UsersModule,
     AuthModule,
@@ -55,4 +53,4 @@ const isProd = env.NODE_ENV === 'production';
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
-export class AppModule {}
+export class AppModule { }
