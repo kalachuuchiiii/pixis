@@ -12,7 +12,7 @@
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main.js",
-    "build": "nest build",
+    "build": "nest build && tsc-alias -p tsconfig.build.json",
     "build:prod": "npx @nestjs/cli build",
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:generate": "npm run typeorm -- migration:generate -d dataSource.ts ./src/migrations",
