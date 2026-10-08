@@ -15,6 +15,11 @@ export async function createApp() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.set('trust proxy', 1); // needed for secure cookies behind Vercel's proxy
     app.use(cookieParser());
+    app.enableCors({
+        origin: [process.env.CORS_ORIGIN as unknown as string, 'http://localhost:3000'], // Allowed origins
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        credentials: true,
+    });
     app.use(
         cors({
             origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
