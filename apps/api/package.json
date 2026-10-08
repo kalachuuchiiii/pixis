@@ -15,9 +15,9 @@
     "build": "nest build",
     "build:prod": "npx @nestjs/cli build",
     "typeorm": "node -r ts-node/register ./node_modules/typeorm/cli.js",
-    "migration:generate": "pnpm typeorm migration:generate -d ./src/dataSource.ts ./src/migrations",
-    "migration:run": "pnpm typeorm migration:run -d ./src/dataSource.ts",
-    "migration:revert": "pnpm typeorm migration:revert -d ./src/dataSource.ts",
+    "migration:generate": "npm run typeorm -- migration:generate -d ./src/dataSource.ts ./src/migrations",
+    "migration:run": "npm run typeorm -- migration:run -d ./src/dataSource.ts",
+    "migration:revert": "npm run typeorm -- migration:revert -d ./src/dataSource.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -96,13 +96,29 @@
     "typescript-eslint": "^8.59.2"
   },
   "engines": {
-    "node": "22"
+    "node": "22.x"
   },
   "jest": {
     "moduleFileExtensions": [
       "js",
       "json",
       "ts"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "transformIgnorePatterns": [
+      "node_modules/(?!nestql)"
     ]
   }
 }
