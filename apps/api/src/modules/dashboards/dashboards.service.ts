@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
-import type { AuthUser } from '../auth/schemas/auth.schemas';
-import { Deck } from '../deck/entities/deck.entity';
-import { Flashcard } from '../flashcard/entities/flashcard.entity';
 import { Session } from '../session/entities/session.entity';
-import nestql from 'nestql';
+import { nestql } from '../../common/utils/nestql';
 
 @Injectable()
 export class DashboardsService {
@@ -15,14 +12,9 @@ export class DashboardsService {
     @InjectRepository(FlashcardProgress)
     private readonly flashcardProgressRepo: Repository<FlashcardProgress>,
     @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
-    @InjectRepository(Deck)
-    private readonly deckRepo: Repository<Deck>,
-    @InjectRepository(Flashcard)
-    private readonly flashcardRepo: Repository<Flashcard>,
     @InjectRepository(Session)
     private readonly sessionRepo: Repository<Session>,
-  ) {}
+  ) { }
 
   async getDashboardData(userId: number) {
     const [deckAccuracies, progressTrends, retentionRate, totalStats] =

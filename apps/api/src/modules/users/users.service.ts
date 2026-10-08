@@ -14,13 +14,14 @@ import fs from 'fs-extra';
 import { withCooldown } from '../../common/utils/cooldown.util';
 import ms from 'ms';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
-import nestql from 'nestql';
+
 import { UploadsService } from '../uploads/uploads.service';
 import type { UploadApiResponse } from 'cloudinary';
 import type { UpdateUserForm } from '@pixis/schemas';
 import { Follow } from './entities/follow.entity';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { getPaginationData } from '../../common/utils/pagination.util';
+import { nestql } from '../../common/utils/nestql';
 
 type FollowProps = {
   followerId: number;

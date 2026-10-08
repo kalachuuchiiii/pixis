@@ -11,8 +11,9 @@ import { deckPaginationConfig } from '../../config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { withDeckStats } from './query/withDeckStats';
 import { Flashcard } from '../flashcard/entities/flashcard.entity';
-import nestql from 'nestql';
+
 import { UserSavedDeck } from '../user-saved-deck/entities/user-saved-deck.entity';
+import { nestql } from '../../common/utils/nestql';
 type DeckIdWithUser = { deckId: number; user: AuthUser };
 
 @Injectable()

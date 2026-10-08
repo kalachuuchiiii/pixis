@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "packageManager": "pnpm@9.0.0",
+  "type": "commonjs",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "nest start --watch",
@@ -51,7 +52,6 @@
     "multer": "^2.1.1",
     "nest-winston": "^1.10.2",
     "nestjs-paginate": "^13.2.0",
-    "nestql": "^1.1.4",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
@@ -116,9 +116,6 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "transformIgnorePatterns": [
-      "node_modules/(?!nestql)"
-    ]
+    "testEnvironment": "node"
   }
 }
