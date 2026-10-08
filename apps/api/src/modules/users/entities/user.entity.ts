@@ -1,4 +1,4 @@
-import { Credential } from '@/modules/auth/entities/credential.entity';
+import { Credential } from '../../../modules/auth/entities/credential.entity';
 import {
   Column,
   CreateDateColumn,
@@ -12,16 +12,16 @@ import {
 } from 'typeorm';
 import { Point } from './point.entity';
 import { Streak } from './streak.entity';
-import { Deck } from '@/modules/deck/entities/deck.entity';
-import { Collection } from '@/modules/collections/entities/collection.entity';
-import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
-import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
-import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity';
-import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
-import { UserSavedCollection } from '@/modules/user-saved-collections/entities/user-saved-collection.entity';
-import { Session } from '@/modules/session/entities/session.entity';
-import { Message } from '@/modules/assistant/entities/message.entity';
-import { Conversation } from '@/modules/assistant/entities/conversation.entity';
+import { Deck } from '../../../modules/deck/entities/deck.entity';
+import { Collection } from '../../../modules/collections/entities/collection.entity';
+import { CollectionDeck } from '../../../modules/collection-deck/entities/collection-deck.entity';
+import { Flashcard } from '../../../modules/flashcard/entities/flashcard.entity';
+import { FlashcardProgress } from '../../../modules/flashcard-progress/entities/flashcard-progress.entity';
+import { UserSavedDeck } from '../../../modules/user-saved-deck/entities/user-saved-deck.entity';
+import { UserSavedCollection } from '../../../modules/user-saved-collections/entities/user-saved-collection.entity';
+import { Session } from '../../../modules/session/entities/session.entity';
+import { Message } from '../../../modules/assistant/entities/message.entity';
+import { Conversation } from '../../../modules/assistant/entities/conversation.entity';
 import { Follow } from './follow.entity';
 
 @Entity('user')

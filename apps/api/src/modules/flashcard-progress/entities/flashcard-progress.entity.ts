@@ -9,9 +9,9 @@ import {
   RelationId,
 } from 'typeorm';
 import { Flashcard } from '../../flashcard/entities/flashcard.entity';
-import { User } from '@/modules/users/entities/user.entity';
-import { Session } from '@/modules/session/entities/session.entity';
-import { Deck } from '@/modules/deck/entities/deck.entity';
+import { User } from '../../../modules/users/entities/user.entity';
+import { Session } from '../../../modules/session/entities/session.entity';
+import { Deck } from '../../../modules/deck/entities/deck.entity';
 
 @Entity('flashcard_progress')
 export class FlashcardProgress {

@@ -5,14 +5,12 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
-  OneToOne,
   RelationId,
   OneToMany,
 } from 'typeorm';
-import { Deck } from '@/modules/deck/entities/deck.entity';
-import { User } from '@/modules/users/entities/user.entity';
-import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
-import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity';
+import { Deck } from '../../../modules/deck/entities/deck.entity';
+import { User } from '../../../modules/users/entities/user.entity';
+import { FlashcardProgress } from '../../../modules/flashcard-progress/entities/flashcard-progress.entity';
 import {
   EXAM_MODE_ENUM,
   SESSION_STATUS,

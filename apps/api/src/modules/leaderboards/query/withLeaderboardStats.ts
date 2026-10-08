@@ -1,4 +1,4 @@
-import type { User } from '@/modules/users/entities/user.entity';
+import type { User } from '../../../modules/users/entities/user.entity';
 import type { SelectQueryBuilder } from 'typeorm';
 
 export const withLeaderboardStats = (qb: SelectQueryBuilder<User>) => {

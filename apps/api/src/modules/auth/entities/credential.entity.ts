@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { User } from '@/modules/users/entities/user.entity';
+import { User } from '../../../modules/users/entities/user.entity';
 import {
   BeforeInsert,
   BeforeUpdate,

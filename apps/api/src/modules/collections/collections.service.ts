@@ -8,8 +8,8 @@ import { Collection } from './entities/collection.entity';
 import { type Repository } from 'typeorm';
 import type { CollectionForm } from '@pixis/schemas';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
-import { getPaginationData } from '@/common/utils/pagination.util';
-import { collectionPaginationConfig } from '@/config/paginationConfigs';
+import { getPaginationData } from '../../common/utils/pagination.util';
+import { collectionPaginationConfig } from '../../config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { withCollectionStats } from './query/withCollectionStats';
 
@@ -22,7 +22,7 @@ type CollectionIdWithUser = {
 export class CollectionsService {
   constructor(
     @InjectRepository(Collection) public collectionRepo: Repository<Collection>,
-  ) {}
+  ) { }
 
   async createCollection({
     collectionForm,
@@ -151,12 +151,12 @@ export class CollectionsService {
       user.id === userId
         ? collectionPaginationConfig
         : {
-            ...collectionPaginationConfig,
-            filterableColumns: {
-              ...collectionPaginationConfig.filterableColumns,
-              visibility: [],
-            },
+          ...collectionPaginationConfig,
+          filterableColumns: {
+            ...collectionPaginationConfig.filterableColumns,
+            visibility: [],
           },
+        },
     );
     return getPaginationData(result);
   }
@@ -196,12 +196,12 @@ export class CollectionsService {
       user
         ? collectionPaginationConfig
         : {
-            ...collectionPaginationConfig,
-            filterableColumns: {
-              ...collectionPaginationConfig.filterableColumns,
-              visibility: [],
-            },
+          ...collectionPaginationConfig,
+          filterableColumns: {
+            ...collectionPaginationConfig.filterableColumns,
+            visibility: [],
           },
+        },
     );
     return getPaginationData(result);
   }

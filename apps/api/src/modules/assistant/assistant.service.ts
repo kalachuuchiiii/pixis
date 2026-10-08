@@ -19,7 +19,7 @@ import { type PaginateQuery } from 'nestjs-paginate';
 import z from 'zod';
 import { UploadsService } from '../uploads/uploads.service';
 import { responseFormat } from './data/responseFormat';
-import { withRetry } from '@/common/utils/retry.util';
+import { withRetry } from '../../common/utils/retry.util';
 
 @Injectable()
 export class AssistantService {

@@ -7,8 +7,9 @@ import { Repository } from 'typeorm';
 import { type TopUser } from '@pixis/schemas';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity';
-import nestql from 'nestql';
+
 import { withLeaderboardStats } from './query/withLeaderboardStats';
+import { nestql } from '../../common/utils/nestql';
 
 @Injectable()
 export class LeaderboardsService {
@@ -17,7 +18,7 @@ export class LeaderboardsService {
     private readonly flashcardProgressRepo: Repository<FlashcardProgress>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-  ) {}
+  ) { }
 
   async getLeaderboards() {
     /**{

@@ -9,9 +9,9 @@ import {
   OneToMany,
   RelationId,
 } from 'typeorm';
-import { Deck } from '@/modules/deck/entities/deck.entity';
+import { Deck } from '../../../modules/deck/entities/deck.entity';
 import { FLASHCARD_TYPES, type FlashcardType } from '@pixis/constants';
-import { User } from '@/modules/users/entities/user.entity';
+import { User } from '../../../modules/users/entities/user.entity';
 import { FlashcardProgress } from '../../flashcard-progress/entities/flashcard-progress.entity';
 
 @Entity('flashcard')

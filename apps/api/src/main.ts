@@ -1,4 +1,4 @@
-import { createApp } from "../create-app";
+import { createApp } from "./create-app";
 
 
 async function bootstrap() {
@@ -6,3 +6,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 bootstrap();
+

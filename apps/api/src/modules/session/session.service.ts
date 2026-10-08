@@ -3,17 +3,11 @@ import type { ExamMode } from '@pixis/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
 import {
-  Equal,
-  IsNull,
-  Not,
   Repository,
-  type DeepPartial,
-  type FindOptionsWhere,
-  type ObjectId,
 } from 'typeorm';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
-import { sessionPaginationConfig } from '@/config/paginationConfigs';
-import { getPaginationData } from '@/common/utils/pagination.util';
+import { sessionPaginationConfig } from '../../config/paginationConfigs';
+import { getPaginationData } from '../../common/utils/pagination.util';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 export interface SessionProps {
@@ -27,7 +21,7 @@ export class SessionService {
   constructor(
     @InjectRepository(Session)
     private readonly sessionRepo: Repository<Session>,
-  ) {}
+  ) { }
 
   async create({ deckId, mode, user }: SessionProps) {
     const newSession = this.sessionRepo.create({
