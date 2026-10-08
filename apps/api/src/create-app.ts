@@ -16,7 +16,7 @@ export async function createApp() {
     app.set('trust proxy', 1); // needed for secure cookies behind Vercel's proxy
     app.use(cookieParser());
     app.enableCors({
-        origin: [process.env.CORS_ORIGIN as unknown as string, 'http://localhost:3000'], // Allowed origins
+        origin: [process.env.CORS_ORIGIN as unknown as string, 'http://localhost:5173'], // Allowed origins
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
     });
