@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "api/index.ts"],
+  "include": ["src/**/*", "api"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "module": "nodenext",
