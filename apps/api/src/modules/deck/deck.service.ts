@@ -3,13 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type DeckForm } from '@pixis/schemas';
 import { Deck } from './entities/deck.entity';
 import { In, IsNull, Not, type Repository } from 'typeorm';
-import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
+import { getPaginationData } from '../../common/utils/pagination.util';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { DataSource } from 'typeorm';
 
-import { deckPaginationConfig } from '@/config/paginationConfigs';
+import { deckPaginationConfig } from '../../config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
-import { withDeckSavedInfo } from './query/withDeckSavedInfo';
 import { withDeckStats } from './query/withDeckStats';
 import { Flashcard } from '../flashcard/entities/flashcard.entity';
 import nestql from 'nestql';
@@ -25,7 +24,7 @@ export class DeckService {
     public userSavedDeckRepo: Repository<UserSavedDeck>,
 
     public dataSource: DataSource,
-  ) {}
+  ) { }
 
   async getLatestDecksAnsweredByUserId({
     userId,

@@ -1,5 +1,5 @@
-import { Collection } from '@/modules/collections/entities/collection.entity';
-import { User } from '@/modules/users/entities/user.entity';
+import { Collection } from '../../../modules/collections/entities/collection.entity';
+import { User } from '../../../modules/users/entities/user.entity';
 import { Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 @Entity('user_saved_collection')

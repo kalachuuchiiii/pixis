@@ -7,8 +7,9 @@ import {
   RelationId,
 } from 'typeorm';
 import { Conversation } from './conversation.entity';
-import { User } from '@/modules/users/entities/user.entity';
+
 import type { GeneratedSet } from '@pixis/schemas';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('message')
 export class Message {

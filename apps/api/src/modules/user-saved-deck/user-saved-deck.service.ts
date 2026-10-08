@@ -5,8 +5,8 @@ import { UserSavedDeck } from './entities/user-saved-deck.entity';
 import { Equal, Not, Repository } from 'typeorm';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
 import { Deck } from '../deck/entities/deck.entity';
-import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
-import { deckPaginationConfig } from '@/config/paginationConfigs';
+import { getNextPage, getPaginationData } from '../../common/utils/pagination.util';
+import { deckPaginationConfig } from '../../config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 interface DeckIdWithUser {
@@ -21,7 +21,7 @@ export class UserSavedDeckService {
     @InjectRepository(UserSavedDeck)
     private userSavedDeckRepo: Repository<UserSavedDeck>,
     @InjectRepository(Deck) private deckRepo: Repository<Deck>,
-  ) {}
+  ) { }
 
   async createSavedDeck({ deckId, user }: DeckIdWithUser) {
     await this.deckService.findAccessibleDeckById({ deckId, user });

@@ -11,7 +11,7 @@ import { Repository, type FindOneOptions } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import fs from 'fs-extra';
 
-import { withCooldown } from '@/common/utils/cooldown.util';
+import { withCooldown } from '../../common/utils/cooldown.util';
 import ms from 'ms';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 import nestql from 'nestql';
@@ -20,7 +20,7 @@ import type { UploadApiResponse } from 'cloudinary';
 import type { UpdateUserForm } from '@pixis/schemas';
 import { Follow } from './entities/follow.entity';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
-import { getPaginationData } from '@/common/utils/pagination.util';
+import { getPaginationData } from '../../common/utils/pagination.util';
 
 type FollowProps = {
   followerId: number;
@@ -33,7 +33,7 @@ export class UsersService {
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Follow) private followRepo: Repository<Follow>,
     private readonly uploadsService: UploadsService,
-  ) {}
+  ) { }
 
   async findUsers(query: PaginateQuery) {
     const qb = this.userRepo

@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import 'dotenv/config';
 import AppDataSource from './dataSource';
-import { AppModule } from '@/app.module';
+import { AppModule } from './app.module';
 
 
 export async function createApp() {

@@ -2,16 +2,14 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  Req,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Collection } from '../collections/entities/collection.entity';
 import { Equal, Not, Repository } from 'typeorm';
-import type { Request } from 'express';
 import { UserSavedCollection } from './entities/user-saved-collection.entity';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
-import { collectionPaginationConfig } from '@/config/paginationConfigs';
-import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
+import { collectionPaginationConfig } from '../../config/paginationConfigs';
+import { getPaginationData } from '../../common/utils/pagination.util';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 type CollectionIDWithUser = { collectionId: number; user: AuthUser };
@@ -23,7 +21,7 @@ export class UserSavedCollectionsService {
     private readonly collectionRepo: Repository<Collection>,
     @InjectRepository(UserSavedCollection)
     private readonly userSavedCollectionRepo: Repository<UserSavedCollection>,
-  ) {}
+  ) { }
 
   async isCollectionAlreadySaved({ collectionId, user }: CollectionIDWithUser) {
     return await this.userSavedCollectionRepo.exists({

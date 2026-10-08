@@ -1,4 +1,4 @@
-import { createApp } from "../create-app";
+import { createApp } from "./create-app";
 
 
 async function bootstrap() {

@@ -25,7 +25,7 @@ import {
   SEARCHABLE_FLASHCARD_FIELDS,
   SORTABLE_FLASHCARD_FIELDS,
 } from '@pixis/constants';
-import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
+import { getNextPage, getPaginationData } from '../../common/utils/pagination.util';
 import { DeckService } from '../deck/deck.service';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 
@@ -38,7 +38,7 @@ export class FlashcardService {
     @InjectRepository(Flashcard)
     private flashcardRepo: Repository<Flashcard>,
     public readonly deckService: DeckService,
-  ) {}
+  ) { }
 
   async createFlashcard({
     deckId,

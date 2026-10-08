@@ -5,10 +5,9 @@ import { DataSource, Equal, Not, Repository } from 'typeorm';
 import { CollectionsService } from '../collections/collections.service';
 import { DeckService } from '../deck/deck.service';
 import { paginate, type PaginateQuery } from 'nestjs-paginate';
-import { getNextPage, getPaginationData } from '@/common/utils/pagination.util';
-import { User } from '../users/entities/user.entity';
+import { getNextPage, getPaginationData } from '../../common/utils/pagination.util';
 import { Deck } from '../deck/entities/deck.entity';
-import { deckPaginationConfig } from '@/config/paginationConfigs';
+import { deckPaginationConfig } from '../../config/paginationConfigs';
 import type { AuthUser } from '../auth/schemas/auth.schemas';
 
 @Injectable()
@@ -20,7 +19,7 @@ export class CollectionDeckService {
     public collectionService: CollectionsService,
     public deckService: DeckService,
     public dataSource: DataSource,
-  ) {}
+  ) { }
 
   async addDeckToCollection({
     deckId,

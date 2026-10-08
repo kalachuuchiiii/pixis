@@ -1,6 +1,6 @@
-import type { Collection } from '@/modules/collections/entities/collection.entity';
-import type { Deck } from '@/modules/deck/entities/deck.entity';
-import type { Session } from '@/modules/session/entities/session.entity';
+import type { Collection } from '../modules/collections/entities/collection.entity';
+import type { Deck } from '../modules/deck/entities/deck.entity';
+import type { Session } from '../modules/session/entities/session.entity';
 import {
   SEARCHABLE_DECK_FIELDS,
   SORTABLE_COLLECTION_FIELDS,

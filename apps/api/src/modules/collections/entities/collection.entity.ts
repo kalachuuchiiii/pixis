@@ -1,4 +1,4 @@
-import { User } from '@/modules/users/entities/user.entity';
+import { User } from './../../../modules/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -15,8 +15,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { VISIBILITY_ENUM, type Visibility } from '@pixis/constants';
-import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
-import { UserSavedCollection } from '@/modules/user-saved-collections/entities/user-saved-collection.entity';
+import { CollectionDeck } from './../../../modules/collection-deck/entities/collection-deck.entity';
+import { UserSavedCollection } from './../../../modules/user-saved-collections/entities/user-saved-collection.entity';
 
 @Entity('collection')
 export class Collection {

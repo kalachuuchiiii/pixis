@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "api/**/*"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "module": "nodenext",
@@ -16,9 +16,7 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "rootDir": ".",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

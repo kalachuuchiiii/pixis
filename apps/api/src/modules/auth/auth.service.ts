@@ -12,9 +12,10 @@ import { DataSource, Repository, type FindOneOptions } from 'typeorm';
 import { Point } from '../users/entities/point.entity';
 import { Streak } from '../users/entities/streak.entity';
 import { type SignUpForm, type UpdatePasswordForm } from '@pixis/schemas';
-import { hashPassword } from '@/common/utils/hash.util';
+
 import type { AuthUser } from './schemas/auth.schemas';
 import type ms from 'ms';
+import { hashPassword } from '../../common/utils/hash.util';
 
 @Injectable()
 export class AuthService {

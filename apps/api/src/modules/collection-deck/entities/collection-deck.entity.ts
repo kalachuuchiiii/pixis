@@ -1,4 +1,4 @@
-import { User } from '@/modules/users/entities/user.entity';
+import { User } from '../../../modules/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,8 +11,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Collection } from '@/modules/collections/entities/collection.entity';
-import { Deck } from '@/modules/deck/entities/deck.entity';
+import { Collection } from '../../../modules/collections/entities/collection.entity';
+import { Deck } from '../../../modules/deck/entities/deck.entity';
 
 @Entity('collection_deck')
 export class CollectionDeck {

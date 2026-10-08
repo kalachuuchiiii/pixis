@@ -10,16 +10,16 @@ import {
   RelationId,
 } from 'typeorm';
 
-import { User } from '@/modules/users/entities/user.entity';
+import { User } from '../../../modules/users/entities/user.entity';
 import {
   VISIBILITY_ENUM,
   type Visibility,
 } from '@pixis/constants';
-import { Flashcard } from '@/modules/flashcard/entities/flashcard.entity';
-import { CollectionDeck } from '@/modules/collection-deck/entities/collection-deck.entity';
-import { UserSavedDeck } from '@/modules/user-saved-deck/entities/user-saved-deck.entity';
-import { Session } from '@/modules/session/entities/session.entity';
-import { FlashcardProgress } from '@/modules/flashcard-progress/entities/flashcard-progress.entity';
+import { Flashcard } from '../../../modules/flashcard/entities/flashcard.entity';
+import { CollectionDeck } from '../../../modules/collection-deck/entities/collection-deck.entity';
+import { UserSavedDeck } from '../../../modules/user-saved-deck/entities/user-saved-deck.entity';
+import { Session } from '../../../modules/session/entities/session.entity';
+import { FlashcardProgress } from '../../../modules/flashcard-progress/entities/flashcard-progress.entity';
 
 @Entity('deck')
 export class Deck {

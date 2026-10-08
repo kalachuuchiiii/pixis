@@ -1,15 +1,10 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@/modules/users/entities/user.entity';
-import { Repository } from 'typeorm';
-import { UsersService } from '@/modules/users/users.service';
+import { UsersService } from './../../../modules/users/users.service';
 import { AuthUserSchema } from '../schemas/auth.schemas';
 
 @Injectable()
