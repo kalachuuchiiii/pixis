@@ -1,11 +1,12 @@
 import cloudinary from '../../config/cloudinary';
 import {
+
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import fs from 'fs-extra';
-import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 @Injectable()
 export class UploadsService {
