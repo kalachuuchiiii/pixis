@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { AppModule } from './app.module';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 type Handler = (req: IncomingMessage, res: ServerResponse) => void;
 
@@ -10,10 +12,19 @@ let cached: Promise<Handler> | undefined;
 function getServer(): Promise<Handler> {
     cached ??= (async () => {
         const app = await NestFactory.create<NestExpressApplication>(AppModule);
+        app.set('trust proxy', 1); // needed for secure cookies behind Vercel's proxy
+        app.use(cookieParser());
         app.enableCors({
-            origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+            origin: [process.env.CORS_ORIGIN as unknown as string, 'http://localhost:5173'], // Allowed origins
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
             credentials: true,
         });
+        app.use(
+            cors({
+                origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+                credentials: true,
+            }),
+        );
 
         await app.init(); // init, not listen
         return app.getHttpAdapter().getInstance();
