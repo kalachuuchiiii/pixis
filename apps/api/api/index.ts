@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { AppModule } from './app.module';
+import { AppModule } from '../src/app.module';
 import cookieParser from 'cookie-parser';
 
 type Handler = (req: IncomingMessage, res: ServerResponse) => void;
