@@ -160,7 +160,7 @@ export class UsersController {
   }
 
   @Throttle({ default: { limit: 1, ttl: 60_000 } })
-  @Delete()
+  @Delete('/me')
   @UseGuards(AccessGuard)
   async deleteAccount(
     @Req() request: Request,

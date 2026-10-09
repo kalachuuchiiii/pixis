@@ -42,8 +42,8 @@ export const PointSchema = z.object({
 });
 
 export const UserStatsSchema = z.object({
-  deckStudiedCount: z.number().nonnegative(),
-  averageAccuracy: z.float64().nonnegative(),
+  deckStudiedCount: z.number().nonnegative().catch(0),
+  averageAccuracy: z.float64().nonnegative().catch(0),
   rank: z.coerce.number().nonnegative().positive(),
   flashcardAnsweredCount: z.number().nonnegative(),
 });
