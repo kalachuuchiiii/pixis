@@ -24,7 +24,7 @@ export const PercentageSchema = z
   })
   .max(100, {
     message: "% must not exceed 100",
-  });
+  }).catch(0);
 
 export const ColorSchema = z
   .string()

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { FlashcardProgress } from '../flashcard-progress/entities/flashcard-progress.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
 import { Session } from '../session/entities/session.entity';
 import { nestql } from '../../common/utils/nestql';
 
@@ -11,7 +10,6 @@ export class DashboardsService {
   constructor(
     @InjectRepository(FlashcardProgress)
     private readonly flashcardProgressRepo: Repository<FlashcardProgress>,
-    @InjectRepository(User)
     @InjectRepository(Session)
     private readonly sessionRepo: Repository<Session>,
   ) { }
@@ -63,19 +61,18 @@ export class DashboardsService {
   }
 
   private async getProgressTrends(userId: number) {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const dayExpr = `DATE(s.started_at AT TIME ZONE 'UTC')`;
 
-    const result = await this.sessionRepo
+    const qb = this.sessionRepo
       .createQueryBuilder('s')
-      .select(`DATE(s.startedAt AT TIME ZONE 'UTC')`, 'date')
-      .addSelect('AVG(s.accuracy)', 'averageAccuracy')
+      .select(dayExpr, 'date')
+      .addSelect(`AVG(NULLIF(s.accuracy, 'NaN'))`, 'averageAccuracy')
       .where('s.user_id = :userId', { userId })
-      .andWhere(`s.startedAt >= NOW() - INTERVAL '30 days'`)
-      .groupBy(`DATE(s.startedAt AT TIME ZONE 'UTC')`)
-      .orderBy(`DATE(s.startedAt AT TIME ZONE 'UTC')`, 'ASC')
-      .getRawMany();
+      .andWhere(`s.started_at >= NOW() - INTERVAL '30 days'`)
+      .groupBy(dayExpr)
+      .orderBy(dayExpr, 'ASC')
 
+    const result = await qb.getRawMany();
     return result;
   }
 
