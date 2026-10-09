@@ -5,7 +5,7 @@ import SignIn from "../../pages/SignIn";
 import { Spinner } from "@/components/ui/spinner";
 
 export const AuthGuard = ({ children }: { children: ReactNode }) => {
-  const { isPending, isError } = useAuthUser();
+  const { isPending, isError, data } = useAuthUser();
 
   if (isPending)
     return (
@@ -16,7 +16,7 @@ export const AuthGuard = ({ children }: { children: ReactNode }) => {
       </div>
     );
 
-  return isError ? (
+  return isError && !data.id ? (
     <div>
       <Dialog open={true}>
         <DialogContent>
